@@ -41,7 +41,7 @@ export default function Home() {
     }
 
     loadTasks();
-  }, [user]);
+  }, [user, client]); // Added 'client' to the dependency array
 
   async function createTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

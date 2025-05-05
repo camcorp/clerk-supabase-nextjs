@@ -1,17 +1,19 @@
 import { createServerSupabaseClient } from "./client";
 import AddTaskForm from "./AddTaskForm";
+import { GetServerSideProps } from "next";
 
-export default async function Home() {
-  // Use the custom Supabase client you created
+export const getServerSideProps: GetServerSideProps = async () => {
   const client = createServerSupabaseClient();
 
   // Query the 'tasks' table to render the list of tasks
   const { data, error } = await client.from("tasks").select();
   if (error) {
-    throw error;
+    return { props: { tasks: [] } };
   }
-  const tasks = data;
+  return { props: { tasks: data } };
+};
 
+export default function Home({ tasks }: { tasks: any[] }) {
   return (
     <div>
       <h1>Tasks</h1>

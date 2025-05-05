@@ -1,28 +1,41 @@
-import { createServerSupabaseClient } from "./client";
+"use client";
+
+import { useEffect, useState } from "react";
 import AddTaskForm from "./AddTaskForm";
-import { GetServerSideProps } from "next";
+import { createClient } from "@supabase/supabase-js";
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const client = createServerSupabaseClient();
+export default function Home() {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Query the 'tasks' table to render the list of tasks
-  const { data, error } = await client.from("tasks").select();
-  if (error) {
-    return { props: { tasks: [] } };
-  }
-  return { props: { tasks: data } };
-};
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const client = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_KEY!
+      );
 
-export default function Home({ tasks }: { tasks: any[] }) {
+      const { data, error } = await client.from("tasks").select();
+      if (!error) {
+        setTasks(data);
+      }
+      setLoading(false);
+    };
+
+    fetchTasks();
+  }, []);
+
   return (
     <div>
       <h1>Tasks</h1>
 
-      <div>
-        {tasks?.map((task: any) => (
-          <p key={task.id}>{task.name}</p>
-        ))}
-      </div>
+      {loading && <p>Loading...</p>}
+
+      {!loading && tasks.length > 0 && tasks.map((task: any) => (
+        <p key={task.id}>{task.name}</p>
+      ))}
+
+      {!loading && tasks.length === 0 && <p>No tasks found</p>}
 
       <AddTaskForm />
     </div>

@@ -1,19 +1,21 @@
 // app/api/guardar-datos-empresa/route.ts
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // usa la service role para escritura segura
-);
+import { auth } from '@clerk/nextjs/server';
+import { createServerSupabaseClient } from '@/app/ssr/client';
 
 export async function POST(req: Request) {
   const body = await req.json();
+  const { userId } = await auth();
+  
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  const { user_id, email, empresa, rut_empresa } = body;
+  const { email, empresa, rut_empresa } = body;
+  const supabase = createServerSupabaseClient();
 
   const { error } = await supabase.from('registro_empresa').insert([
-    { user_id, email, empresa, rut_empresa }
+    { user_id: userId, email, empresa, rut_empresa }
   ]);
 
   if (error) {

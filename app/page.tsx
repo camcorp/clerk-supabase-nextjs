@@ -119,20 +119,13 @@ export default function LandingPage() {
       <p className="text-lg text-gray-700 mb-8">
         Descárgala sin costo y empieza a tomar mejores decisiones con datos reales.
       </p>
-      <a
-        href="/registro"
-        className="inline-block bg-blue-600 text-white text-lg font-semibold px-10 py-4 rounded-full hover:bg-blue-700 transition"
-      >
-        Registrarse Gratis
-      </a>
+      <SignUpButton>
+
+<button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow"> Registrarse</button>
+</SignUpButton>
     </div>
   </section>
-    
 
-        <SignUpButton>
-
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow"> Registrarse</button>
-        </SignUpButton>
 
  {/* Footer */}
  <footer className="bg-gray-900 text-white py-12 px-6">

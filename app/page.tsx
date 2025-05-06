@@ -28,7 +28,7 @@ export default function LandingPage() {
         <SignUpButton
           mode="modal"
           afterSignUpUrl="/dashboard"
-          redirectUrl="/dashboard"
+          redirectUrl="/registro-completo"
         >
           <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow">
             Registrarse para acceder

@@ -6,7 +6,6 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
-import DebugEnv from "./debug-env";
 
 // Verify environment variables are available during build
 const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -31,7 +30,6 @@ export default function RootLayout({
               <UserButton />
             </SignedIn>
           </header>
-          <DebugEnv />
           <main>{children}</main>
         </body>
       </html>

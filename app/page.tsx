@@ -1,6 +1,8 @@
 'use client';
 
 import { SignUpButton } from '@clerk/nextjs';
+import { Stats } from '../components/Stats';
+import { Benefits } from '../components/Benefits';
 
 export default function LandingPage() {
   return (
@@ -41,30 +43,11 @@ export default function LandingPage() {
       </div>
     </section>
   
+      {/* Beneficios */}
+      <Benefits />
     {/* Estadísticas */}
-    <section className="bg-gray-50 py-20 px-6">
-      <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-12">Resultados que hablan por sí solos</h2>
-        <div className="grid md:grid-cols-4 gap-6 text-blue-700 font-semibold text-xl">
-          <div>
-            <p className="text-5xl mb-2">13</p>
-            <p>Años de datos históricos</p>
-          </div>
-          <div>
-            <p className="text-5xl mb-2">+350</p>
-            <p>Corredores analizados</p>
-          </div>
-          <div>
-            <p className="text-5xl mb-2">4</p>
-            <p>Tipos de informes disponibles</p>
-          </div>
-          <div>
-            <p className="text-5xl mb-2">98%</p>
-            <p>Usuarios satisfechos</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Stats />
+
   
     {/* Comparación de informes */}
     <section className="py-20 px-6 bg-white" id="informes">

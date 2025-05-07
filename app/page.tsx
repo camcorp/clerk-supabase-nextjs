@@ -3,6 +3,7 @@
 import { SignUpButton } from '@clerk/nextjs';
 import { Stats } from '../components/Stats';
 import { Benefits } from '../components/Benefits';
+import { Benefits } from '../components/Hero';
 
 export default function LandingPage() {
   return (
@@ -24,6 +25,8 @@ export default function LandingPage() {
         </a>
       </div>
     </section>
+          {/* Hero */}
+          <Hero />
   
     {/* Beneficios */}
     <section className="py-20 px-6 bg-white">
@@ -108,7 +111,9 @@ export default function LandingPage() {
 </SignUpButton>
     </div>
   </section>
-
+  <PricingTable />
+      <RegistrationCTA />
+      <Footer />
 
  {/* Footer */}
  <footer className="bg-gray-900 text-white py-12 px-6">

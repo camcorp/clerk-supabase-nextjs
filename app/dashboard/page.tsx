@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import UpgradeSubscription from '@/components/UpgradeSubscription';
 
 // Componente para mostrar productos premium bloqueados
-const ProductosBloqueados = ({ onUpgrade }) => (
+const ProductosBloqueados = ({ onUpgrade }: { onUpgrade: () => void }) => (
   <div className="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50">
     <h2 className="text-xl font-bold mb-2">Productos Premium</h2>
     <p className="text-gray-600 mb-4">Accede a informes detallados y análisis comparativos desbloqueando nuestros productos premium.</p>

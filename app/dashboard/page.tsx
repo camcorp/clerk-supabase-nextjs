@@ -56,8 +56,15 @@ const ProductosBloqueados = ({ onUpgrade }: { onUpgrade: () => void }) => (
   </div>
 );
 
+// Definición de tipo para la información de empresa
+type EmpresaInfo = {
+  empresa?: string;
+  rut_empresa?: string;
+  [key: string]: any; // Para otras propiedades que pueda tener
+};
+
 // Componente para mostrar información de la empresa
-const InformacionEmpresa = ({ empresa }) => (
+const InformacionEmpresa = ({ empresa }: { empresa: EmpresaInfo }) => (
   <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-white">
     <h2 className="text-lg font-semibold mb-2">Información de Empresa</h2>
     <div className="grid grid-cols-2 gap-4">
@@ -75,7 +82,7 @@ const InformacionEmpresa = ({ empresa }) => (
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const [empresaInfo, setEmpresaInfo] = useState(null);
+  const [empresaInfo, setEmpresaInfo] = useState<EmpresaInfo | null>(null);
   const [userRole, setUserRole] = useState('free'); // 'free', 'premium'
   const [loading, setLoading] = useState(true);
   

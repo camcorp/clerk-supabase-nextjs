@@ -64,6 +64,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { plan } = body;
     
+    // Define plan type
+    type PlanType = 'individual' | 'comparativo' | 'completo';
+    
     // Validar el plan
     if (!['individual', 'comparativo', 'completo'].includes(plan)) {
       return NextResponse.json({ error: 'Plan no válido' }, { status: 400 });
@@ -72,7 +75,7 @@ export async function POST(req: Request) {
     const supabase = createServerSupabaseClient();
 
     // Mapeo de planes a productos y roles
-    const planConfig = {
+    const planConfig: Record<PlanType, { role: string; products: string[] }> = {
       individual: {
         role: 'premium',
         products: ['memoria_anual', 'informe_individual']
@@ -86,6 +89,9 @@ export async function POST(req: Request) {
         products: ['memoria_anual', 'informe_individual', 'informe_comparativo', 'descarga_datos']
       }
     };
+    
+    // Cast plan to PlanType since we've validated it
+    const validatedPlan = plan as PlanType;
 
     // Fecha de validez (1 año desde hoy)
     const validUntil = new Date();
@@ -94,9 +100,9 @@ export async function POST(req: Request) {
     // Insertar o actualizar la suscripción
     const { error } = await supabase.from('user_subscriptions').upsert({
       user_id: userId,
-      plan,
-      role: planConfig[plan].role,
-      products: planConfig[plan].products,
+      plan: validatedPlan,
+      role: planConfig[validatedPlan].role,
+      products: planConfig[validatedPlan].products,
       status: 'active',
       valid_until: validUntil.toISOString(),
       updated_at: new Date().toISOString()
@@ -110,9 +116,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ 
       success: true,
       message: 'Suscripción actualizada correctamente',
-      plan,
-      role: planConfig[plan].role,
-      products: planConfig[plan].products,
+      plan: validatedPlan,
+      role: planConfig[validatedPlan].role,
+      products: planConfig[validatedPlan].products,
       valid_until: validUntil.toISOString()
     });
   } catch (error) {

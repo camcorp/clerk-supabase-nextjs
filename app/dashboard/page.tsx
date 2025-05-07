@@ -94,8 +94,8 @@ export default function DashboardPage() {
       try {
         // Crear cliente de Supabase
         const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.NEXT_PUBLIC_SUPABASE_KEY
+          process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+          process.env.NEXT_PUBLIC_SUPABASE_KEY || ''
         );
         
         // Obtener información de la empresa

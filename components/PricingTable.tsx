@@ -6,24 +6,28 @@ export function PricingTable() {
     price: 'Gratis',
     features: ['Evolución del mercado', 'Ranking y participación', 'Tendencias de primas'],
     highlight: true,
+    badge: 'Gratis',
     cta: 'Obtener ahora'
   }, {
     title: 'Informe Individual',
     price: '$29.990',
     features: ['Análisis de un corredor', 'Participación por ramo', 'Comparativa con mercado'],
     highlight: false,
+    badge: 'Económico',
     cta: 'Seleccionar plan'
   }, {
     title: 'Informe Comparativo',
     price: '$49.990',
     features: ['Comparación de hasta 3 corredores', 'Históricos y crecimientos', 'Visualizaciones clave'],
-    highlight: false,
+    highlight: true,
+    badge: 'Más popular',
     cta: 'Seleccionar plan'
   }, {
     title: 'Acceso Completo',
     price: '$99.990',
     features: ['Todos los informes', 'Descarga de datos', 'Actualizaciones por 1 año'],
     highlight: false,
+    badge: 'Más completa',
     cta: 'Seleccionar plan'
   }];
   return <section id="informes" className="w-full py-24 px-6">
@@ -39,8 +43,8 @@ export function PricingTable() {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {plans.map((plan, i) => <div key={i} className={`relative rounded-3xl p-8 transition-all duration-300 ${plan.highlight ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-700/20' : 'bg-white border border-slate-100 hover:border-slate-200 hover:shadow-lg'}`}>
-              {plan.highlight && <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-                  Más popular
+              {plan.badge && <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full">
+                  {plan.badge}
                 </div>}
               <h3 className={`text-xl font-bold mb-2 ${plan.highlight ? 'text-white' : ''}`}>
                 {plan.title}

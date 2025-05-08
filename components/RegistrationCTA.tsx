@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import { SignUpButton } from '@clerk/nextjs';
+
 export function RegistrationCTA() {
   return <section id="registro" className="w-full py-24 px-6 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 z-0"></div>
@@ -15,9 +17,11 @@ export function RegistrationCTA() {
               de seguros.
             </p>
             <div className="space-y-4">
-              <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-4 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all">
-                Registrarse
-              </button>
+              <SignUpButton>
+                <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-4 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all">
+                  Registrarse
+                </button>
+              </SignUpButton>
               <p className="text-sm text-slate-500 text-center">
                 Sin tarjeta de crédito. Acceso inmediato.
               </p>

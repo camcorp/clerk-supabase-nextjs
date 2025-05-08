@@ -1,16 +1,19 @@
-import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 // Protege las rutas que requieren autenticación
-export default authMiddleware({
-  // Rutas públicas que no requieren autenticación
-  publicRoutes: ["/", "/sign-in(.*)", "/sign-up(.*)"],
-  
+const isPublic = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+
+export default clerkMiddleware({
   // Función para manejar cuando un usuario no autenticado intenta acceder a una ruta protegida
-  afterAuth(auth, req, evt) {
+  afterAuth(auth, req) {
     // Manejar usuarios no autenticados
-    if (!auth.userId && !auth.isPublicRoute) {
-      return redirectToSignIn({ returnBackUrl: req.url });
+    if (!auth.userId && !isPublic(req)) {
+      const signInUrl = new URL('/sign-in', req.url);
+      signInUrl.searchParams.set('redirect_url', req.url);
+      return NextResponse.redirect(signInUrl);
     }
+    return NextResponse.next();
   },
 });
 

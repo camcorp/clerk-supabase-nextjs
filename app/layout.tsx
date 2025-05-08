@@ -29,7 +29,7 @@ export default function RootLayout({
             </div>
             <div>
               <SignedOut>
-                <SignInButton mode="modal" afterSignInUrl="/dashboard">
+                <SignInButton mode="modal" redirectUrl="/dashboard">
                   <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
                     Iniciar Sesión
                   </button>

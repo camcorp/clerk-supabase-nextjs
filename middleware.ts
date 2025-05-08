@@ -1,8 +1,18 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { authMiddleware, redirectToSignIn } from "@clerk/nextjs/server";
 
-// This Middleware does not protect any routes by default.
-// See https://clerk.com/docs/references/nextjs/clerk-middleware for more information about configuring your Middleware
-export default clerkMiddleware();
+// Protege las rutas que requieren autenticación
+export default authMiddleware({
+  // Rutas públicas que no requieren autenticación
+  publicRoutes: ["/", "/sign-in(.*)", "/sign-up(.*)"],
+  
+  // Función para manejar cuando un usuario no autenticado intenta acceder a una ruta protegida
+  afterAuth(auth, req, evt) {
+    // Manejar usuarios no autenticados
+    if (!auth.userId && !auth.isPublicRoute) {
+      return redirectToSignIn({ returnBackUrl: req.url });
+    }
+  },
+});
 
 export const config = {
   matcher: [

@@ -21,14 +21,25 @@ export const supabaseAdmin = createClient(
 );
 
 // Función para crear un cliente de Supabase autenticado con Clerk (para el servidor)
-export function createServerSupabaseClient() {
+export async function createServerSupabaseClient() {
+  const { userId } = await auth();
+  
+  // Si no hay usuario autenticado, devolver un cliente anónimo
+  if (!userId) {
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+  }
+  
+  // Si hay un usuario autenticado, crear un cliente con el token JWT de Clerk
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       global: {
         headers: {
-          Authorization: `Bearer ${auth().getToken()}`
+          Authorization: `Bearer ${userId}`
         }
       }
     }
@@ -36,7 +47,7 @@ export function createServerSupabaseClient() {
 }
 
 // Función para sincronizar datos de usuario entre Clerk y Supabase
-export function createSupabaseUserFromClerk(clerkUser: any) {
+export async function createSupabaseUserFromClerk(clerkUser: any) {
   // Esta función se puede usar para sincronizar datos adicionales del usuario
   // entre Clerk y Supabase si es necesario
   return supabaseAdmin

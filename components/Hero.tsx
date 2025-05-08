@@ -10,10 +10,10 @@ export function Hero() {
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-6">
             <span className="mr-1">2025</span>
             <div className="w-1 h-1 bg-blue-600 rounded-full mx-1.5"></div>
-            <span>Análisis de Mercado</span>
+            <span>AnáliInforme360 Seguros</span>
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Domina el Mercado de Corredores de Seguros en Chile
+          Conoce el mercado, domina tu estrategia
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mb-12">
             Accede gratis a la Memoria Anual con 13 años de evolución del

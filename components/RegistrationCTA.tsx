@@ -17,7 +17,7 @@ export function RegistrationCTA() {
               de seguros.
             </p>
             <div className="space-y-4">
-              <SignUpButton mode="modal" redirectUrl="/registro-completo">
+              <SignUpButton mode="modal">
                 <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-4 px-6 rounded-xl shadow-lg shadow-blue-500/20 transition-all">
                   Registrarse
                 </button>

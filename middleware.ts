@@ -4,17 +4,14 @@ import { NextResponse } from "next/server";
 // Protege las rutas que requieren autenticación
 const isPublic = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
-export default clerkMiddleware({
-  // Función para manejar cuando un usuario no autenticado intenta acceder a una ruta protegida
-  afterAuth(auth, req) {
-    // Manejar usuarios no autenticados
-    if (!auth.userId && !isPublic(req)) {
-      const signInUrl = new URL('/sign-in', req.url);
-      signInUrl.searchParams.set('redirect_url', req.url);
-      return NextResponse.redirect(signInUrl);
-    }
-    return NextResponse.next();
-  },
+export default clerkMiddleware((auth, req) => {
+  // Manejar usuarios no autenticados
+  if (!auth.userId && !isPublic(req)) {
+    const signInUrl = new URL('/sign-in', req.url);
+    signInUrl.searchParams.set('redirect_url', req.url);
+    return NextResponse.redirect(signInUrl);
+  }
+  return NextResponse.next();
 });
 
 export const config = {

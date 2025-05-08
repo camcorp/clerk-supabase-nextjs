@@ -1,4 +1,4 @@
-import { authMiddleware, redirectToSignIn } from "@clerk/nextjs/server";
+import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
 
 // Protege las rutas que requieren autenticación
 export default authMiddleware({

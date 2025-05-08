@@ -6,7 +6,7 @@ const isPublic = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
   // Manejar usuarios no autenticados
-  if (!auth.userId && !isPublic(req)) {
+  if (!auth.isSignedIn && !isPublic(req)) {
     const signInUrl = new URL('/sign-in', req.url);
     signInUrl.searchParams.set('redirect_url', req.url);
     return NextResponse.redirect(signInUrl);

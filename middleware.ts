@@ -6,12 +6,12 @@ const isPublic = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
   // Si el usuario está en la página principal y ya está autenticado, redirigir al dashboard
-  if (auth.userId && req.nextUrl.pathname === '/') {
+  if (auth.user?.id && req.nextUrl.pathname === '/') {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
   
   // Si el usuario no está autenticado e intenta acceder a una ruta protegida
-  if (!auth.userId && !isPublic(req)) {
+  if (!auth.user?.id && !isPublic(req)) {
     const signInUrl = new URL('/sign-in', req.url);
     signInUrl.searchParams.set('redirect_url', req.url);
     return NextResponse.redirect(signInUrl);

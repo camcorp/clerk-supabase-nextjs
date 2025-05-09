@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useSupabaseClient } from "@/lib/supabase-client";
 
 interface PeriodSelectorProps {
   onSelect: (periodo: string) => void;
@@ -8,6 +8,7 @@ interface PeriodSelectorProps {
 export default function PeriodSelector({ onSelect }: PeriodSelectorProps) {
   const [periodos, setPeriodos] = useState<string[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+  const supabase = useSupabaseClient();
 
   useEffect(() => {
     const fetchPeriods = async () => {
@@ -21,7 +22,7 @@ export default function PeriodSelector({ onSelect }: PeriodSelectorProps) {
     };
 
     fetchPeriods();
-  }, []);
+  }, [supabase]);
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;

@@ -44,7 +44,7 @@ export default function Dashboard() {
           .order('periodo', { ascending: false });
         
         if (error) throw error;
-        
+        Companias.tsx, Ramos.tsx, Corredores.tsx        
         // Usamos un enfoque alternativo para obtener valores únicos
         const uniquePeriods = Array.from(
           new Map(data.map(item => [item.periodo, item.periodo])).values()

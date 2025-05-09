@@ -1,9 +1,9 @@
-import { useSupabaseClient } from "@/lib/supabase-client";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 export const getPeriods = async () => {
-  const supabase = useSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
-    .from("uf_values")
+    .from("periodos")
     .select("periodo")
     .order("periodo", { ascending: false });
 

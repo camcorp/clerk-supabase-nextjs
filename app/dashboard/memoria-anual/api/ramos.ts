@@ -1,7 +1,7 @@
-import { useSupabaseClient } from "@/lib/supabase-client";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 export const getRamosData = async (periodo: string) => {
-  const supabase = useSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("vista_ramos_periodo")
     .select("*")

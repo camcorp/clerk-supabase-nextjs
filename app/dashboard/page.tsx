@@ -1,187 +1,110 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
-import GraficoPrimas from '@/components/GraficoPrimas';
-import { createClient } from '@supabase/supabase-js';
-import UpgradeSubscription from '@/components/UpgradeSubscription';
+import { useEffect, useState } from 'react';
+import { useSupabaseClient } from '../../lib/supabase-client';
 
-// Componente para mostrar productos premium bloqueados
-const ProductosBloqueados = ({ onUpgrade }: { onUpgrade: () => void }) => (
-  <div className="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50">
-    <h2 className="text-xl font-bold mb-2">Productos Premium</h2>
-    <p className="text-gray-600 mb-4">Accede a informes detallados y análisis comparativos desbloqueando nuestros productos premium.</p>
-    
-    <div className="grid md:grid-cols-3 gap-4 mb-6">
-      <div className="p-4 border border-gray-200 rounded-lg bg-white">
-        <h3 className="font-semibold">Informe Individual</h3>
-        <p className="text-sm text-gray-500 mb-2">Análisis detallado de un corredor</p>
-        <div className="flex items-center text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          <span className="text-sm">Bloqueado</span>
-        </div>
-      </div>
-      
-      <div className="p-4 border border-gray-200 rounded-lg bg-white">
-        <h3 className="font-semibold">Informe Comparativo</h3>
-        <p className="text-sm text-gray-500 mb-2">Compara hasta 3 corredores</p>
-        <div className="flex items-center text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          <span className="text-sm">Bloqueado</span>
-        </div>
-      </div>
-      
-      <div className="p-4 border border-gray-200 rounded-lg bg-white">
-        <h3 className="font-semibold">Acceso Completo</h3>
-        <p className="text-sm text-gray-500 mb-2">Todos los informes y datos</p>
-        <div className="flex items-center text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          <span className="text-sm">Bloqueado</span>
-        </div>
-      </div>
-    </div>
-    
-    <button 
-      onClick={onUpgrade}
-      className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-    >
-      Desbloquear Productos Premium
-    </button>
-  </div>
-);
+// Definir la interfaz para las compañías
+interface Compania {
+  id: number;
+  nombrecia: string;
+  // Puedes añadir más campos según tu esquema de base de datos
+}
 
-// Definición de tipo para la información de empresa
-type EmpresaInfo = {
-  empresa?: string;
-  rut_empresa?: string;
-  [key: string]: any; // Para otras propiedades que pueda tener
-};
-
-// Componente para mostrar información de la empresa
-const InformacionEmpresa = ({ empresa }: { empresa: EmpresaInfo }) => (
-  <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-white">
-    <h2 className="text-lg font-semibold mb-2">Información de Empresa</h2>
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <p className="text-sm text-gray-500">Empresa</p>
-        <p className="font-medium">{empresa.empresa || 'No disponible'}</p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-500">RUT</p>
-        <p className="font-medium">{empresa.rut_empresa || 'No disponible'}</p>
-      </div>
-    </div>
-  </div>
-);
-
-export default function DashboardPage() {
-  const { user } = useUser();
-  const [empresaInfo, setEmpresaInfo] = useState<EmpresaInfo | null>(null);
-  const [userRole, setUserRole] = useState('free'); // 'free', 'premium'
+export default function Dashboard() {
+  const [companias, setCompanias] = useState<Compania[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Obtener el cliente de Supabase
+  const supabase = useSupabaseClient();
   
   useEffect(() => {
-    // Función para obtener información de la empresa y el rol del usuario
-    const fetchUserData = async () => {
-      if (!user) return;
-      
+    // Función para cargar las compañías
+    async function loadCompanias() {
       try {
-        // Crear cliente de Supabase
-        const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-          process.env.NEXT_PUBLIC_SUPABASE_KEY || ''
-        );
+        setLoading(true);
         
-        // Obtener información de la empresa
-        const { data: empresaData, error: empresaError } = await supabase
-          .from('registro_empresa')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-          
-        if (empresaError) throw empresaError;
+        // Realizar la consulta a Supabase
+        const { data, error } = await supabase
+          .from('companias')
+          .select('id, nombrecia')
+          .order('nombrecia', { ascending: true });
         
-        // Aquí se podría obtener información sobre el rol/suscripción del usuario
-        // Por ahora, simulamos que todos los usuarios son 'free'
-        // En una implementación real, esto vendría de una tabla de suscripciones
+        if (error) {
+          throw error;
+        }
         
-        setEmpresaInfo(empresaData);
-        setUserRole('free'); // Por defecto todos son usuarios gratuitos
-      } catch (error) {
-        console.error('Error al obtener datos del usuario:', error);
+        // Actualizar el estado con los datos
+        setCompanias(data || []);
+      } catch (err) {
+        console.error('Error al cargar compañías:', err);
+        setError('No se pudieron cargar las compañías. Por favor, intenta de nuevo más tarde.');
       } finally {
         setLoading(false);
       }
-    };
-    
-    fetchUserData();
-  }, [user]);
-  
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  
-  const handleUpgradeClick = () => {
-    setShowUpgradeModal(true);
-  };
-  
-  const handleUpgradeSuccess = async () => {
-    setShowUpgradeModal(false);
-    // Recargar los datos del usuario para reflejar su nueva suscripción
-    setLoading(true);
-    try {
-      const response = await fetch('/api/user-role');
-      const data = await response.json();
-      
-      if (response.ok) {
-        setUserRole(data.role);
-      }
-    } catch (error) {
-      console.error('Error al actualizar el rol del usuario:', error);
-    } finally {
-      setLoading(false);
     }
-  };
-  
-  const handleUpgradeCancel = () => {
-    setShowUpgradeModal(false);
-  };
-  
-  if (loading) {
-    return (
-      <main className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 mb-8"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
-        </div>
-      </main>
-    );
-  }
+    
+    loadCompanias();
+  }, [supabase]);
   
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Memoria Anual del Mercado de Corredores</h1>
-      <p className="text-gray-700 mb-6">Explora las tendencias del mercado de los últimos 13 años.</p>
-      
-      {empresaInfo && <InformacionEmpresa empresa={empresaInfo} />}
-      
-      <div className="mt-8">
-        <GraficoPrimas />
+    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div className="px-4 py-6 sm:px-0">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
+        
+        {/* Mostrar mensaje de carga */}
+        {loading && (
+          <div className="text-center py-4">
+            <p className="text-gray-500">Cargando compañías...</p>
+          </div>
+        )}
+        
+        {/* Mostrar mensaje de error */}
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Mostrar lista de compañías */}
+        {!loading && !error && (
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul className="divide-y divide-gray-200">
+              {companias.length > 0 ? (
+                companias.map((compania) => (
+                  <li key={compania.id}>
+                    <div className="px-4 py-4 sm:px-6">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-blue-600 truncate">
+                          {compania.nombrecia}
+                        </p>
+                        <div className="ml-2 flex-shrink-0 flex">
+                          <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            ID: {compania.id}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-4 sm:px-6 text-center text-gray-500">
+                  No hay compañías disponibles
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
-      
-      {userRole === 'free' && <ProductosBloqueados onUpgrade={handleUpgradeClick} />}
-      
-      {showUpgradeModal && (
-        <UpgradeSubscription 
-          onSuccess={handleUpgradeSuccess} 
-          onCancel={handleUpgradeCancel} 
-        />
-      )}
-    </main>
+    </div>
   );
 }

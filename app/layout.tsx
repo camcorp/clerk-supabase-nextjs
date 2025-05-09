@@ -23,26 +23,48 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="es">
         <body>
-          <header className="p-4 flex justify-between items-center bg-white shadow-sm">
-            <div>
-              <Link href="/" className="text-xl font-bold text-blue-600">MiApp</Link>
-            </div>
-            <div>
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
-                    Iniciar Sesión
-                  </button>
-                </SignInButton>
-              </SignedOut>
-              <SignedIn>
-                <div className="flex items-center gap-4">
-                  <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
-                    Dashboard
-                  </Link>
-                  <UserButton afterSignOutUrl="/" />
+          <header className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between h-16">
+                <div className="flex items-center">
+                  <Link href="/" className="text-xl font-bold text-blue-600">MiApp</Link>
                 </div>
-              </SignedIn>
+                
+                <div className="flex items-center">
+                  <SignedOut>
+                    <div className="flex items-center space-x-4">
+                      <SignInButton mode="modal">
+                        <button className="text-gray-600 hover:text-blue-600">
+                          Iniciar Sesión
+                        </button>
+                      </SignInButton>
+                      <SignUpButton mode="modal">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                          Registrarse
+                        </button>
+                      </SignUpButton>
+                    </div>
+                  </SignedOut>
+                  
+                  <SignedIn>
+                    <nav className="flex items-center space-x-6 mr-6">
+                      <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">
+                        Dashboard
+                      </Link>
+                      <Link href="/perfil" className="text-gray-600 hover:text-blue-600">
+                        Mi Perfil
+                      </Link>
+                      <Link href="/reportes" className="text-gray-600 hover:text-blue-600">
+                        Reportes
+                      </Link>
+                      <Link href="/configuracion" className="text-gray-600 hover:text-blue-600">
+                        Configuración
+                      </Link>
+                    </nav>
+                    <UserButton afterSignOutUrl="/" />
+                  </SignedIn>
+                </div>
+              </div>
             </div>
           </header>
           <main>{children}</main>

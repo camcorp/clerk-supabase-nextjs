@@ -38,20 +38,21 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadPeriodos() {
       try {
+        // Modificamos la consulta para obtener periodos únicos
         const { data, error } = await supabase
           .from('companias')
           .select('periodo')
-          .order('periodo', { ascending: false })
-          .distinct();
+          .order('periodo', { ascending: false });
         
         if (error) throw error;
         
-        const availablePeriods = data.map(item => item.periodo);
-        setPeriodos(availablePeriods);
+        // Filtramos los periodos únicos manualmente
+        const uniquePeriods = [...new Set(data.map(item => item.periodo))];
+        setPeriodos(uniquePeriods);
         
         // Set default selected period to the most recent one
-        if (availablePeriods.length > 0 && !selectedPeriodo) {
-          setSelectedPeriodo(availablePeriods[0]);
+        if (uniquePeriods.length > 0 && !selectedPeriodo) {
+          setSelectedPeriodo(uniquePeriods[0]);
         }
       } catch (err) {
         console.error('Error al cargar periodos:', err);

@@ -38,7 +38,6 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadPeriodos() {
       try {
-        // Modificamos la consulta para obtener periodos únicos
         const { data, error } = await supabase
           .from('companias')
           .select('periodo')
@@ -46,8 +45,10 @@ export default function Dashboard() {
         
         if (error) throw error;
         
-        // Filtramos los periodos únicos manualmente
-        const uniquePeriods = [...new Set(data.map(item => item.periodo))];
+        // Usamos un enfoque alternativo para obtener valores únicos
+        const uniquePeriods = Array.from(
+          new Map(data.map(item => [item.periodo, item.periodo])).values()
+        );
         setPeriodos(uniquePeriods);
         
         // Set default selected period to the most recent one

@@ -178,15 +178,17 @@ export default function CompaniasView() {
         <SummaryCard 
           title="Total Prima UF" 
           value={formatCurrency(summary.totalPrimauf)} 
+          valueColor="text-blue-600"
         />
         <SummaryCard 
           title="Número de Compañías" 
           value={summary.companyCount.toString()} 
+          valueColor="text-indigo-600"
         />
         <SummaryCard 
           title="Crecimiento vs Periodo Anterior" 
           value={summary.growth !== null ? `${summary.growth >= 0 ? '+' : ''}${summary.growth.toFixed(2)}%` : 'N/A'} 
-          valueColor={summary.growth !== null ? (summary.growth >= 0 ? 'text-green-600' : 'text-red-600') : ''}
+          valueColor={summary.growth !== null ? (summary.growth >= 0 ? 'text-green-600' : 'text-red-600') : 'text-gray-600'}
         />
       </div>
       

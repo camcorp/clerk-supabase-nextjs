@@ -1,6 +1,7 @@
-import { supabase } from "@/lib/supabaseClient";
+import { useSupabaseClient } from "@/lib/supabase-client";
 
 export const getCorredoresData = async (periodo: string) => {
+  const supabase = useSupabaseClient();
   const { data, error } = await supabase
     .from("vista_corredores_periodo")
     .select("*")

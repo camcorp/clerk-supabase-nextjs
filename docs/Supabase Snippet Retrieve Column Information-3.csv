@@ -1,0 +1,43 @@
+view_name,column_name,data_type
+vista_companias_periodo,periodo,character
+vista_companias_periodo,nombrecia,character varying
+vista_companias_periodo,total_clp,numeric
+vista_companias_periodo,total_uf,numeric
+vista_ramos_periodo,periodo,character
+vista_ramos_periodo,ramo,character varying
+vista_ramos_periodo,total_clp,numeric
+vista_ramos_periodo,total_uf,numeric
+vista_corredores_periodo,periodo,character
+vista_corredores_periodo,nombre,character varying
+vista_corredores_periodo,total_clp,numeric
+vista_corredores_periodo,total_uf,numeric
+vista_evolucion_mercado,periodo,character
+vista_evolucion_mercado,rutcia,character varying
+vista_evolucion_mercado,nombrecia,character varying
+vista_evolucion_mercado,tipo_cambio,text
+vista_evolucion_mercado,motivo,text
+vista_evolucion_corredores,periodo,character
+vista_evolucion_corredores,rut,character varying
+vista_evolucion_corredores,nombre,character varying
+vista_evolucion_corredores,tipo_cambio,text
+vista_segmentos_companias,periodo,character
+vista_segmentos_companias,rutcia,character varying
+vista_segmentos_companias,nombrecia,character varying
+vista_segmentos_companias,primauf,numeric
+vista_segmentos_companias,segmento,text
+vista_segmentos_corredores,periodo,character
+vista_segmentos_corredores,rut,character varying
+vista_segmentos_corredores,nombre,character varying
+vista_segmentos_corredores,primauf,numeric
+vista_segmentos_corredores,segmento,text
+memoria_anual_ramos,codigo,character varying
+memoria_anual_ramos,ramo,character varying
+memoria_anual_ramos,total_clp,numeric
+memoria_anual_ramos,total_uf,numeric
+vista_concentracion_mercado,periodo,character
+vista_concentracion_mercado,grupo,character varying
+vista_concentracion_mercado,total_clp,numeric
+vista_concentracion_mercado,total_uf,numeric
+vista_concentracion_mercado,participacion_porcentaje,numeric
+vista_concentracion_mercado,varianza_anual,numeric
+vista_concentracion_mercado,hhi,numeric

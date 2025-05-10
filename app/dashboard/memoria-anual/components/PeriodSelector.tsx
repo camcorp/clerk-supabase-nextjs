@@ -13,7 +13,7 @@ export default function PeriodSelector({ onSelect }: PeriodSelectorProps) {
   useEffect(() => {
     const fetchPeriods = async () => {
       const { data, error } = await supabase
-        .from("uf_values")
+        .from("periodos")
         .select("periodo")
         .order("periodo", { ascending: false });
 

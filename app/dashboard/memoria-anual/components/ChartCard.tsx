@@ -1,24 +1,37 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-interface ChartCardProps {
+// Make the component more flexible with generic data type
+interface ChartCardProps<T> {
   title: string;
-  data: { periodo: string; clp: number; uf: number }[];
+  data: T[];
+  xKey: string;  // Key to use for X axis (as string)
+  yKey: string;  // Key to use for Y axis (as string)
+  color?: string;
 }
 
-export default function ChartCard({ title, data }: ChartCardProps) {
+export default function ChartCard<T>({ 
+  title, 
+  data, 
+  xKey = 'nombre', 
+  yKey = 'primauf',
+  color = '#1A7F8E'
+}: ChartCardProps<T>) {
   return (
-    <div className="bg-white p-4 shadow rounded-lg mb-4">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
-          <CartesianGrid stroke="#e0e0e0" />
-          <XAxis dataKey="periodo" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="clp" stroke="#4f46e5" />
-          <Line type="monotone" dataKey="uf" stroke="#ef4444" />
-        </LineChart>
-      </ResponsiveContainer>
+    <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-4px]">
+      <div className="p-6">
+        <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk'] mb-4">{title}</h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+              <XAxis dataKey={xKey} tick={{fontSize: 10}} />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey={yKey} fill={color} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }

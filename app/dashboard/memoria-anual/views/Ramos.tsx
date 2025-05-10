@@ -192,7 +192,12 @@ export default function RamosView() {
       
       {/* Chart and Data Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard title="Distribución de Primas por Ramo" data={ramos} />
+        <ChartCard 
+          title="Distribución de Primas por Ramo" 
+          data={ramos} 
+          xKey="nombre"
+          yKey="primauf"
+        />
         <DataCard 
           title="Resumen de Primas" 
           clp={summary.totalPrimauf * 30000} // Ejemplo de conversión, ajustar según valor real de UF

@@ -1,21 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 
-// Create a single supabase client for server components
 export async function createServerSupabaseClient() {
-  const { getToken } = auth();
-  const token = await getToken({ template: 'supabase' });
-  
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+  try {
+    const authObject = await auth();
+    const { userId } = authObject;
+    const jwt = await authObject.getToken({ template: 'supabase' });
+    
+    if (!userId) {
+      return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
     }
-  );
+    
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        },
+      }
+    );
+  } catch (error) {
+    // En caso de error, devolver un cliente sin autenticación
+    console.error('Error al obtener la autenticación de Clerk:', error);
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+  }
 }

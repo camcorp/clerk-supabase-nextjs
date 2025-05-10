@@ -17,8 +17,10 @@ interface Corredor {
 }
 
 // Interface for summary stats
+// Update the interface to include totalPrimaclp
 interface PeriodSummary {
   totalPrimauf: number;
+  totalPrimaclp?: number; // Add this property
   corredorCount: number;
   growth: number | null;
 }
@@ -29,8 +31,10 @@ export default function CorredoresView() {
   const [error, setError] = useState<string | null>(null);
   const [periodos, setPeriodos] = useState<string[]>([]);
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
+  // Update the initial state
   const [summary, setSummary] = useState<PeriodSummary>({
     totalPrimauf: 0,
+    totalPrimaclp: 0, // Initialize this property
     corredorCount: 0,
     growth: null
   });
@@ -75,10 +79,10 @@ export default function CorredoresView() {
       try {
         setLoading(true);
         
-        // Realizar la consulta a Supabase
+        // Use the vista_corredores_periodo view instead of the corredores table
         const { data, error } = await supabase
-          .from('corredores')
-          .select('id, nombre, primauf, periodo')
+          .from('vista_corredores_periodo')
+          .select('nombre, total_clp, total_uf, periodo')
           .eq('periodo', selectedPeriodo)
           .order('nombre', { ascending: true });
         
@@ -86,12 +90,22 @@ export default function CorredoresView() {
           throw error;
         }
         
+        // Transform the data to match the expected format
+        const transformedData = data?.map(item => ({
+          id: item.nombre, // Using nombre as ID since we don't have an explicit ID
+          nombre: item.nombre,
+          primauf: item.total_uf,
+          primaclp: item.total_clp,
+          periodo: item.periodo
+        })) || [];
+        
         // Actualizar el estado con los datos
-        setCorredores(data || []);
+        setCorredores(transformedData);
         
         // Calculate summary statistics
         if (data) {
-          const totalPrimauf = data.reduce((sum, corredor) => sum + (corredor.primauf || 0), 0);
+          const totalPrimauf = data.reduce((sum, corredor) => sum + (corredor.total_uf || 0), 0);
+          const totalPrimaclp = data.reduce((sum, corredor) => sum + (corredor.total_clp || 0), 0);
           const corredorCount = data.length;
           
           // Get previous period data for growth calculation
@@ -101,12 +115,12 @@ export default function CorredoresView() {
           if (periodIndex < periodos.length - 1) {
             const prevPeriod = periodos[periodIndex + 1];
             const { data: prevData, error: prevError } = await supabase
-              .from('corredores')
-              .select('primauf')
+              .from('vista_corredores_periodo')
+              .select('total_uf')
               .eq('periodo', prevPeriod);
               
             if (!prevError && prevData) {
-              const prevTotalPrimauf = prevData.reduce((sum, corredor) => sum + (corredor.primauf || 0), 0);
+              const prevTotalPrimauf = prevData.reduce((sum, corredor) => sum + (corredor.total_uf || 0), 0);
               if (prevTotalPrimauf > 0) {
                 growth = ((totalPrimauf - prevTotalPrimauf) / prevTotalPrimauf) * 100;
               }
@@ -115,6 +129,7 @@ export default function CorredoresView() {
           
           setSummary({
             totalPrimauf,
+            totalPrimaclp,
             corredorCount,
             growth
           });
@@ -144,6 +159,11 @@ export default function CorredoresView() {
     { 
       header: 'Prima UF', 
       accessor: 'primauf',
+      cell: (value: number) => formatCurrency(value)
+    },
+    { 
+      header: 'Prima CLP', 
+      accessor: 'primaclp',
       cell: (value: number) => formatCurrency(value)
     }
   ];
@@ -192,10 +212,15 @@ export default function CorredoresView() {
       
       {/* Chart and Data Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard title="Distribución de Primas por Corredor" data={corredores} />
+        <ChartCard 
+          title="Distribución de Primas por Corredor" 
+          data={corredores} 
+          xKey="nombre"
+          yKey="primauf"
+        />
         <DataCard 
           title="Resumen de Primas" 
-          clp={summary.totalPrimauf * 30000} // Ejemplo de conversión, ajustar según valor real de UF
+          clp={summary.totalPrimaclp} // Valor directo de la base de datos
           uf={summary.totalPrimauf} 
         />
       </div>
@@ -230,3 +255,10 @@ export default function CorredoresView() {
     </div>
   );
 }
+
+// Remove this incorrect transformation at the end of the file
+// const chartData = corredores.map(corredor => ({
+//   periodo: corredor.periodo,
+//   clp: corredor.primauf * 30000, // Convert UF to CLP
+//   uf: corredor.primauf
+// }));

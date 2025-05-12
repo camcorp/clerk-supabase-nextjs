@@ -9,24 +9,32 @@ interface MaChartPieGrupoProps {
 export default function MaChartPieGrupo({ concentracionMercado }: MaChartPieGrupoProps) {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
   
+  // Verificar que concentracionMercado sea un array válido
+  const mercadoArray = Array.isArray(concentracionMercado) ? concentracionMercado : [];
+  
   // Ordenar por participación y tomar los 5 principales
-  const topGrupos = [...concentracionMercado]
-    .sort((a, b) => b.participacion_porcentaje - a.participacion_porcentaje)
-    .slice(0, 5);
+  const topGrupos = mercadoArray.length > 0 
+    ? [...mercadoArray]
+        .filter(item => item && typeof item === 'object' && 'participacion_porcentaje' in item)
+        .sort((a, b) => (b.participacion_porcentaje || 0) - (a.participacion_porcentaje || 0))
+        .slice(0, 5)
+    : [];
   
   // Calcular "Otros" si hay más de 5 grupos
-  const otrosParticipacion = concentracionMercado.length > 5
-    ? concentracionMercado
-        .sort((a, b) => b.participacion_porcentaje - a.participacion_porcentaje)
+  const otrosParticipacion = mercadoArray.length > 5
+    ? mercadoArray
+        .filter(item => item && typeof item === 'object' && 'participacion_porcentaje' in item)
+        .sort((a, b) => (b.participacion_porcentaje || 0) - (a.participacion_porcentaje || 0))
         .slice(5)
-        .reduce((sum, item) => sum + item.participacion_porcentaje, 0)
+        .reduce((sum, item) => sum + (item.participacion_porcentaje || 0), 0)
     : 0;
   
-  const otrosPrimaUF = concentracionMercado.length > 5
-    ? concentracionMercado
-        .sort((a, b) => b.participacion_porcentaje - a.participacion_porcentaje)
+  const otrosPrimaUF = mercadoArray.length > 5
+    ? mercadoArray
+        .filter(item => item && typeof item === 'object' && 'total_uf' in item)
+        .sort((a, b) => (b.participacion_porcentaje || 0) - (a.participacion_porcentaje || 0))
         .slice(5)
-        .reduce((sum, item) => sum + item.total_uf, 0)
+        .reduce((sum, item) => sum + (item.total_uf || 0), 0)
     : 0;
   
   // Datos para el gráfico

@@ -102,7 +102,17 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
           throw concentracionError;
         }
         
-        setConcentracionMercado(concentracionData || []);
+        // Transformar los datos para que tengan la estructura esperada por los componentes
+        const transformedConcentracionData = concentracionData?.map(item => ({
+          ...item,
+          grupo: item.grupo,
+          total_uf: item.total_uf || 0,
+          participacion_porcentaje: item.participacion_porcentaje || 0,
+          hhi: item.hhi || 0,
+          tipo: item.grupo?.includes('Vida') ? 'VIDA' : 'GENERALES'
+        })) || [];
+        
+        setConcentracionMercado(transformedConcentracionData);
         
         // 4. Cargar actores salientes
         const { data: actoresSalientesData, error: actoresSalientesError } = await supabase

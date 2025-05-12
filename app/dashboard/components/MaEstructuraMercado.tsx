@@ -21,10 +21,16 @@ interface MaEstructuraMercadoProps {
     concentracionMercado, // Añade esta línea
   }: MaEstructuraMercadoProps) {
   
-  // Calcular participación de cada grupo
-  const totalMercado = grupoGenerales.total_uf + grupoVida.total_uf;
-  const participacionGenerales = totalMercado > 0 ? (grupoGenerales.total_uf / totalMercado) * 100 : 0;
-  const participacionVida = totalMercado > 0 ? (grupoVida.total_uf / totalMercado) * 100 : 0;
+  // Calcular totales y participación de cada grupo
+  const totalGenerales = Array.isArray(grupoGenerales) ? 
+    grupoGenerales.reduce((sum, item) => sum + (item.total_uf || 0), 0) : 0;
+  
+  const totalVida = Array.isArray(grupoVida) ? 
+    grupoVida.reduce((sum, item) => sum + (item.total_uf || 0), 0) : 0;
+  
+  const totalMercado = totalGenerales + totalVida;
+  const participacionGenerales = totalMercado > 0 ? (totalGenerales / totalMercado) * 100 : 0;
+  const participacionVida = totalMercado > 0 ? (totalVida / totalMercado) * 100 : 0;
   
   // Calcular crecimiento para cada grupo
   const calcularCrecimiento = (grupo: string) => {
@@ -39,7 +45,7 @@ interface MaEstructuraMercadoProps {
     
     if (!datosAnteriores || !datosAnteriores.total_uf) return null;
     
-    const valorActual = grupo === 'Seguros Generales' ? grupoGenerales.total_uf : grupoVida.total_uf;
+    const valorActual = grupo === 'Seguros Generales' ? totalGenerales : totalVida;
     return ((valorActual - datosAnteriores.total_uf) / datosAnteriores.total_uf) * 100;
   };
   
@@ -75,7 +81,7 @@ interface MaEstructuraMercadoProps {
               </h3>
               <div className="mt-3">
                 <p className="text-3xl font-semibold text-gray-900">
-                  {formatUF(grupoGenerales.total_uf, 0)}
+                  {formatUF(totalGenerales, 0)}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   Crecimiento: {crecimientoGenerales !== null ? (
@@ -96,7 +102,7 @@ interface MaEstructuraMercadoProps {
               </h3>
               <div className="mt-3">
                 <p className="text-3xl font-semibold text-gray-900">
-                  {formatUF(grupoVida.total_uf, 0)}
+                  {formatUF(totalVida, 0)}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   Crecimiento: {crecimientoVida !== null ? (

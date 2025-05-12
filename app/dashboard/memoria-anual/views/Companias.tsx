@@ -57,7 +57,7 @@ export default function CompaniasView() {
         // Realizar la consulta a Supabase usando la vista correcta
         const { data, error } = await supabase
           .from('vista_companias_periodo')
-          .select('nombrecia, total_clp, total_uf, periodo')
+          .select('nombrecia, total_primaclp, total_primauf, periodo')
           .eq('periodo', selectedPeriodo)
           .order('nombrecia', { ascending: true });
         
@@ -69,8 +69,8 @@ export default function CompaniasView() {
         const transformedData = data?.map((item, index) => ({
           id: index, // Usar índice como ID ya que no hay ID explícito
           nombrecia: item.nombrecia,
-          primauf: item.total_uf,
-          primaclp: item.total_clp,
+          primauf: item.total_primauf,
+          primaclp: item.total_primaclp,
           periodo: item.periodo
         })) || [];
         
@@ -80,9 +80,9 @@ export default function CompaniasView() {
         
         // Calculate summary statistics
         if (data) {
-          const totalPrimauf = data.reduce((sum, company) => sum + (company.total_uf || 0), 0);
+          const totalPrimauf = data.reduce((sum, company) => sum + (company.total_primauf || 0), 0);
           const companyCount = data.length;
-          const totalPrimaclp = data.reduce((sum, company) => sum + (company.total_clp || 0), 0);
+          const totalPrimaclp = data.reduce((sum, company) => sum + (company.total_primaclp || 0), 0);
           
           // Get previous period data for growth calculation
           const periodIndex = periodos.indexOf(selectedPeriodo);

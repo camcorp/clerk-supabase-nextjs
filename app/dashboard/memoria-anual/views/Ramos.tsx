@@ -166,44 +166,42 @@ export default function RamosView() {
       ) : ramos.length === 0 ? (
         <NoData message="No hay datos de ramos disponibles para este período." />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <AccordeonTable 
-              data={ramos} 
-              columns={columns} 
-              title="Ramos de Seguros"
-              groupBy="grupo"
-              subGroupBy="subgrupo"
-              emptyMessage="No hay datos de ramos disponibles para este período."
-              showTotal={true}
-              totalLabel="Total General"
-              onRowDetail={handleRamoDetail}
-            />
-          </div>
+        <div className="space-y-6">
+          {/* Tarjeta de resumen en la parte superior */}
+          <SummaryCard
+            title="Resumen del Período"
+            items={[
+              {
+                label: 'Total Prima UF',
+                value: formatUF(summary.totalPrimauf),
+                icon: 'currency'
+              },
+              {
+                label: 'Cantidad de Ramos',
+                value: summary.ramoCount.toString(),
+                icon: 'chart'
+              },
+              {
+                label: 'Crecimiento',
+                value: summary.growth !== null ? `${summary.growth.toFixed(2)}%` : 'N/A',
+                icon: 'trend',
+                trend: summary.growth !== null ? (summary.growth > 0 ? 'up' : 'down') : 'neutral'
+              }
+            ]}
+          />
           
-          <div className="space-y-6">
-            <SummaryCard
-              title="Resumen del Período"
-              items={[
-                {
-                  label: 'Total Prima UF',
-                  value: formatUF(summary.totalPrimauf),
-                  icon: 'currency'
-                },
-                {
-                  label: 'Cantidad de Ramos',
-                  value: summary.ramoCount.toString(),
-                  icon: 'chart'
-                },
-                {
-                  label: 'Crecimiento',
-                  value: summary.growth !== null ? `${summary.growth.toFixed(2)}%` : 'N/A',
-                  icon: 'trend',
-                  trend: summary.growth !== null ? (summary.growth > 0 ? 'up' : 'down') : 'neutral'
-                }
-              ]}
-            />
-          </div>
+          {/* Tabla acordeón que ocupa todo el ancho */}
+          <AccordeonTable 
+            data={ramos} 
+            columns={columns} 
+            title="Ramos de Seguros"
+            groupBy="grupo"
+            subGroupBy="subgrupo"
+            emptyMessage="No hay datos de ramos disponibles para este período."
+            showTotal={true}
+            totalLabel="Total General"
+            onRowDetail={handleRamoDetail}
+          />
         </div>
       )}
     </div>

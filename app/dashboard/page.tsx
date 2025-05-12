@@ -75,7 +75,7 @@ export default function Dashboard() {
         </div>
         
         {/* Tarjetas de resumen */}
-        <MaCardSummary summary={summary} />
+        <MaCardSummary summary={summary} loading={loading} />
         
         {/* Mostrar mensaje de carga o error */}
         {loading && <MaLoading error={null} />}
@@ -113,13 +113,13 @@ export default function Dashboard() {
             
             {/* Estructura de mercado reorganizada */}
             <MaEstructuraMercado
-  grupoGenerales={grupoGenerales}
-  grupoVida={grupoVida}
-  selectedPeriodo={selectedPeriodo}
-  periodos={periodos}
-  historicalConcentracion={historicalConcentracion}
-  concentracionMercado={concentracionMercado} // Pasa el estado o datos
-/>
+              grupoGenerales={concentracionMercado && Array.isArray(concentracionMercado) ? concentracionMercado.filter(item => item.tipo === 'GENERALES') : []}
+              grupoVida={concentracionMercado && Array.isArray(concentracionMercado) ? concentracionMercado.filter(item => item.tipo === 'VIDA') : []}
+              selectedPeriodo={selectedPeriodo}
+              periodos={periodos}
+              historicalConcentracion={historicalConcentracion}
+              concentracionMercado={concentracionMercado} // Pasa el estado o datos
+            />
           </>
         )}
       </div>

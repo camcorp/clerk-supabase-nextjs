@@ -4,11 +4,15 @@
 
 ### 1. Resumen General del Mercado
 
+El Resumen General del Mercado proporciona una visión integral del estado actual del mercado asegurador, incluyendo:
+
 * **Evolución del Mercado:** Análisis de la evolución de compañías en términos de entradas, salidas y fusiones.
 * **Cambios en la estructura de mercado:** Identificación de cambios en la concentración del mercado, nuevos actores relevantes y tendencias significativas.
 * **Tendencias por Grupo:** Comparación entre Seguros Generales y Vida.
 * **Nuevos productos y actores destacados:** Resaltar productos o compañías que han mostrado un crecimiento significativo o una entrada destacada al mercado.
 * **Tabla de Salidas:** Listado de actores que han dejado el mercado, incluyendo motivo (venta, fusión, cierre).
+
+Este resumen permite a los usuarios identificar rápidamente las principales tendencias y cambios en el mercado asegurador durante el período seleccionado, facilitando la toma de decisiones estratégicas basadas en datos actualizados y precisos.
 
 ### 2. Tabla de Ramos
 

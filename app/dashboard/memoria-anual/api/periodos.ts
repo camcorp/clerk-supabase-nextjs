@@ -1,3 +1,5 @@
+'use server';
+
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 export const getPeriods = async () => {

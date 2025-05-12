@@ -1,3 +1,5 @@
+'use server';  // Add this directive
+
 import { createClient } from '@supabase/supabase-js';
 import { auth } from '@clerk/nextjs/server';
 

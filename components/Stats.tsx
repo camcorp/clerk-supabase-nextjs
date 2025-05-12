@@ -4,7 +4,7 @@ export function Stats() {
     value: '13',
     label: 'Años de datos históricos'
   }, {
-    value: '+350',
+    value: '+2800',
     label: 'Corredores analizados'
   }, {
     value: '4',

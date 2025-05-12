@@ -2,17 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { useSupabaseClient } from '../../../../lib/supabase-client';
-import DataCard from '../components/DataCard';
+import ModernCard from '../components/ModernCard';
 import SummaryCard from '../components/SummaryCard';
-import DataTable from '../components/DataTable';
 import NoData from '../components/NoData';
 import ChartCard from '../components/ChartCard';
+import { usePeriod } from '../context/PeriodContext';
+import { inter, spaceGrotesk } from '../fonts';
+import AccordeonTable from '../components/AccordeonTable';
+import { formatUF } from '../utils/formatters';
 
 // Definir la interfaz para los ramos
 interface Ramo {
   id: number;
   nombre: string;
+  grupo: string;
+  subgrupo: string;
   primauf: number;
+  primaclp?: number;
   periodo: string;
 }
 
@@ -23,12 +29,14 @@ interface PeriodSummary {
   growth: number | null;
 }
 
+// Importar la función API
+import { getRamosData } from '../api/ramos';
+
 export default function RamosView() {
   const [ramos, setRamos] = useState<Ramo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [periodos, setPeriodos] = useState<string[]>([]);
-  const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
+  const [selectedRamo, setSelectedRamo] = useState<Ramo | null>(null);
   const [summary, setSummary] = useState<PeriodSummary>({
     totalPrimauf: 0,
     ramoCount: 0,
@@ -38,34 +46,8 @@ export default function RamosView() {
   // Obtener el cliente de Supabase
   const supabase = useSupabaseClient();
   
-  // Load available periods
-  useEffect(() => {
-    async function loadPeriodos() {
-      try {
-        const { data, error } = await supabase
-          .from('ramos')
-          .select('periodo')
-          .order('periodo', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Usamos un enfoque alternativo para obtener valores únicos
-        const uniquePeriods = Array.from(
-          new Map(data.map(item => [item.periodo, item.periodo])).values()
-        );
-        setPeriodos(uniquePeriods);
-        
-        // Set default selected period to the most recent one
-        if (uniquePeriods.length > 0 && !selectedPeriodo) {
-          setSelectedPeriodo(uniquePeriods[0]);
-        }
-      } catch (err) {
-        console.error('Error al cargar periodos:', err);
-      }
-    }
-    
-    loadPeriodos();
-  }, [supabase, selectedPeriodo]);
+  // Usar el contexto de período
+  const { selectedPeriodo, periodos } = usePeriod();
   
   // Load ramos for the selected period
   useEffect(() => {
@@ -75,23 +57,26 @@ export default function RamosView() {
       try {
         setLoading(true);
         
-        // Realizar la consulta a Supabase
-        const { data, error } = await supabase
-          .from('ramos')
-          .select('id, nombre, primauf, periodo')
-          .eq('periodo', selectedPeriodo)
-          .order('nombre', { ascending: true });
+        // Usar la función API en lugar de consultar directamente
+        const data = await getRamosData(selectedPeriodo);
         
-        if (error) {
-          throw error;
-        }
+        // Transformar los datos al formato esperado si es necesario
+        const transformedData = data?.map((item, index) => ({
+          id: index,
+          grupo: item.grupo || item.grupo,
+          subgrupo: item.subgrupo || item.subgrupo,
+          nombre: item.nombre || item.ramo,
+          primauf: item.primauf || item.total_uf,
+          primaclp: item.primaclp || item.total_clp,
+          periodo: item.periodo
+        })) || [];
         
-        // Actualizar el estado con los datos
-        setRamos(data || []);
+        // Actualizar el estado con los datos transformados
+        setRamos(transformedData);
         
         // Calculate summary statistics
-        if (data) {
-          const totalPrimauf = data.reduce((sum, ramo) => sum + (ramo.primauf || 0), 0);
+        if (data.length > 0) {
+          const totalPrimauf = data.reduce((sum, ramo) => sum + (ramo.primauf || ramo.total_uf || 0), 0);
           const ramoCount = data.length;
           
           // Get previous period data for growth calculation
@@ -100,13 +85,10 @@ export default function RamosView() {
           
           if (periodIndex < periodos.length - 1) {
             const prevPeriod = periodos[periodIndex + 1];
-            const { data: prevData, error: prevError } = await supabase
-              .from('ramos')
-              .select('primauf')
-              .eq('periodo', prevPeriod);
-              
-            if (!prevError && prevData) {
-              const prevTotalPrimauf = prevData.reduce((sum, ramo) => sum + (ramo.primauf || 0), 0);
+            const prevData = await getRamosData(prevPeriod);
+                
+            if (prevData && prevData.length > 0) {
+              const prevTotalPrimauf = prevData.reduce((sum, ramo) => sum + (ramo.primauf || ramo.total_uf || 0), 0);
               if (prevTotalPrimauf > 0) {
                 growth = ((totalPrimauf - prevTotalPrimauf) / prevTotalPrimauf) * 100;
               }
@@ -130,107 +112,99 @@ export default function RamosView() {
     loadRamos();
   }, [supabase, selectedPeriodo, periodos]);
   
-  // Format number as currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP'
-    }).format(value);
+  // Format number as UF
+  // Eliminar esta función y usar la importada
+  // import { formatUF } from '../utils/formatters';
+  
+  // Función para manejar el detalle de un ramo
+  const handleRamoDetail = (ramo: Ramo) => {
+    setSelectedRamo(ramo);
+    // Aquí podrías mostrar un modal o navegar a una página de detalle
+    console.log('Detalle del ramo:', ramo);
+    // También podrías implementar un modal o un panel lateral para mostrar más detalles
+    alert(`Detalle del ramo: ${ramo.nombre}\nPrima UF: ${formatUF(ramo.primauf, 2)}`);
   };
   
   // Columns for data table
   const columns = [
-    { header: 'Ramo', accessor: 'nombre' },
+    { 
+      header: 'Grupo', 
+      accessor: 'grupo' as keyof Ramo, 
+      isSortable: true 
+    },{ 
+      header: 'Subgrupo', 
+      accessor: 'subgrupo' as keyof Ramo, 
+      isSortable: true 
+    },{ 
+      header: 'Ramo', 
+      accessor: 'nombre' as keyof Ramo, 
+      isSortable: true 
+    },
     { 
       header: 'Prima UF', 
-      accessor: 'primauf',
-      cell: (value: number) => formatCurrency(value)
+      accessor: 'primauf' as keyof Ramo,
+      cell: (value: number) => formatUF(value, 2),
+      isSortable: true,
+      isNumeric: true
     }
   ];
   
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${inter.variable} ${spaceGrotesk.variable}`}>
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Ramos de Seguros</h2>
-        
-        {/* Period selector */}
-        <div className="flex items-center">
-          <label htmlFor="periodo" className="mr-2 text-sm font-medium text-gray-700">
-            Periodo:
-          </label>
-          <select
-            id="periodo"
-            value={selectedPeriodo}
-            onChange={(e) => setSelectedPeriodo(e.target.value)}
-            className="block w-40 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-          >
-            {periodos.map((periodo) => (
-              <option key={periodo} value={periodo}>
-                {periodo}
-              </option>
-            ))}
-          </select>
-        </div>
+        <h2 className={`text-xl font-semibold text-gray-900 font-sans`}>Ramos de Seguros</h2>
       </div>
       
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <SummaryCard 
-          title="Total Prima UF" 
-          value={formatCurrency(summary.totalPrimauf)} 
-        />
-        <SummaryCard 
-          title="Número de Ramos" 
-          value={summary.ramoCount.toString()} 
-        />
-        <SummaryCard 
-          title="Crecimiento vs Periodo Anterior" 
-          value={summary.growth !== null ? `${summary.growth >= 0 ? '+' : ''}${summary.growth.toFixed(2)}%` : 'N/A'} 
-          valueColor={summary.growth !== null ? (summary.growth >= 0 ? 'text-green-600' : 'text-red-600') : ''}
-        />
-      </div>
-      
-      {/* Chart and Data Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard 
-          title="Distribución de Primas por Ramo" 
-          data={ramos} 
-          xKey="nombre"
-          yKey="primauf"
-        />
-        <DataCard 
-          title="Resumen de Primas" 
-          clp={summary.totalPrimauf * 30000} // Ejemplo de conversión, ajustar según valor real de UF
-          uf={summary.totalPrimauf} 
-        />
-      </div>
-      
-      {/* Data Table */}
       {loading ? (
-        <div className="text-center py-4">
-          <p className="text-gray-500">Cargando ramos...</p>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Cargando datos...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
+        <div className="bg-red-50 p-4 rounded-md">
+          <p className="text-red-600">{error}</p>
+        </div>
+      ) : ramos.length === 0 ? (
+        <NoData message="No hay datos de ramos disponibles para este período." />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <AccordeonTable 
+              data={ramos} 
+              columns={columns} 
+              title="Ramos de Seguros"
+              groupBy="grupo"
+              subGroupBy="subgrupo"
+              emptyMessage="No hay datos de ramos disponibles para este período."
+              showTotal={true}
+              totalLabel="Total General"
+              onRowDetail={handleRamoDetail}
+            />
+          </div>
+          
+          <div className="space-y-6">
+            <SummaryCard
+              title="Resumen del Período"
+              items={[
+                {
+                  label: 'Total Prima UF',
+                  value: formatUF(summary.totalPrimauf),
+                  icon: 'currency'
+                },
+                {
+                  label: 'Cantidad de Ramos',
+                  value: summary.ramoCount.toString(),
+                  icon: 'chart'
+                },
+                {
+                  label: 'Crecimiento',
+                  value: summary.growth !== null ? `${summary.growth.toFixed(2)}%` : 'N/A',
+                  icon: 'trend',
+                  trend: summary.growth !== null ? (summary.growth > 0 ? 'up' : 'down') : 'neutral'
+                }
+              ]}
+            />
           </div>
         </div>
-      ) : ramos.length > 0 ? (
-        <DataTable 
-          data={ramos} 
-          columns={columns} 
-          title="Listado de Ramos" 
-        />
-      ) : (
-        <NoData message="No hay ramos disponibles para este periodo" />
       )}
     </div>
   );

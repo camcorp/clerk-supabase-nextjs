@@ -2,76 +2,106 @@
 
 import { useEffect, useState } from 'react';
 import { useSupabaseClient } from '../../../../lib/supabase-client';
-import DataCard from '../components/DataCard';
+import ModernCard from '../components/ModernCard';
 import SummaryCard from '../components/SummaryCard';
 import DataTable from '../components/DataTable';
 import NoData from '../components/NoData';
 import ChartCard from '../components/ChartCard';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { usePeriod } from '../context/PeriodContext';
+import { inter, spaceGrotesk } from '../fonts';
+import { getCorredoresData, getHistoricalCorredoresData } from '../api/corredores';
+import { formatUF } from '../utils/formatters';
 
-// Definir la interfaz para los corredores
+// Definir interfaces
 interface Corredor {
   id: number;
-  nombre: string;
-  primauf: number;
   periodo: string;
+  total_clp: number;
+  total_uf: number;
+  num_corredores: number;
+  hhi_general?: number;
+  concentracion?: any[];
 }
 
-// Interface for summary stats
-// Update the interface to include totalPrimaclp
 interface PeriodSummary {
   totalPrimauf: number;
-  totalPrimaclp?: number; // Add this property
+  totalPrimaclp: number;
   corredorCount: number;
   growth: number | null;
+  hhi?: number;
 }
+
+interface HistoricalData {
+  evolution: Array<{
+    periodo: string;
+    total_clp: number;
+    total_uf: number;
+    num_corredores: number;
+    variacion_num_corredores: number | null;
+    variacion_total_uf: number | null;
+  }>;
+  concentracion: Array<{
+    periodo: string;
+    hhi_general: number;
+    grupo: string;
+    hhi_grupo: number;
+  }>;
+  movimientos: Array<{
+    periodo: string;
+    entradas: number;
+    salidas: number;
+    neto: number;
+  }>;
+}
+
+// Eliminar esta función y usar la importada
+// const formatUF = (value: number, decimals: number = 0) => { ... }
+
+// Importar los nuevos componentes
+import ChartPrimaEvolution from '../components/ChartPrimaEvolution';
+import ChartHHIEvolution from '../components/ChartHHIEvolution';
+import ChartMove from '../components/ChartMove';
+import ChartCountEvolution from '../components/ChartCountEvolution';
 
 export default function CorredoresView() {
   const [corredores, setCorredores] = useState<Corredor[]>([]);
+  const [historicalData, setHistoricalData] = useState<HistoricalData>({
+    evolution: [],
+    concentracion: [],
+    movimientos: []
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [periodos, setPeriodos] = useState<string[]>([]);
-  const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
-  // Update the initial state
   const [summary, setSummary] = useState<PeriodSummary>({
     totalPrimauf: 0,
-    totalPrimaclp: 0, // Initialize this property
+    totalPrimaclp: 0,
     corredorCount: 0,
-    growth: null
+    growth: null,
+    hhi: 0
   });
   
   // Obtener el cliente de Supabase
   const supabase = useSupabaseClient();
   
-  // Load available periods
+  // Usar el contexto de período
+  const { selectedPeriodo, periodos } = usePeriod();
+  
+  // Cargar datos históricos para gráficos
   useEffect(() => {
-    async function loadPeriodos() {
+    async function loadHistoricalData() {
       try {
-        const { data, error } = await supabase
-          .from('corredores')
-          .select('periodo')
-          .order('periodo', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Usamos un enfoque alternativo para obtener valores únicos
-        const uniquePeriods = Array.from(
-          new Map(data.map(item => [item.periodo, item.periodo])).values()
-        );
-        setPeriodos(uniquePeriods);
-        
-        // Set default selected period to the most recent one
-        if (uniquePeriods.length > 0 && !selectedPeriodo) {
-          setSelectedPeriodo(uniquePeriods[0]);
-        }
+        const data = await getHistoricalCorredoresData();
+        setHistoricalData(data);
       } catch (err) {
-        console.error('Error al cargar periodos:', err);
+        console.error('Error al cargar datos históricos:', err);
       }
     }
     
-    loadPeriodos();
-  }, [supabase, selectedPeriodo]);
+    loadHistoricalData();
+  }, []);
   
-  // Load corredores for the selected period
+  // Cargar datos del período seleccionado
   useEffect(() => {
     async function loadCorredores() {
       if (!selectedPeriodo) return;
@@ -79,59 +109,32 @@ export default function CorredoresView() {
       try {
         setLoading(true);
         
-        // Use the vista_corredores_periodo view instead of the corredores table
-        const { data, error } = await supabase
-          .from('vista_corredores_periodo')
-          .select('nombre, total_clp, total_uf, periodo')
-          .eq('periodo', selectedPeriodo)
-          .order('nombre', { ascending: true });
+        const data = await getCorredoresData(selectedPeriodo);
+        setCorredores(data);
         
-        if (error) {
-          throw error;
-        }
+        // Filtrar los datos del período seleccionado para el resumen
+        const currentPeriodData = data.find(item => item.periodo === selectedPeriodo);
         
-        // Transform the data to match the expected format
-        const transformedData = data?.map(item => ({
-          id: item.nombre, // Using nombre as ID since we don't have an explicit ID
-          nombre: item.nombre,
-          primauf: item.total_uf,
-          primaclp: item.total_clp,
-          periodo: item.periodo
-        })) || [];
-        
-        // Actualizar el estado con los datos
-        setCorredores(transformedData);
-        
-        // Calculate summary statistics
-        if (data) {
-          const totalPrimauf = data.reduce((sum, corredor) => sum + (corredor.total_uf || 0), 0);
-          const totalPrimaclp = data.reduce((sum, corredor) => sum + (corredor.total_clp || 0), 0);
-          const corredorCount = data.length;
-          
-          // Get previous period data for growth calculation
+        if (currentPeriodData) {
+          // Calcular crecimiento respecto al período anterior
           const periodIndex = periodos.indexOf(selectedPeriodo);
           let growth = null;
           
           if (periodIndex < periodos.length - 1) {
             const prevPeriod = periodos[periodIndex + 1];
-            const { data: prevData, error: prevError } = await supabase
-              .from('vista_corredores_periodo')
-              .select('total_uf')
-              .eq('periodo', prevPeriod);
+            const prevPeriodData = data.find(item => item.periodo === prevPeriod);
               
-            if (!prevError && prevData) {
-              const prevTotalPrimauf = prevData.reduce((sum, corredor) => sum + (corredor.total_uf || 0), 0);
-              if (prevTotalPrimauf > 0) {
-                growth = ((totalPrimauf - prevTotalPrimauf) / prevTotalPrimauf) * 100;
-              }
+            if (prevPeriodData && prevPeriodData.total_uf > 0) {
+              growth = ((currentPeriodData.total_uf - prevPeriodData.total_uf) / prevPeriodData.total_uf) * 100;
             }
           }
           
           setSummary({
-            totalPrimauf,
-            totalPrimaclp,
-            corredorCount,
-            growth
+            totalPrimauf: currentPeriodData.total_uf,
+            totalPrimaclp: currentPeriodData.total_clp,
+            corredorCount: currentPeriodData.num_corredores,
+            growth,
+            hhi: currentPeriodData.hhi_general
           });
         }
       } catch (err) {
@@ -145,120 +148,138 @@ export default function CorredoresView() {
     loadCorredores();
   }, [supabase, selectedPeriodo, periodos]);
   
-  // Format number as currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP'
-    }).format(value);
-  };
-  
-  // Columns for data table
-  const columns = [
-    { header: 'Corredor', accessor: 'nombre' },
-    { 
-      header: 'Prima UF', 
-      accessor: 'primauf',
-      cell: (value: number) => formatCurrency(value)
-    },
-    { 
-      header: 'Prima CLP', 
-      accessor: 'primaclp',
-      cell: (value: number) => formatCurrency(value)
-    }
-  ];
-  
+  // Dentro del componente CorredoresView, reemplazar los gráficos existentes
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Corredores de Seguros</h2>
-        
-        {/* Period selector */}
-        <div className="flex items-center">
-          <label htmlFor="periodo" className="mr-2 text-sm font-medium text-gray-700">
-            Periodo:
-          </label>
-          <select
-            id="periodo"
-            value={selectedPeriodo}
-            onChange={(e) => setSelectedPeriodo(e.target.value)}
-            className="block w-40 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-          >
-            {periodos.map((periodo) => (
-              <option key={periodo} value={periodo}>
-                {periodo}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+    <div className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
+      <h2 className="text-2xl font-bold mb-6">Corredores de Seguros</h2>
       
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <SummaryCard 
-          title="Total Prima UF" 
-          value={formatCurrency(summary.totalPrimauf)} 
-        />
-        <SummaryCard 
-          title="Número de Corredores" 
-          value={summary.corredorCount.toString()} 
-        />
-        <SummaryCard 
-          title="Crecimiento vs Periodo Anterior" 
-          value={summary.growth !== null ? `${summary.growth >= 0 ? '+' : ''}${summary.growth.toFixed(2)}%` : 'N/A'} 
-          valueColor={summary.growth !== null ? (summary.growth >= 0 ? 'text-green-600' : 'text-red-600') : ''}
-        />
-      </div>
-      
-      {/* Chart and Data Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartCard 
-          title="Distribución de Primas por Corredor" 
-          data={corredores} 
-          xKey="nombre"
-          yKey="primauf"
-        />
-        <DataCard 
-          title="Resumen de Primas" 
-          clp={summary.totalPrimaclp} // Valor directo de la base de datos
-          uf={summary.totalPrimauf} 
-        />
-      </div>
-      
-      {/* Data Table */}
       {loading ? (
-        <div className="text-center py-4">
-          <p className="text-gray-500">Cargando corredores...</p>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       ) : error ? (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+          {error}
         </div>
-      ) : corredores.length > 0 ? (
-        <DataTable 
-          data={corredores} 
-          columns={columns} 
-          title="Listado de Corredores" 
-        />
+      ) : corredores.length === 0 ? (
+        <NoData message="No hay datos de corredores disponibles para este período." />
       ) : (
-        <NoData message="No hay corredores disponibles para este periodo" />
+        <div className="space-y-8">
+          {/* Resumen del período */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <SummaryCard
+              title="Total Prima UF"
+              value={formatUF(summary.totalPrimauf) + " UF"}
+            />
+            <SummaryCard
+              title="Cantidad de Corredores"
+              value={summary.corredorCount.toString()}
+            />
+            <SummaryCard
+              title="Crecimiento"
+              value={summary.growth !== null ? formatUF(summary.growth, 2) + "%" : "N/A"}
+              trend={summary.growth !== null ? summary.growth : 0}
+            />
+            <SummaryCard
+              title="Índice HHI"
+              value={Math.trunc(summary.hhi || 0).toString()}
+              tooltip="Índice Herfindahl-Hirschman. Valores mayores indican mayor concentración del mercado."
+            />
+          </div>
+          
+          {/* Gráfico 1: Evolución del número de corredores */}
+          {historicalData.evolution && historicalData.evolution.length > 0 ? (
+            <ChartCountEvolution 
+              data={historicalData.evolution}
+              countKey="num_corredores"
+              title="Evolución del Número de Corredores"
+              subtitle="Cantidad de corredores a lo largo del tiempo"
+              color="#82ca9d"
+            />
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">
+              <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">Evolución del Número de Corredores</h3>
+              <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">No hay datos históricos disponibles</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Gráfico 2: Evolución de primas */}
+          {historicalData.evolution && historicalData.evolution.length > 0 ? (
+            <ChartPrimaEvolution 
+              data={historicalData.evolution}
+              title="Evolución de Primas de Corredores"
+              subtitle="Primas intermediadas a lo largo del tiempo"
+            />
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">
+              <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">Evolución de Primas</h3>
+              <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">No hay datos históricos disponibles</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Gráfico 3: Concentración del mercado */}
+          {historicalData.concentracion && historicalData.concentracion.length > 0 ? (
+            <ChartHHIEvolution 
+              data={historicalData.concentracion}
+              title="Concentración del Mercado de Corredores"
+              subtitle="Índice Herfindahl-Hirschman por grupo de ramos"
+              threshold={1800}
+            />
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">
+              <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">Concentración del Mercado</h3>
+              <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">No hay datos de concentración disponibles</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Gráfico 4: Entradas y salidas de corredores */}
+          {historicalData.movimientos && historicalData.movimientos.length > 0 ? (
+            <ChartMove 
+              data={historicalData.movimientos}
+              title="Movimientos de Corredores"
+              subtitle="Entradas y salidas de corredores por período"
+              showNeto={true}
+            />
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">
+              <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">Movimientos de Corredores</h3>
+              <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">No hay datos de movimientos disponibles</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Tabla de datos del período seleccionado */}
+          <ModernCard title="Corredores de Seguros">
+            <DataTable
+              columns={[
+                { header: 'Período', accessor: 'periodo' },
+                { 
+                  header: 'Prima UF', 
+                  accessor: 'total_uf',
+                  cell: (value) => formatUF(value, 0) + " UF"
+                },
+                { 
+                  header: 'Número de Corredores', 
+                  accessor: 'num_corredores' 
+                },
+                { 
+                  header: 'Índice HHI', 
+                  accessor: 'hhi_general',
+                  cell: (value) => Math.trunc(value || 0).toString()
+                }
+              ]}
+              data={corredores}
+            />
+          </ModernCard>
+        </div>
       )}
     </div>
   );
 }
-
-// Remove this incorrect transformation at the end of the file
-// const chartData = corredores.map(corredor => ({
-//   periodo: corredor.periodo,
-//   clp: corredor.primauf * 30000, // Convert UF to CLP
-//   uf: corredor.primauf
-// }));

@@ -1,43 +1,184 @@
-view_name,column_name,data_type
-vista_companias_periodo,periodo,character
-vista_companias_periodo,nombrecia,character varying
-vista_companias_periodo,total_clp,numeric
-vista_companias_periodo,total_uf,numeric
-vista_ramos_periodo,periodo,character
-vista_ramos_periodo,ramo,character varying
-vista_ramos_periodo,total_clp,numeric
-vista_ramos_periodo,total_uf,numeric
-vista_corredores_periodo,periodo,character
-vista_corredores_periodo,nombre,character varying
-vista_corredores_periodo,total_clp,numeric
-vista_corredores_periodo,total_uf,numeric
-vista_evolucion_mercado,periodo,character
-vista_evolucion_mercado,rutcia,character varying
-vista_evolucion_mercado,nombrecia,character varying
-vista_evolucion_mercado,tipo_cambio,text
-vista_evolucion_mercado,motivo,text
-vista_evolucion_corredores,periodo,character
-vista_evolucion_corredores,rut,character varying
-vista_evolucion_corredores,nombre,character varying
-vista_evolucion_corredores,tipo_cambio,text
-vista_segmentos_companias,periodo,character
-vista_segmentos_companias,rutcia,character varying
-vista_segmentos_companias,nombrecia,character varying
-vista_segmentos_companias,primauf,numeric
-vista_segmentos_companias,segmento,text
-vista_segmentos_corredores,periodo,character
-vista_segmentos_corredores,rut,character varying
-vista_segmentos_corredores,nombre,character varying
-vista_segmentos_corredores,primauf,numeric
-vista_segmentos_corredores,segmento,text
-memoria_anual_ramos,codigo,character varying
-memoria_anual_ramos,ramo,character varying
-memoria_anual_ramos,total_clp,numeric
-memoria_anual_ramos,total_uf,numeric
-vista_concentracion_mercado,periodo,character
-vista_concentracion_mercado,grupo,character varying
-vista_concentracion_mercado,total_clp,numeric
-vista_concentracion_mercado,total_uf,numeric
-vista_concentracion_mercado,participacion_porcentaje,numeric
-vista_concentracion_mercado,varianza_anual,numeric
-vista_concentracion_mercado,hhi,numeric
+table_name	column_name	data_type
+accesos	id	uuid
+accesos	user_id	text
+accesos	producto_id	uuid
+accesos	modulo	text
+accesos	fecha_inicio	timestamp without time zone
+accesos	fecha_fin	timestamp without time zone
+accesos	activo	boolean
+actores_salientes	id	integer
+actores_salientes	rutcia	character varying
+actores_salientes	nombrecia	character varying
+actores_salientes	motivo	text
+actores_salientes	fecha_salida	date
+companias	id	integer
+companias	rutcia	character varying
+companias	nombrecia	character varying
+companias	grupo	character varying
+corredores	id	integer
+corredores	rut	character varying
+corredores	nombre	character varying
+corredores	telefono	character varying
+corredores	domicilio	character varying
+corredores	ciudad	character varying
+corredores	region	smallint
+corredores	tipo_persona	character
+fusiones	id	integer
+fusiones	rutcia_original	character varying
+fusiones	rutcia_nueva	character varying
+fusiones	fecha_fusion	date
+fusiones	motivo	text
+identifi	id	integer
+identifi	rut	character varying
+identifi	nombre	character varying
+identifi	telefono	character varying
+identifi	domicilio	character varying
+identifi	ciudad	character varying
+identifi	region	smallint
+identifi	tipo_persona	character
+identifi	periodo	character
+indicadores_generales_corredor	rut	character varying
+indicadores_generales_corredor	periodo	character
+indicadores_generales_corredor	total_primaclp	numeric
+indicadores_generales_corredor	total_primauf	numeric
+indicadores_generales_corredor	crecimiento_clp	numeric
+indicadores_generales_corredor	crecimiento_uf	numeric
+indicadores_generales_corredor	hhi_ramos	numeric
+indicadores_generales_corredor	hhi_companias	numeric
+indicadores_generales_corredor	participacion_clp	numeric
+indicadores_generales_corredor	variacion_clp_pp	numeric
+indicadores_generales_corredor	num_companias	bigint
+indicadores_generales_corredor	num_ramos	bigint
+indicadores_generales_corredor	ranking_general	bigint
+intercia	id	integer
+intercia	periodo	character
+intercia	rut	character varying
+intercia	rutcia	character varying
+intercia	primaclp	numeric
+intercia	nombrecia	character varying
+intercia	grupo	character varying
+intercia	signo	character varying
+intercia	primauf	numeric
+memoria_anual_ramos	codigo	character varying
+memoria_anual_ramos	ramo	character varying
+memoria_anual_ramos	total_clp	numeric
+memoria_anual_ramos	total_uf	numeric
+pagos	id	uuid
+pagos	user_id	text
+pagos	rut	character varying
+pagos	producto_id	uuid
+pagos	orden_comercio	text
+pagos	amount	numeric
+pagos	estado	text
+pagos	fecha_creacion	timestamp without time zone
+pagos	token	text
+pagos	url_pago	text
+periodos	id	integer
+periodos	periodo	character varying
+prodramo	id	integer
+prodramo	periodo	character
+prodramo	grupo	smallint
+prodramo	cod	character varying
+prodramo	primaclp	numeric
+prodramo	primauf	numeric
+prodramo	rut	character varying
+prodramo	signo	character varying
+productos	id	uuid
+productos	codigo	text
+productos	nombre	text
+productos	descripcion	text
+productos	precio_neto	numeric
+productos	precio_bruto	numeric
+ramos	id	smallint
+ramos	codigo	character varying
+ramos	ramo	character varying
+ramos	grupo	character varying
+ramos	subgrupo	character varying
+ramos	cod	character varying
+ramos	codsg	character varying
+ranking_companias	periodo	character
+ranking_companias	rutcia	character varying
+ranking_companias	rut	character varying
+ranking_companias	total_primaclp	numeric
+ranking_companias	ranking_produccion	bigint
+ranking_general	periodo	character
+ranking_general	rut	character varying
+ranking_general	total_primaclp	numeric
+ranking_general	ranking_produccion	bigint
+ranking_ramos	periodo	character
+ranking_ramos	ramo_cod	character varying
+ranking_ramos	rut	character varying
+ranking_ramos	primaclp	numeric
+ranking_ramos	ranking_produccion	bigint
+registro_empresa	id	uuid
+registro_empresa	user_id	text
+registro_empresa	email	text
+registro_empresa	empresa	text
+registro_empresa	rut_empresa	text
+registro_empresa	created_at	timestamp without time zone
+reporte_individual	id	uuid
+reporte_individual	user_id	text
+reporte_individual	rut	character varying
+reporte_individual	periodo	text
+reporte_individual	data	jsonb
+reporte_individual	fecha_generacion	timestamp without time zone
+reporte_individual	fecha_expiracion	timestamp without time zone
+reporte_individual	activo	boolean
+uf_values	id	integer
+uf_values	periodo	character varying
+uf_values	valor	numeric
+vista_companias_periodo	periodo	character
+vista_companias_periodo	rutcia	character varying
+vista_companias_periodo	nombrecia	character varying
+vista_companias_periodo	grupo	character varying
+vista_companias_periodo	total_primaclp	numeric
+vista_companias_periodo	total_primauf	numeric
+vista_companias_periodo	crecimiento_clp	numeric
+vista_companias_periodo	crecimiento_uf	numeric
+vista_companias_periodo	participacion_clp	numeric
+vista_companias_periodo	participacion_uf	numeric
+vista_companias_periodo	variacion_clp_pp	numeric
+vista_companias_periodo	variacion_uf_pp	numeric
+vista_companias_periodo	participacion_grupo_clp	numeric
+vista_companias_periodo	ranking_general	bigint
+vista_companias_periodo	ranking_grupo	bigint
+vista_concentracion_corredores	periodo	character
+vista_concentracion_corredores	hhi_general	numeric
+vista_concentracion_corredores	grupo	character varying
+vista_concentracion_corredores	hhi_grupo	numeric
+vista_concentracion_mercado	periodo	character
+vista_concentracion_mercado	grupo	character varying
+vista_concentracion_mercado	total_clp	numeric
+vista_concentracion_mercado	total_uf	numeric
+vista_concentracion_mercado	participacion_porcentaje	numeric
+vista_concentracion_mercado	varianza_anual	numeric
+vista_concentracion_mercado	hhi	numeric
+vista_corredores_periodo	periodo	character
+vista_corredores_periodo	total_clp	numeric
+vista_corredores_periodo	total_uf	numeric
+vista_corredores_periodo	num_corredores	bigint
+vista_evolucion_corredores	periodo	character
+vista_evolucion_corredores	rut	character varying
+vista_evolucion_corredores	nombre	character varying
+vista_evolucion_corredores	tipo_cambio	text
+vista_evolucion_mercado	periodo	character
+vista_evolucion_mercado	rutcia	character varying
+vista_evolucion_mercado	nombrecia	character varying
+vista_evolucion_mercado	tipo_cambio	text
+vista_evolucion_mercado	motivo	text
+vista_ramos_periodo	periodo	character
+vista_ramos_periodo	cod	character varying
+vista_ramos_periodo	ramo	character varying
+vista_ramos_periodo	grupo	character varying
+vista_ramos_periodo	subgrupo	character varying
+vista_ramos_periodo	total_primaclp	numeric
+vista_ramos_periodo	total_primauf	numeric
+vista_segmentos_companias	periodo	character
+vista_segmentos_companias	rutcia	character varying
+vista_segmentos_companias	nombrecia	character varying
+vista_segmentos_companias	primauf	numeric
+vista_segmentos_companias	segmento	text
+vista_segmentos_corredores	periodo	character
+vista_segmentos_corredores	rut	character varying
+vista_segmentos_corredores	promedio_primauf	numeric
+vista_segmentos_corredores	segmento	text

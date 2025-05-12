@@ -1,47 +1,25 @@
-import { useEffect, useState } from "react";
-import { useSupabaseClient } from "@/lib/supabase-client";
+'use client';
 
-interface PeriodSelectorProps {
-  onSelect: (periodo: string) => void;
-}
+import { usePeriod } from '../context/PeriodContext';
 
-export default function PeriodSelector({ onSelect }: PeriodSelectorProps) {
-  const [periodos, setPeriodos] = useState<string[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("");
-  const supabase = useSupabaseClient();
+export default function PeriodSelector() {
+  const { selectedPeriodo, setSelectedPeriodo, periodos, loading } = usePeriod();
 
-  useEffect(() => {
-    const fetchPeriods = async () => {
-      const { data, error } = await supabase
-        .from("periodos")
-        .select("periodo")
-        .order("periodo", { ascending: false });
-
-      if (error) console.error("Error fetching periods:", error);
-      else setPeriodos(data.map((item) => item.periodo));
-    };
-
-    fetchPeriods();
-  }, [supabase]);
-
-  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = event.target.value;
-    setSelectedPeriod(selected);
-    onSelect(selected);
-  };
+  if (loading) {
+    return <div className="animate-pulse w-40 h-10 bg-gray-200 rounded"></div>;
+  }
 
   return (
-    <div className="mb-4">
-      <label htmlFor="periodSelector" className="block mb-2 text-sm font-medium">
-        Seleccionar Período:
+    <div className="flex items-center">
+      <label htmlFor="periodo" className="mr-2 text-sm font-medium text-[#6C757D]">
+        Periodo:
       </label>
       <select
-        id="periodSelector"
-        value={selectedPeriod}
-        onChange={handleSelect}
-        className="border p-2 rounded w-full"
+        id="periodo"
+        value={selectedPeriodo}
+        onChange={(e) => setSelectedPeriodo(e.target.value)}
+        className="block w-40 pl-3 pr-10 py-2 text-base border-[#E9ECEF] focus:outline-none focus:ring-[#1A7F8E] focus:border-[#1A7F8E] sm:text-sm rounded-md"
       >
-        <option value="">Selecciona un período</option>
         {periodos.map((periodo) => (
           <option key={periodo} value={periodo}>
             {periodo}

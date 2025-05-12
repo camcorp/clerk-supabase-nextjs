@@ -1,20 +1,15 @@
 import React, { ReactNode } from 'react';
+import { formatCurrency } from '../utils/formatters';
 
 interface DataCardProps {
   title: string;
-  children?: ReactNode;
+  children: ReactNode;
   footer?: ReactNode;
   clp?: number;
   uf?: number;
 }
 
-export default function DataCard({ 
-  title, 
-  children, 
-  footer,
-  clp,
-  uf
-}: DataCardProps) {
+export default function DataCard({ title, children, footer, clp, uf }: DataCardProps) {
   // Format number as currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -23,40 +18,37 @@ export default function DataCard({
     }).format(value);
   };
 
+  // Format number as currency
+  const formatCurrencyValue = (value: number) => {
+    return formatCurrency(value);
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-4px]">
+    <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] overflow-hidden transition-all duration-300 hover:shadow-md">
       <div className="p-6">
         <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk'] mb-4">{title}</h3>
         
-        {(clp !== undefined || uf !== undefined) && (
-          <div className="space-y-4 py-4">
-            {uf !== undefined && (
-              <div>
-                <p className="text-sm text-[#6C757D]">Total en UF</p>
-                <p className="text-2xl font-bold bg-gradient-to-r from-[#0F3460] to-[#1A7F8E] bg-clip-text text-transparent">
-                  {formatCurrency(uf)}
-                </p>
+        {children}
+        
+        {(clp || uf) && (
+          <div className="mt-4 pt-4 border-t border-[#E9ECEF]">
+            {uf && (
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-[#6C757D]">Total UF:</span>
+                <span className="font-semibold text-[#0F3460]">{formatCurrencyValue(uf)}</span>
               </div>
             )}
-            {clp !== undefined && (
-              <div>
-                <p className="text-sm text-[#6C757D]">Total en CLP</p>
-                <p className="text-2xl font-bold text-[#0F3460]">
-                  {formatCurrency(clp)}
-                </p>
+            {clp && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#6C757D]">Total CLP:</span>
+                <span className="font-semibold text-[#0F3460]">{formatCurrency(clp)}</span>
               </div>
             )}
           </div>
         )}
         
-        {children}
+        {footer && <div className="mt-4 pt-4 border-t border-[#E9ECEF]">{footer}</div>}
       </div>
-      
-      {footer && (
-        <div className="bg-[#F8F9FC] px-6 py-3 border-t border-[#E9ECEF]">
-          {footer}
-        </div>
-      )}
     </div>
   );
 }

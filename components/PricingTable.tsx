@@ -10,21 +10,21 @@ export function PricingTable() {
     cta: 'Obtener ahora'
   }, {
     title: 'Informe Individual',
-    price: '$29.990',
+    price: '$29.990 +IVA',
     features: ['Análisis de un corredor', 'Participación por ramo', 'Comparativa con mercado'],
     highlight: false,
     badge: 'Económico',
     cta: 'Seleccionar plan'
   }, {
     title: 'Informe Comparativo',
-    price: '$49.990',
+    price: '$49.990 +IVA',
     features: ['Comparación de hasta 3 corredores', 'Históricos y crecimientos', 'Visualizaciones clave'],
     highlight: true,
     badge: 'Más popular',
     cta: 'Seleccionar plan'
   }, {
-    title: 'Acceso Completo',
-    price: '$99.990',
+    title: 'Acceso Completo por Usuario',
+    price: '$199.990 + IVA',
     features: ['Todos los informes', 'Descarga de datos', 'Actualizaciones por 1 año'],
     highlight: false,
     badge: 'Más completa',

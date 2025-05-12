@@ -37,7 +37,7 @@ export function Hero() {
             value: '13'
           }, {
             label: 'Corredores',
-            value: '+350'
+            value: '+2800'
           }, {
             label: 'Informes',
             value: '4'

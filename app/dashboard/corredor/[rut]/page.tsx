@@ -5,12 +5,13 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
 
-// Corregir la definición de PageProps para que coincida con lo que Next.js espera
-type PageProps = {
+// Modificar la definición de PageProps para que coincida con lo que Next.js espera
+interface PageProps {
   params: {
     rut: string;
   };
-};
+  searchParams?: Record<string, string | string[] | undefined>;
+}
 
 export default function CorredorDetailPage({ params }: PageProps) {
   const { rut } = params;
@@ -283,4 +284,29 @@ export default function CorredorDetailPage({ params }: PageProps) {
       </div>
     </div>
   );
+}
+
+// Definir interfaces para los datos que vamos a obtener
+interface ReporteIndividual {
+  id: string;
+  user_id: string;
+  rut: string;
+  periodo: string;
+  data: any; // jsonb en la base de datos
+  fecha_generacion: string;
+  fecha_expiracion: string;
+  activo: boolean;
+}
+
+interface Pago {
+  id: string;
+  user_id: string;
+  rut: string;
+  producto_id: string;
+  orden_comercio: string;
+  amount: number;
+  estado: string;
+  fecha_creacion: string;
+  token: string;
+  url_pago: string;
 }

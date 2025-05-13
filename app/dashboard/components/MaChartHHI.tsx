@@ -8,16 +8,32 @@ interface MaChartHHIProps {
 
 export default function MaChartHHI({ historicalConcentracion }: MaChartHHIProps) {
   // Procesar datos para el gráfico HHI
-  const hhiData = Array.from(new Set(historicalConcentracion.map(item => item.periodo)))
-    .sort()
-    .map(periodo => {
-      // Obtener el HHI para este período (puede ser calculado o tomado directamente)
-      const hhi = historicalConcentracion
-        .filter(item => item.periodo === periodo)
-        .reduce((max, item) => Math.max(max, item.hhi || 0), 0);
-      
-      return { periodo, hhi };
+  // Crear un mapa para almacenar un solo valor HHI por período
+  const hhiMap = new Map();
+  
+  // Primero, intentar encontrar registros con hhi_general
+  historicalConcentracion.forEach(item => {
+    if (item.periodo && item.hhi_general !== undefined && !hhiMap.has(item.periodo)) {
+      hhiMap.set(item.periodo, item.hhi_general);
+    }
+  });
+  
+  // Si no hay registros con hhi_general, usar el campo hhi como respaldo
+  if (hhiMap.size === 0) {
+    historicalConcentracion.forEach(item => {
+      if (item.periodo && item.hhi !== undefined) {
+        // Solo guardar un valor por período (el primero que encontremos)
+        if (!hhiMap.has(item.periodo)) {
+          hhiMap.set(item.periodo, item.hhi);
+        }
+      }
     });
+  }
+  
+  // Convertir el mapa a un array de objetos para el gráfico
+  const hhiData = Array.from(hhiMap.entries())
+    .map(([periodo, hhi]) => ({ periodo, hhi }))
+    .sort((a, b) => a.periodo.localeCompare(b.periodo));
 
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg">

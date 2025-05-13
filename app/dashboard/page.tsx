@@ -9,6 +9,7 @@ import { useMarketData } from './hooks/useMarketData';
 import MaCardSummary from './components/MaCardSummary';
 import MaChartEvol from './components/MaChartEvol';
 import MaTableCompanias from './components/MaTableCompanias';
+import MaChartPieGrupo from './components/MaChartPieGrupo';
 import MaChartMove from './components/MaChartMove';
 import MaChartMoveCorredores from './components/MaChartMoveCorredores';
 import MaEstructuraMercado from './components/MaEstructuraMercado';
@@ -139,20 +140,26 @@ export default function Dashboard() {
             
             {/* Estructura de mercado reorganizada */}
             {concentracionMercado && Array.isArray(concentracionMercado) && concentracionMercado.length > 0 ? (
-              <MaEstructuraMercado
-                grupoGenerales={concentracionMercado.filter(item => item && item.tipo === 'GENERALES')}
-                grupoVida={concentracionMercado.filter(item => item && item.tipo === 'VIDA')}
-                selectedPeriodo={selectedPeriodo}
-                periodos={periodos}
-                historicalConcentracion={historicalConcentracion || []}
-                concentracionMercado={concentracionMercado}
-              />
+              <>
+                <div className="mb-6">
+                  <MaChartPieGrupo concentracionMercado={concentracionMercado} />
+                </div>
+                <MaEstructuraMercado
+                  grupoGenerales={concentracionMercado.filter(item => item && item.tipo === 'GENERALES')}
+                  grupoVida={concentracionMercado.filter(item => item && item.tipo === 'VIDA')}
+                  selectedPeriodo={selectedPeriodo}
+                  periodos={periodos}
+                  historicalConcentracion={historicalConcentracion || []}
+                  concentracionMercado={concentracionMercado}
+                />
+              </>
             ) : (
               <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
                 <p className="text-gray-500 text-center">No hay datos de concentración disponibles</p>
               </div>
             )}
           </>
+          
         )}
       </div>
     </div>

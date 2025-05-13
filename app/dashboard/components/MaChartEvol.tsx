@@ -24,11 +24,11 @@ export default function MaChartEvol({ periodos, historicalCompanias }: MaChartEv
     .map(periodo => {
       const totalUF = historicalCompanias
         .filter(c => c.periodo === periodo)
-        .reduce((sum, company) => sum + (company.total_uf || 0), 0) || 0;
+        .reduce((sum, company) => sum + (company.total_primauf || 0), 0) || 0;
       
       const totalCLP = historicalCompanias
         .filter(c => c.periodo === periodo)
-        .reduce((sum, company) => sum + (company.total_clp || 0), 0) || 0;
+        .reduce((sum, company) => sum + (company.total_primaclp || 0), 0) || 0;
       
       return { 
         periodo, 

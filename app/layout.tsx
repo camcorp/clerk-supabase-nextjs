@@ -8,6 +8,7 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import Link from "next/link";
+import UserButtonWrapper from './components/UserButtonWrapper';
 
 // Verify environment variables are available during build
 const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -60,7 +61,7 @@ export default function RootLayout({
                         Configuración
                       </Link>
                     </nav>
-                    <UserButton afterSignOutUrl="/" />
+                    <UserButtonWrapper afterSignOutUrl="/" />
                   </SignedIn>
                 </div>
               </div>

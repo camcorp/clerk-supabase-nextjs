@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useSupabaseClient } from '@/lib/supabase-client';
 import { useAccessCheck } from '../hooks/useAccessCheck';
 import { useIndividualReportAccess } from '../hooks/useIndividualReportAccess';
 import ProcesoPago from './components/ProcesoPago';
+import SearchBox from '@/app/components/SearchBox';
 
 type Corredor = {
   id: number;
@@ -19,47 +19,13 @@ type Corredor = {
 export default function CorredorPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<Corredor[]>([]);
   const [selectedCorredor, setSelectedCorredor] = useState<Corredor | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showProcesoPago, setShowProcesoPago] = useState(false);
   
   const userId = user?.id || '';
   const { hasAccess, loading: accessLoading } = useAccessCheck(userId, 'corredores');
   const { report, loading: reportLoading, hasAccess: hasReportAccess } = 
     useIndividualReportAccess(userId, selectedCorredor?.rut || '');
-  
-  const supabase = useSupabaseClient();
-  
-  // Se eliminó el useEffect y la función loadPopularCorredores para cargar corredores populares
-
-  const handleSearch = async () => {
-    if (!searchTerm) return;
-    
-    setIsSearching(true);
-    setError(null);
-    
-    try {
-      const { data, error } = await supabase
-        .from('corredores')
-        .select('id, rut, nombre, telefono, ciudad')
-        .ilike('rut', `%${searchTerm}%`)
-        .order('nombre', { ascending: true })
-        .limit(10);
-      
-      if (error) throw error;
-      
-      setSearchResults(data || []);
-    } catch (err: any) {
-      console.error('Error al buscar corredores:', err.message);
-      setError('Error al buscar corredores. Por favor intente nuevamente.');
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   const handleSelectCorredor = (corredor: Corredor) => {
     setSelectedCorredor(corredor);
@@ -82,6 +48,24 @@ export default function CorredorPage() {
       router.push('/dashboard/corredor');
     }
   };
+
+  // Renderizado personalizado para los resultados de búsqueda de corredores
+  const renderCorredorItem = (corredor: Corredor, isSelected: boolean) => (
+    <div className={`w-full text-left px-6 py-4 hover:bg-gray-50 ${isSelected ? 'bg-blue-50' : ''}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="font-medium">{corredor.nombre}</p>
+          <p className="text-sm text-gray-500">RUT: {corredor.rut}</p>
+          {corredor.ciudad && (
+            <p className="text-sm text-gray-500">{corredor.ciudad}</p>
+          )}
+        </div>
+        <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+        </svg>
+      </div>
+    </div>
+  );
 
   // Mostrar pantalla de carga mientras verificamos el acceso
   if (!isLoaded || accessLoading) {
@@ -130,62 +114,22 @@ export default function CorredorPage() {
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Búsqueda de Corredores</h1>
       
-      {/* Buscador */}
+      {/* Buscador parametrizado */}
       <div className="mb-8">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Ingrese RUT del corredor"
-            className="flex-1 p-2 border border-gray-300 rounded"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          />
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-            onClick={handleSearch}
-            disabled={isSearching}
-          >
-            {isSearching ? 'Buscando...' : 'Buscar'}
-          </button>
-        </div>
-        
-        {error && (
-          <p className="text-red-500 mt-2">{error}</p>
-        )}
+        <SearchBox
+          tableName="corredores"
+          searchField="rut"
+          displayFields={["id", "rut", "nombre", "telefono", "ciudad"]}
+          placeholder="Ingrese RUT del corredor"
+          limit={10}
+          orderBy={{
+            field: "nombre",
+            ascending: true
+          }}
+          onSelect={(result) => handleSelectCorredor(result as Corredor)}
+          renderResultItem={(result, isSelected) => renderCorredorItem(result as Corredor, isSelected)}
+        />
       </div>
-      
-      {/* Resultados de búsqueda */}
-      {searchResults.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-3">Resultados de búsqueda</h2>
-          <div className="bg-white shadow overflow-hidden rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {searchResults.map((corredor) => (
-                <li key={corredor.id}>
-                  <button
-                    className={`w-full text-left px-6 py-4 hover:bg-gray-50 ${selectedCorredor?.id === corredor.id ? 'bg-blue-50' : ''}`}
-                    onClick={() => handleSelectCorredor(corredor)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{corredor.nombre}</p>
-                        <p className="text-sm text-gray-500">RUT: {corredor.rut}</p>
-                        {corredor.ciudad && (
-                          <p className="text-sm text-gray-500">{corredor.ciudad}</p>
-                        )}
-                      </div>
-                      <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
       
       {/* Corredor seleccionado */}
       {selectedCorredor && (

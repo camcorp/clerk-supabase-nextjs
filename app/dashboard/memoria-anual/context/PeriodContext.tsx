@@ -29,6 +29,13 @@ export function PeriodProvider({ children }: { children: ReactNode }) {
         
         if (error) throw error;
         
+        if (!data || data.length === 0) {
+          // Handle empty data case
+          setPeriodos([]);
+          setLoading(false);
+          return;
+        }
+        
         // Obtener valores únicos
         const uniquePeriods = Array.from(
           new Map(data.map(item => [item.periodo, item.periodo])).values()
@@ -41,13 +48,16 @@ export function PeriodProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error('Error al cargar periodos:', err);
+        // Set empty array to avoid undefined errors
+        setPeriodos([]);
       } finally {
         setLoading(false);
       }
     }
     
     loadPeriodos();
-  }, [supabase, selectedPeriodo]); // Añadimos selectedPeriodo como dependencia
+    // Remove selectedPeriodo from dependency array to avoid infinite loops
+  }, [supabase]); // Only depend on supabase client
 
   return (
     <PeriodContext.Provider value={{ selectedPeriodo, setSelectedPeriodo, periodos, loading }}>

@@ -66,13 +66,8 @@ interface MaEstructuraMercadoProps {
           <MaChartHHI historicalConcentracion={historicalConcentracion} />
         </div>
         
-        {/* Segunda fila: Gráfico de pie y tarjetas de grupos */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Gráfico de pie */}
-          <div className="lg:col-span-1">
-            <MaChartPieGrupo concentracionMercado={concentracionMercado} />
-          </div>
-          
+        {/* Segunda fila: Tarjetas de grupos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Tarjeta Seguros Generales */}
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">

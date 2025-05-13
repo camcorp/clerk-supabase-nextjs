@@ -15,7 +15,8 @@ export function useSupabaseClient() {
         global: {
           fetch: async (url, options = {}) => {
             if (userId) {
-              const token = await getToken({ template: 'supabase' });
+              // Use the default JWT template instead of a named one
+              const token = await getToken();
               options.headers = {
                 ...options.headers,
                 Authorization: `Bearer ${token}`

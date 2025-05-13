@@ -117,7 +117,7 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         // 4. Cargar actores salientes
         try {
           const { data: actoresSalientesData, error: actoresSalientesError } = await supabase
-            .from('actores_salientes') // Cambiar de vista_actores_salientes a actores_salientes
+            .from('actores_salientes')
             .select('*')
             .eq('fecha_salida', selectedPeriodo);
             
@@ -149,7 +149,7 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         // 6. Cargar datos históricos de concentración
         const { data: historicalConcentracionData, error: historicalConcentracionError } = await supabase
           .from('vista_concentracion_mercado')
-          .select('periodo, grupo, total_uf, hhi')
+          .select('*')  // Cambiado para obtener todos los campos
           .order('periodo', { ascending: true });
 
         if (historicalConcentracionError) {
@@ -176,7 +176,7 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         // 8. Cargar datos de corredores
         const { data: corredoresFullData, error: corredoresFullError } = await supabase
           .from('intercia')
-          .select('rut, nombrecia, periodo, prima_uf')
+          .select('rut, nombrecia, periodo, primauf')  // Corregido: prima_uf → primauf
           .order('periodo', { ascending: true });
             
         if (corredoresFullError) {

@@ -47,8 +47,12 @@ export default function MaChartMove({ evolucionMercado, periodos }: MaChartMoveP
                 formatter={(value, name) => {
                   if (name === 'salidas') {
                     return [Math.abs(Number(value)), 'Salidas'];
+                  } else if (name === 'entradas') {
+                    return [Number(value), 'Entradas'];
+                  } else if (name === 'neto') {
+                    return [Number(value), 'Neto'];
                   }
-                  return [value, name === 'entradas' ? 'Entradas' : 'Neto'];
+                  return [value, name];
                 }}
               />
               <Legend />

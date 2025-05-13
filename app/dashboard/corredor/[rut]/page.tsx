@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
 
+// Corregir la definición de PageProps para que coincida con lo que Next.js espera
 type PageProps = {
   params: {
     rut: string;

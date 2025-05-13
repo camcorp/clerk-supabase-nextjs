@@ -8,7 +8,7 @@ export interface Compania {
   id: string;
   nombrecia: string;
   periodo: string;
-  primauf: number;
+  total_primauf: number;
   grupo: string;
   tipo: string;
 }
@@ -66,10 +66,10 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         
         // 1. Cargar compañías del período seleccionado
         const { data: companiasData, error: companiasError } = await supabase
-          .from('companias')
+          .from('vista_companias_periodo')
           .select('*')
           .eq('periodo', selectedPeriodo)
-          .order('primauf', { ascending: false });
+          .order('total_primauf', { ascending: false });
           
         if (companiasError) {
           console.error('Error al cargar compañías:', companiasError);
@@ -115,21 +115,27 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         setConcentracionMercado(transformedConcentracionData);
         
         // 4. Cargar actores salientes
-        const { data: actoresSalientesData, error: actoresSalientesError } = await supabase
-          .from('vista_actores_salientes')
-          .select('*')
-          .eq('periodo', selectedPeriodo);
-          
-        if (actoresSalientesError) {
-          console.error('Error al cargar actores salientes:', actoresSalientesError);
-          throw actoresSalientesError;
+        try {
+          const { data: actoresSalientesData, error: actoresSalientesError } = await supabase
+            .from('actores_salientes') // Cambiar de vista_actores_salientes a actores_salientes
+            .select('*')
+            .eq('fecha_salida', selectedPeriodo);
+            
+          if (actoresSalientesError) {
+            console.error('Error al cargar actores salientes:', actoresSalientesError);
+            // No lanzar error, solo establecer un array vacío
+            setActoresSalientes([]);
+          } else {
+            setActoresSalientes(actoresSalientesData || []);
+          }
+        } catch (err) {
+          console.error('Error al cargar actores salientes:', err);
+          setActoresSalientes([]);
         }
-        
-        setActoresSalientes(actoresSalientesData || []);
         
         // 5. Cargar datos históricos de compañías
         const { data: historicalCompaniasData, error: historicalCompaniasError } = await supabase
-          .from('companias')
+          .from('vista_companias_periodo')
           .select('*')
           .order('periodo', { ascending: true });
           
@@ -199,8 +205,8 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         const companiasVida = companiasData?.filter((item: any) => item.tipo === 'Vida') || [];
         
         // Calcular totales
-        const totalGenerales = companiasGenerales.reduce((sum: number, company: any) => sum + company.primauf, 0);
-        const totalVida = companiasVida.reduce((sum: number, company: any) => sum + company.primauf, 0);
+        const totalGenerales = companiasGenerales.reduce((sum: number, company: any) => sum + company.total_primauf, 0);
+        const totalVida = companiasVida.reduce((sum: number, company: any) => sum + company.total_primauf, 0);
         const totalMercado = totalGenerales + totalVida;
         
         // Calcular movimientos para el período seleccionado
@@ -221,8 +227,8 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
           const companiasGeneralesAnteriores = companiasAnteriores.filter((item: any) => item.tipo === 'Generales');
           const companiasVidaAnteriores = companiasAnteriores.filter((item: any) => item.tipo === 'Vida');
           
-          const totalGeneralesAnterior = companiasGeneralesAnteriores.reduce((sum: number, company: any) => sum + company.primauf, 0);
-          const totalVidaAnterior = companiasVidaAnteriores.reduce((sum: number, company: any) => sum + company.primauf, 0);
+          const totalGeneralesAnterior = companiasGeneralesAnteriores.reduce((sum: number, company: any) => sum + company.total_primauf, 0);
+          const totalVidaAnterior = companiasVidaAnteriores.reduce((sum: number, company: any) => sum + company.total_primauf, 0);
           const totalMercadoAnterior = totalGeneralesAnterior + totalVidaAnterior;
           
           if (totalGeneralesAnterior > 0) {

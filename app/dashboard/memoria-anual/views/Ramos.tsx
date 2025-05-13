@@ -18,6 +18,7 @@ interface Ramo {
   grupo: string;
   subgrupo: string;
   primauf: number;
+  total_uf?: number; // Campo alternativo que puede estar presente
   primaclp?: number;
   periodo: string;
 }
@@ -67,6 +68,7 @@ export default function RamosView() {
           subgrupo: item.subgrupo || item.subgrupo,
           nombre: item.nombre || item.ramo,
           primauf: item.primauf || item.total_uf,
+          total_uf: item.total_uf,
           primaclp: item.primaclp || item.total_clp,
           periodo: item.periodo
         })) || [];
@@ -128,15 +130,7 @@ export default function RamosView() {
   // Columns for data table
   const columns = [
     { 
-      header: 'Grupo', 
-      accessor: 'grupo' as keyof Ramo, 
-      isSortable: true 
-    },{ 
-      header: 'Subgrupo', 
-      accessor: 'subgrupo' as keyof Ramo, 
-      isSortable: true 
-    },{ 
-      header: 'Ramo', 
+      header: 'Grupo/Subgrupo/Ramo', 
       accessor: 'nombre' as keyof Ramo, 
       isSortable: true 
     },
@@ -145,7 +139,8 @@ export default function RamosView() {
       accessor: 'primauf' as keyof Ramo,
       cell: (value: number) => formatUF(value, 2),
       isSortable: true,
-      isNumeric: true
+      isNumeric: true,
+      formatter: (value: number) => formatUF(value, 2)
     }
   ];
   
@@ -194,14 +189,11 @@ export default function RamosView() {
           <AccordeonTable 
             data={ramos} 
             columns={columns} 
-            title="Ramos de Seguros"
             groupBy="grupo"
             subGroupBy="subgrupo"
-            emptyMessage="No hay datos de ramos disponibles para este período."
-            showTotal={true}
-            totalLabel="Total General"
-            onRowDetail={handleRamoDetail}
+            detailPath="/dashboard/memoria-anual/ramo"
           />
+          
         </div>
       )}
     </div>

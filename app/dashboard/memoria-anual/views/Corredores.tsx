@@ -227,7 +227,7 @@ export default function CorredoresView() {
               data={historicalData.concentracion}
               title="Concentración del Mercado de Corredores"
               subtitle="Índice Herfindahl-Hirschman por grupo de ramos"
-              threshold={1800}
+              threshold={1000}
             />
           ) : (
             <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">

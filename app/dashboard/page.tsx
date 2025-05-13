@@ -18,10 +18,12 @@ export default function Dashboard() {
   // Usar el contexto de período
   const { selectedPeriodo, setSelectedPeriodo, periodos } = usePeriod();
   
-  // Establecer periodos como variable global
+  // Manejar periodos de forma segura para evitar errores de hidratación
   useEffect(() => {
+    // Solo ejecutar en el cliente para evitar errores de hidratación
     if (typeof window !== 'undefined' && periodos.length > 0) {
-      window.periodos = periodos;
+      // Usar sessionStorage en lugar de window global para evitar problemas de hidratación
+      sessionStorage.setItem('periodos', JSON.stringify(periodos));
     }
   }, [periodos]);
   
@@ -84,42 +86,72 @@ export default function Dashboard() {
         {!loading && !error && (
           <>
             {/* Gráfico de evolución */}
-            <MaChartEvol 
-              periodos={periodos} 
-              historicalCompanias={historicalCompanias} 
-            />
+            {historicalCompanias && historicalCompanias.length > 0 ? (
+              <MaChartEvol 
+                periodos={periodos} 
+                historicalCompanias={historicalCompanias} 
+              />
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos históricos disponibles</p>
+              </div>
+            )}
             
             {/* Tabla de compañías con acordeón */}
-            <MaTableCompanias 
-              companias={companias}
-              loading={loading}
-              historicalCompanias={historicalCompanias}
-              corredoresData={corredoresData}
-              periodos={periodos} // Pasamos periodos como prop
-            />
+            {companias && companias.length > 0 ? (
+              <MaTableCompanias 
+                companias={companias}
+                loading={loading}
+                historicalCompanias={historicalCompanias || []}
+                corredoresData={corredoresData || []}
+                periodos={periodos}
+              />
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos de compañías disponibles</p>
+              </div>
+            )}
             
             {/* Gráficos de movimientos */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <MaChartMove 
-                evolucionMercado={evolucionMercado}
-                periodos={periodos}
-              />
+              {evolucionMercado && evolucionMercado.length > 0 ? (
+                <MaChartMove 
+                  evolucionMercado={evolucionMercado}
+                  periodos={periodos}
+                />
+              ) : (
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
+                  <p className="text-gray-500 text-center">No hay datos de evolución disponibles</p>
+                </div>
+              )}
               
-              <MaChartMoveCorredores 
-                evolucionCorredores={evolucionCorredores}
-                periodos={periodos}
-              />
+              {evolucionCorredores && evolucionCorredores.length > 0 ? (
+                <MaChartMoveCorredores 
+                  evolucionCorredores={evolucionCorredores}
+                  periodos={periodos}
+                />
+              ) : (
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
+                  <p className="text-gray-500 text-center">No hay datos de corredores disponibles</p>
+                </div>
+              )}
             </div>
             
             {/* Estructura de mercado reorganizada */}
-            <MaEstructuraMercado
-              grupoGenerales={concentracionMercado && Array.isArray(concentracionMercado) ? concentracionMercado.filter(item => item.tipo === 'GENERALES') : []}
-              grupoVida={concentracionMercado && Array.isArray(concentracionMercado) ? concentracionMercado.filter(item => item.tipo === 'VIDA') : []}
-              selectedPeriodo={selectedPeriodo}
-              periodos={periodos}
-              historicalConcentracion={historicalConcentracion}
-              concentracionMercado={concentracionMercado} // Pasa el estado o datos
-            />
+            {concentracionMercado && Array.isArray(concentracionMercado) && concentracionMercado.length > 0 ? (
+              <MaEstructuraMercado
+                grupoGenerales={concentracionMercado.filter(item => item && item.tipo === 'GENERALES')}
+                grupoVida={concentracionMercado.filter(item => item && item.tipo === 'VIDA')}
+                selectedPeriodo={selectedPeriodo}
+                periodos={periodos}
+                historicalConcentracion={historicalConcentracion || []}
+                concentracionMercado={concentracionMercado}
+              />
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos de concentración disponibles</p>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -17,6 +17,7 @@ interface Compania {
   primauf: number;
   primaclp?: number;
   periodo: string;
+  // Nota: primauf se mantiene para compatibilidad, pero internamente usa total_primauf
 }
 
 // Definir la interfaz para las estadísticas de resumen

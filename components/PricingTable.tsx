@@ -10,21 +10,21 @@ export function PricingTable() {
     cta: 'Obtener ahora'
   }, {
     title: 'Informe Individual',
-    price: '$29.990 +IVA',
+    price: '$29.990',
     features: ['Análisis de un corredor', 'Participación por ramo', 'Comparativa con mercado'],
     highlight: false,
     badge: 'Económico',
     cta: 'Seleccionar plan'
   }, {
     title: 'Informe Comparativo',
-    price: '$49.990 +IVA',
+    price: '$49.990',
     features: ['Comparación de hasta 3 corredores', 'Históricos y crecimientos', 'Visualizaciones clave'],
     highlight: true,
     badge: 'Más popular',
     cta: 'Seleccionar plan'
   }, {
     title: 'Acceso Completo por Usuario',
-    price: '$199.990 + IVA',
+    price: '$199.990',
     features: ['Todos los informes', 'Descarga de datos', 'Actualizaciones por 1 año'],
     highlight: false,
     badge: 'Más completa',
@@ -53,7 +53,7 @@ export function PricingTable() {
                 <span className={`text-3xl font-bold ${plan.highlight ? 'text-white' : 'text-blue-600'}`}>
                   {plan.price}
                 </span>
-                {!plan.highlight && plan.price !== 'Gratis' && <span className="text-slate-400 text-sm ml-1">/ anual</span>}
+                {!plan.highlight && plan.price !== 'Gratis' && <span className="text-slate-400 text-sm ml-1">/+IVA anual</span>}
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature, j) => <li key={j} className="flex items-start">

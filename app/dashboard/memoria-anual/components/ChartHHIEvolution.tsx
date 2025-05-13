@@ -84,7 +84,7 @@ export default function ChartHHIEvolution({
                 tickFormatter={(value) => Math.round(value).toString()}
                 tick={{ fontSize: 12 }}
                 tickLine={{ stroke: '#E9ECEF' }}
-                domain={[0, 'dataMax + 100']}
+                domain={[0, 'dataMax + 200']}
               />
               <Tooltip 
                 formatter={(value: number) => [Math.round(value), "HHI"]}

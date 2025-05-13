@@ -173,6 +173,14 @@ vista_ramos_periodo	grupo	character varying
 vista_ramos_periodo	subgrupo	character varying
 vista_ramos_periodo	total_primaclp	numeric
 vista_ramos_periodo	total_primauf	numeric
+vista_ramos_periodo	crecimiento_clp	numeric
+vista_ramos_periodo	participacion_clp	numeric
+vista_ramos_periodo	variacion_clp_pp	numeric
+vista_ramos_periodo	participacion_grupo_clp	numeric
+vista_ramos_periodo	participacion_subgrupo_clp	numeric
+vista_ramos_periodo	ranking_general	bigint
+vista_ramos_periodo	ranking_grupo	bigint
+vista_ramos_periodo	ranking_subgrupo	bigint
 vista_segmentos_companias	periodo	character
 vista_segmentos_companias	rutcia	character varying
 vista_segmentos_companias	nombrecia	character varying

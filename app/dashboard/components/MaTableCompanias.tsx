@@ -40,7 +40,7 @@ export default function MaTableCompanias({
   // Calcular totales por grupo
   const totalesPorGrupo = Object.keys(companiasPorGrupo).map(grupo => {
     const companias = companiasPorGrupo[grupo];
-    const totalPrima = companias.reduce((sum, c) => sum + c.primauf, 0);
+    const totalPrima = companias.reduce((sum, c) => sum + c.total_primauf, 0);
     
     // Calcular crecimiento respecto al año anterior
     const periodoActual = companias[0]?.periodo;
@@ -70,7 +70,7 @@ export default function MaTableCompanias({
       totalPrima,
       crecimiento,
       corredoresCount,
-      companias: companias.sort((a, b) => b.primauf - a.primauf) // Ordenar por prima descendente
+      companias: companias.sort((a, b) => b.total_primauf - a.total_primauf) // Ordenar por prima descendente
     };
   }).sort((a, b) => b.totalPrima - a.totalPrima); // Ordenar grupos por prima total
 
@@ -149,7 +149,7 @@ export default function MaTableCompanias({
                         {compania.nombrecia}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
-                        {formatUF(compania.primauf, 0)}
+                        {formatUF(compania.total_primauf, 0)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         {(() => {
@@ -167,7 +167,7 @@ export default function MaTableCompanias({
                             return <span className="text-green-600">Nuevo</span>;
                           }
                           
-                          const crecimiento = ((compania.primauf - companiaAnterior.total_uf) / companiaAnterior.total_uf) * 100;
+                          const crecimiento = ((compania.total_primauf - companiaAnterior.total_uf) / companiaAnterior.total_uf) * 100;
                           
                           return (
                             <span className={crecimiento >= 0 ? 'text-green-600' : 'text-red-600'}>

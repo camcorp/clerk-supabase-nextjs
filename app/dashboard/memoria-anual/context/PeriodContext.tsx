@@ -47,7 +47,7 @@ export function PeriodProvider({ children }: { children: ReactNode }) {
     }
     
     loadPeriodos();
-  }, [supabase, selectedPeriodo]);
+  }, [supabase, selectedPeriodo]); // Añadimos selectedPeriodo como dependencia
 
   return (
     <PeriodContext.Provider value={{ selectedPeriodo, setSelectedPeriodo, periodos, loading }}>

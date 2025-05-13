@@ -43,6 +43,19 @@ export function formatPercent(value: number, decimals: number = 2): string {
 }
 
 /**
+ * Formatea un valor numérico como porcentaje (alias para compatibilidad)
+ * @param value Valor numérico a formatear (ya en formato decimal, ej: 0.25 para 25%)
+ * @returns Valor formateado como porcentaje sin decimales
+ */
+export function formatPercentage(value: number): string {
+  return new Intl.NumberFormat('es-CL', {
+    style: 'percent',
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0
+  }).format(value);
+}
+
+/**
  * Formatea un valor numérico como moneda (CLP)
  * @param value Valor numérico a formatear
  * @returns Valor formateado como moneda CLP

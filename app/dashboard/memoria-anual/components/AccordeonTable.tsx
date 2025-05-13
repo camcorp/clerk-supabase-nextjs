@@ -1,384 +1,300 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { ChevronDownIcon, ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { formatUF, formatNumber } from '../utils/formatters';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
-interface Column<T> {
-  header: string;
-  accessor: keyof T;
-  cell?: (value: any, row: T) => React.ReactNode;
-  isSortable?: boolean;
-  isNumeric?: boolean;
+// Importar todas las funciones de formato
+import { formatUF, formatCLP, formatPercent, formatPercentage, formatNumber } from '../utils/formatters';
+
+interface AccordeonTableProps {
+  data: any[];
+  columns: {
+    header: string;
+    accessor: string;
+    isNumeric?: boolean;
+    formatter?: (value: any) => string;
+    width?: string;
+  }[];
+  groupBy: string;
+  subGroupBy?: string;
+  detailPath?: string;
 }
 
-interface AccordeonTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  groupBy: keyof T;
-  subGroupBy?: keyof T;
-  title?: string;
-  emptyMessage?: string;
-  showTotal?: boolean;
-  totalLabel?: string;
-  onRowDetail?: (item: T) => void;
-}
-
-export default function AccordeonTable<T extends Record<string, any>>({
+export default function AccordeonTable({
   data,
   columns,
   groupBy,
   subGroupBy,
-  title,
-  emptyMessage = 'No hay datos disponibles',
-  showTotal = false,
-  totalLabel = "Total",
-  onRowDetail
-}: AccordeonTableProps<T>) {
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  const [expandedSubGroups, setExpandedSubGroups] = useState<Set<string>>(new Set());
-  
-  // Agrupar datos
-  const groupedData = useMemo(() => {
-    const groups: Record<string, T[]> = {};
-    
-    data.forEach(item => {
-      const groupValue = String(item[groupBy]);
-      if (!groups[groupValue]) {
-        groups[groupValue] = [];
-      }
-      groups[groupValue].push(item);
-    });
-    
-    return groups;
-  }, [data, groupBy]);
-  
-  // Agrupar datos por subgrupo si es necesario
-  const getSubGroupedData = (groupItems: T[]) => {
+  detailPath
+}: AccordeonTableProps) {
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openSubGroups, setOpenSubGroups] = useState<Record<string, boolean>>({});
+
+  // Agrupar datos por el campo groupBy
+  const groupedData = data.reduce((acc, item) => {
+    const groupValue = item[groupBy];
+    if (!acc[groupValue]) {
+      acc[groupValue] = [];
+    }
+    acc[groupValue].push(item);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  // Calcular totales por grupo
+  const groupTotals = Object.keys(groupedData).reduce((acc, group) => {
+    const total = groupedData[group].reduce((sum: number, item: any) => sum + (parseFloat(item.total_uf) || 0), 0);
+    acc[group] = total;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calcular total general
+  const totalGeneral = Object.values(groupTotals).reduce((sum, total) => sum + total, 0);
+
+  // Agrupar por subgrupo si existe
+  const getSubGroupedData = (groupItems: any[]) => {
     if (!subGroupBy) return {};
     
-    const subGroups: Record<string, T[]> = {};
-    
-    groupItems.forEach(item => {
-      const subGroupValue = String(item[subGroupBy]);
-      if (!subGroups[subGroupValue]) {
-        subGroups[subGroupValue] = [];
+    return groupItems.reduce((acc, item) => {
+      const subGroupValue = item[subGroupBy];
+      if (!acc[subGroupValue]) {
+        acc[subGroupValue] = [];
       }
-      subGroups[subGroupValue].push(item);
-    });
-    
-    return subGroups;
+      acc[subGroupValue].push(item);
+      return acc;
+    }, {} as Record<string, any[]>);
   };
-  
-  // Manejar expansión de grupos
-  const toggleGroup = (group: string) => {
-    const newExpanded = new Set(expandedGroups);
-    if (newExpanded.has(group)) {
-      newExpanded.delete(group);
-    } else {
-      newExpanded.add(group);
-    }
-    setExpandedGroups(newExpanded);
+
+  // Calcular totales por subgrupo
+  const getSubGroupTotals = (subGroupedData: Record<string, any[]>) => {
+    return Object.keys(subGroupedData).reduce((acc, subGroup) => {
+      const total = subGroupedData[subGroup].reduce((sum: number, item: any) => sum + (parseFloat(item.total_uf) || 0), 0);
+      acc[subGroup] = total;
+      return acc;
+    }, {} as Record<string, number>);
   };
-  
-  // Manejar expansión de subgrupos
-  const toggleSubGroup = (subGroup: string) => {
-    const newExpanded = new Set(expandedSubGroups);
-    if (newExpanded.has(subGroup)) {
-      newExpanded.delete(subGroup);
-    } else {
-      newExpanded.add(subGroup);
-    }
-    setExpandedSubGroups(newExpanded);
-  };
-  
-  // Calcular totales para un grupo
-  const calculateGroupTotals = (items: T[]) => {
-    const totals: Record<string, number> = {};
-    
-    columns.forEach(column => {
-      if (column.isNumeric) {
-        const total = items.reduce((sum, row) => {
-          const value = row[column.accessor];
-          return sum + (typeof value === 'number' ? value : 0);
-        }, 0);
-        totals[column.accessor as string] = total;
-      }
-    });
-    
-    return totals;
-  };
-  
-  // Formatear valores numéricos
-  const formatValue = (value: any, column: Column<T>, row?: T) => {
-    if (column.cell && row) {
-      return column.cell(value, row);
-    }
-    
-    if (column.isNumeric && typeof value === 'number') {
-      // Usar la función formatUF para valores numéricos
-      return formatUF(value, 2);
-    }
-    
-    return value;
-  };
-  
-  // Calcular el total general para las columnas numéricas
-  const calculateGrandTotal = () => {
-    const totals: Record<string, number> = {};
-    
-    // Inicializar totales para columnas numéricas
-    columns.forEach(column => {
-      if (column.isNumeric) {
-        totals[column.accessor as string] = 0;
-      }
-    });
-    
-    // Sumar todos los valores
-    data.forEach(item => {
-      columns.forEach(column => {
-        if (column.isNumeric) {
-          totals[column.accessor as string] += Number(item[column.accessor]) || 0;
-        }
-      });
-    });
-    
-    return totals;
-  };
-  
-  const grandTotals = calculateGrandTotal();
-  
-  if (data.length === 0) {
+
+  // Calcular crecimiento
+  const getCrecimiento = (item: any) => {
+    const crecimiento = item.crecimiento || 0;
     return (
-      <div className="bg-white shadow overflow-hidden rounded-lg p-6 text-center text-gray-500">
-        {emptyMessage}
+      <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+        crecimiento > 0 
+          ? 'bg-green-100 text-green-800' 
+          : crecimiento < 0 
+            ? 'bg-red-100 text-red-800' 
+            : 'bg-gray-100 text-gray-800'
+      }`}>
+        {formatPercentage(crecimiento)}
+        {crecimiento > 0 ? '↑' : crecimiento < 0 ? '↓' : ''}
       </div>
     );
-  }
-  
+  };
+
+  // Calcular participación
+  const getParticipacion = (valor: number, total: number) => {
+    const participacion = total > 0 ? (valor / total) * 100 : 0;
+    return (
+      <span className="text-gray-600">
+        {formatPercent(participacion, 0)}
+      </span>
+    );
+  };
+
+  const toggleGroup = (group: string) => {
+    setOpenGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
+
+  const toggleSubGroup = (subGroup: string) => {
+    setOpenSubGroups(prev => ({
+      ...prev,
+      [subGroup]: !prev[subGroup]
+    }));
+  };
+
   return (
-    <div className="bg-white shadow overflow-hidden rounded-lg">
-      {title && (
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-        </div>
-      )}
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              {/* Columna para expansión */}
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10"></th>
-              
-              {columns.map((column, index) => (
-                <th
-                  key={index}
-                  scope="col"
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                    column.isNumeric ? 'text-right' : ''
-                  }`}
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            {columns.map((column, index) => (
+              <th
+                key={index}
+                scope="col"
+                className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                  column.isNumeric ? 'text-right' : ''
+                } ${column.width || ''}`}
+              >
+                {column.header}
+              </th>
+            ))}
+            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Participación
+            </th>
+            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Crecimiento
+            </th>
+            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Detalle
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {Object.keys(groupedData).map(group => {
+            const isGroupOpen = openGroups[group] || false;
+            const groupItems = groupedData[group];
+            const subGroupedData = getSubGroupedData(groupItems);
+            const subGroupTotals = getSubGroupTotals(subGroupedData);
+            const groupTotal = groupTotals[group];
+            
+            return (
+              <React.Fragment key={group}>
+                {/* Fila de grupo */}
+                <tr 
+                  className={`${isGroupOpen ? 'bg-blue-50' : 'hover:bg-gray-50'} cursor-pointer`}
+                  onClick={() => toggleGroup(group)}
                 >
-                  {column.header}
-                </th>
-              ))}
-              
-              {/* Columna para botón de detalle si se proporciona onRowDetail */}
-              {onRowDetail && (
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
-                  Detalle
-                </th>
-              )}
-            </tr>
-          </thead>
-          
-          <tbody className="bg-white divide-y divide-gray-200">
-            {Object.entries(groupedData).map(([group, groupItems], groupIndex) => {
-              const isExpanded = expandedGroups.has(group);
-              const groupTotals = calculateGroupTotals(groupItems);
-              const subGroupedData = getSubGroupedData(groupItems);
-              
-              return (
-                <React.Fragment key={groupIndex}>
-                  {/* Fila de grupo */}
-                  <tr 
-                    className="bg-gray-50 cursor-pointer hover:bg-gray-100"
-                    onClick={() => toggleGroup(group)}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {isExpanded ? (
-                        <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <ChevronRightIcon className="h-5 w-5 text-gray-500" />
-                      )}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 flex items-center">
+                    {isGroupOpen ? <ChevronDown className="h-4 w-4 mr-2" /> : <ChevronRight className="h-4 w-4 mr-2" />}
+                    {group}
+                  </td>
+                  {columns.slice(1).map((column, index) => (
+                    <td 
+                      key={index} 
+                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${column.isNumeric ? 'text-right' : ''}`}
+                    >
+                      {column.accessor === 'total_uf' ? formatUF(groupTotal) : ''}
                     </td>
-                    
-                    {columns.map((column, colIndex) => (
-                      <td 
-                        key={colIndex}
-                        className={`px-6 py-4 whitespace-nowrap font-medium text-gray-900 ${
-                          column.isNumeric ? 'text-right' : ''
-                        }`}
+                  ))}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                    {getParticipacion(groupTotal, totalGeneral)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                    {getCrecimiento(groupItems[0])}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                    {detailPath && (
+                      <Link href={`${detailPath}/${encodeURIComponent(group)}`} className="text-blue-600 hover:text-blue-800">
+                        <ExternalLink className="h-4 w-4 inline" />
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+
+                {/* Filas de subgrupo si el grupo está abierto */}
+                {isGroupOpen && subGroupBy && Object.keys(subGroupedData).map(subGroup => {
+                  const isSubGroupOpen = openSubGroups[subGroup] || false;
+                  const subGroupItems = subGroupedData[subGroup];
+                  const subGroupTotal = subGroupTotals[subGroup];
+                  
+                  return (
+                    <React.Fragment key={`${group}-${subGroup}`}>
+                      {/* Fila de subgrupo */}
+                      <tr 
+                        className={`${isSubGroupOpen ? 'bg-gray-100' : 'hover:bg-gray-50'} cursor-pointer`}
+                        onClick={() => toggleSubGroup(subGroup)}
                       >
-                        {column.accessor === groupBy ? (
-                          group
-                        ) : column.isNumeric ? (
-                          formatValue(groupTotals[column.accessor as string], column)
-                        ) : (
-                          ''
-                        )}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 pl-10 flex items-center">
+                          {isSubGroupOpen ? <ChevronDown className="h-4 w-4 mr-2" /> : <ChevronRight className="h-4 w-4 mr-2" />}
+                          {subGroup}
+                        </td>
+                        {columns.slice(1).map((column, index) => (
+                          <td 
+                            key={index} 
+                            className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${column.isNumeric ? 'text-right' : ''}`}
+                          >
+                            {column.accessor === 'total_uf' ? formatUF(subGroupTotal) : ''}
+                          </td>
+                        ))}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                          {getParticipacion(subGroupTotal, groupTotal)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                          {getCrecimiento(subGroupItems[0])}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                          {detailPath && (
+                            <Link href={`${detailPath}/${encodeURIComponent(group)}/${encodeURIComponent(subGroup)}`} className="text-blue-600 hover:text-blue-800">
+                              <ExternalLink className="h-4 w-4 inline" />
+                            </Link>
+                          )}
+                        </td>
+                      </tr>
+
+                      {/* Filas de elementos si el subgrupo está abierto */}
+                      {isSubGroupOpen && subGroupItems.map((item: any, itemIndex: number) => (
+                        <tr key={`${group}-${subGroup}-${itemIndex}`} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 pl-16">
+                            {item.nombre || item.ramo || item[columns[2].accessor]}
+                          </td>
+                          {columns.slice(1).map((column, colIndex) => (
+                            <td 
+                              key={colIndex} 
+                              className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${column.isNumeric ? 'text-right' : ''}`}
+                            >
+                              {column.formatter 
+                                ? column.formatter(item[column.accessor]) 
+                                : item[column.accessor]}
+                            </td>
+                          ))}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                            {getParticipacion(parseFloat(item.primauf || item.total_uf) || 0, subGroupTotal)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                            {getCrecimiento(item)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                            {detailPath && (
+                              <Link href={`${detailPath}/${encodeURIComponent(item.id || item[columns[0].accessor])}`} className="text-blue-600 hover:text-blue-800">
+                                <ExternalLink className="h-4 w-4 inline" />
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+
+                {/* Si no hay subgrupos, mostrar los elementos directamente */}
+                {isGroupOpen && !subGroupBy && groupItems.map((item: any, itemIndex: number) => (
+                  <tr key={`${group}-${itemIndex}`} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 pl-10">
+                      {item[columns[0].accessor]}
+                    </td>
+                    {columns.slice(1).map((column, colIndex) => (
+                      <td 
+                        key={colIndex} 
+                        className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${column.isNumeric ? 'text-right' : ''}`}
+                      >
+                        {column.formatter 
+                          ? column.formatter(item[column.accessor]) 
+                          : item[column.accessor]}
                       </td>
                     ))}
-                    
-                    {/* Celda vacía para mantener la estructura si hay botón de detalle */}
-                    {onRowDetail && <td className="px-6 py-4 whitespace-nowrap"></td>}
-                  </tr>
-                  
-                  {/* Filas de subgrupo si está expandido */}
-                  {isExpanded && subGroupBy && (
-                    Object.entries(subGroupedData).map(([subGroup, subGroupItems], subGroupIndex) => {
-                      const isSubExpanded = expandedSubGroups.has(`${group}-${subGroup}`);
-                      const subGroupTotals = calculateGroupTotals(subGroupItems);
-                      
-                      return (
-                        <React.Fragment key={`${groupIndex}-${subGroupIndex}`}>
-                          {/* Fila de subgrupo */}
-                          <tr 
-                            className="bg-gray-100 cursor-pointer hover:bg-gray-200"
-                            onClick={() => toggleSubGroup(`${group}-${subGroup}`)}
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap pl-10">
-                              {isSubExpanded ? (
-                                <ChevronDownIcon className="h-4 w-4 text-gray-500" />
-                              ) : (
-                                <ChevronRightIcon className="h-4 w-4 text-gray-500" />
-                              )}
-                            </td>
-                            
-                            {columns.map((column, colIndex) => (
-                              <td 
-                                key={colIndex}
-                                className={`px-6 py-4 whitespace-nowrap text-sm ${
-                                  column.isNumeric ? 'text-right' : ''
-                                }`}
-                              >
-                                {column.accessor === subGroupBy ? (
-                                  subGroup
-                                ) : column.isNumeric ? (
-                                  formatValue(subGroupTotals[column.accessor as string], column)
-                                ) : (
-                                  ''
-                                )}
-                              </td>
-                            ))}
-                            
-                            {/* Celda vacía para mantener la estructura si hay botón de detalle */}
-                            {onRowDetail && <td className="px-6 py-4 whitespace-nowrap"></td>}
-                          </tr>
-                          
-                          {/* Filas de detalle si el subgrupo está expandido */}
-                          {isSubExpanded && subGroupItems.map((item, itemIndex) => (
-                            <tr 
-                              key={`${groupIndex}-${subGroupIndex}-${itemIndex}`}
-                              className="hover:bg-gray-50"
-                            >
-                              <td className="px-6 py-4 whitespace-nowrap pl-16"></td>
-                              
-                              {columns.map((column, colIndex) => (
-                                <td 
-                                  key={colIndex}
-                                  className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${
-                                    column.isNumeric ? 'text-right' : ''
-                                  }`}
-                                >
-                                  {formatValue(item[column.accessor], column, item)}
-                                </td>
-                              ))}
-                              
-                              {/* Botón de detalle para cada fila */}
-                              {onRowDetail && (
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onRowDetail(item);
-                                    }}
-                                    className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1 rounded"
-                                  >
-                                    <InformationCircleIcon className="h-5 w-5" />
-                                  </button>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </React.Fragment>
-                      );
-                    })
-                  )}
-                  
-                  {/* Filas de detalle si no hay subgrupo o si el grupo está expandido */}
-                  {isExpanded && !subGroupBy && groupItems.map((item, itemIndex) => (
-                    <tr 
-                      key={`${groupIndex}-${itemIndex}`}
-                      className="hover:bg-gray-50"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap pl-10"></td>
-                      
-                      {columns.map((column, colIndex) => (
-                        <td 
-                          key={colIndex}
-                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${
-                            column.isNumeric ? 'text-right' : ''
-                          }`}
-                        >
-                          {formatValue(item[column.accessor], column, item)}
-                        </td>
-                      ))}
-                      
-                      {/* Botón de detalle para cada fila */}
-                      {onRowDetail && (
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onRowDetail(item);
-                            }}
-                            className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1 rounded"
-                          >
-                            <InformationCircleIcon className="h-5 w-5" />
-                          </button>
-                        </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      {getParticipacion(parseFloat(item.total_uf) || 0, groupTotal)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      {getCrecimiento(item)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      {detailPath && (
+                        <Link href={`${detailPath}/${encodeURIComponent(item.id || item[columns[0].accessor])}`} className="text-blue-600 hover:text-blue-800">
+                          <ExternalLink className="h-4 w-4 inline" />
+                        </Link>
                       )}
-                    </tr>
-                  ))}
-                </React.Fragment>
-              );
-            })}
-            
-            {/* Total general */}
-            {showTotal && (
-              <tr className="bg-gray-50 font-semibold">
-                <td colSpan={onRowDetail ? columns.length + 2 : columns.length + 1} className="px-6 py-4 text-sm text-gray-900">
-                  <div className="flex justify-between items-center">
-                    <span>{totalLabel}</span>
-                    <div className="flex space-x-8">
-                      {columns.map((column, colIndex) => (
-                        column.isNumeric && (
-                          <span key={colIndex} className="text-right">
-                            {column.cell 
-                              ? column.cell(grandTotals[column.accessor as string], {} as T) 
-                              : formatValue(grandTotals[column.accessor as string], column)}
-                          </span>
-                        )
-                      ))}
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                    </td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

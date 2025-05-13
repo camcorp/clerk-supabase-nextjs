@@ -76,7 +76,11 @@ export default function CorredorPage() {
   const handlePaymentSuccess = () => {
     setShowProcesoPago(false);
     // Refrescar los datos del informe después del pago exitoso
-    router.push(`/dashboard/corredor/${selectedCorredor?.rut}`);
+    if (selectedCorredor) {
+      router.push(`/dashboard/corredor/detalle?rut=${encodeURIComponent(selectedCorredor.rut)}`);
+    } else {
+      router.push('/dashboard/corredor');
+    }
   };
 
   // Mostrar pantalla de carga mientras verificamos el acceso
@@ -222,7 +226,7 @@ export default function CorredorPage() {
               
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                onClick={() => router.push(`/dashboard/corredor/${selectedCorredor.rut}`)}
+                onClick={() => router.push(`/dashboard/corredor/detalle?rut=${encodeURIComponent(selectedCorredor.rut)}`)}
               >
                 Ver informe completo
               </button>

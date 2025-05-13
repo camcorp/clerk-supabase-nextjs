@@ -1,20 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
 
-// Modificar la definición de PageProps para que coincida con lo que Next.js espera
-interface PageProps {
-  params: {
-    rut: string;
-  };
-  searchParams?: Record<string, string | string[] | undefined>;
-}
-
-export default function CorredorDetailPage({ params }: PageProps) {
-  const { rut } = params;
+// Componente interno que usa useSearchParams
+function CorredorDetailContent() {
+  const searchParams = useSearchParams();
+  const rut = searchParams.get('rut') || '';
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const userId = user?.id || '';
@@ -23,13 +17,19 @@ export default function CorredorDetailPage({ params }: PageProps) {
   const [decodedRut, setDecodedRut] = useState(rut);
 
   useEffect(() => {
+    // Verificar que tenemos el parámetro RUT
+    if (!rut) {
+      router.push('/dashboard/corredor');
+      return;
+    }
+    
     // Decodificar el RUT si viene codificado en la URL
     try {
       setDecodedRut(decodeURIComponent(rut));
     } catch (e) {
       console.error('Error al decodificar RUT:', e);
     }
-  }, [rut]);
+  }, [rut, router]);
 
   // Redirigir si no está autenticado
   useEffect(() => {
@@ -283,6 +283,20 @@ export default function CorredorDetailPage({ params }: PageProps) {
         <p>Válido hasta: {new Date(report?.fecha_expiracion || '').toLocaleDateString()}</p>
       </div>
     </div>
+  );
+}
+
+// Componente principal que envuelve el contenido en un Suspense
+export default function CorredorDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <p className="ml-3">Cargando...</p>
+      </div>
+    }>
+      <CorredorDetailContent />
+    </Suspense>
   );
 }
 

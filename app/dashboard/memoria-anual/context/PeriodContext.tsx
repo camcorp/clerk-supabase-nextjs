@@ -56,8 +56,7 @@ export function PeriodProvider({ children }: { children: ReactNode }) {
     }
     
     loadPeriodos();
-    // Remove selectedPeriodo from dependency array to avoid infinite loops
-  }, [supabase]); // Only depend on supabase client
+  }, [supabase, selectedPeriodo]); // Incluir selectedPeriodo en las dependencias
 
   return (
     <PeriodContext.Provider value={{ selectedPeriodo, setSelectedPeriodo, periodos, loading }}>

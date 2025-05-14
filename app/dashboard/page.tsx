@@ -11,14 +11,16 @@ import MaChartEvol from './components/MaChartEvol';
 import MaTableCompanias from './components/MaTableCompanias';
 import MaChartPieGrupo from './components/MaChartPieGrupo';
 import MaChartMove from './components/MaChartMove';
+import MaChartMovimientos from './components/MaChartMovimientos';
 import MaChartMoveCorredores from './components/MaChartMoveCorredores';
 import MaEstructuraMercado from './components/MaEstructuraMercado';
+import MaChartHHI from './components/MaChartHHI'; // Importación del componente HHI
 import MaLoading from './components/MaLoading';
 
 export default function Dashboard() {
   // Usar el contexto de período
   const { selectedPeriodo, setSelectedPeriodo, periodos } = usePeriod();
-  
+
   // Manejar periodos de forma segura para evitar errores de hidratación
   useEffect(() => {
     // Solo ejecutar en el cliente para evitar errores de hidratación
@@ -27,7 +29,7 @@ export default function Dashboard() {
       sessionStorage.setItem('periodos', JSON.stringify(periodos));
     }
   }, [periodos]);
-  
+
   // Cargar datos usando el hook
   const {
     companias,
@@ -47,15 +49,15 @@ export default function Dashboard() {
       <div className="px-4 py-6 sm:px-0">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Memoria Anual del Mercado Asegurador</h1>
-          
+
           <div className="flex items-center space-x-4">
-            <Link 
+            <Link
               href="/dashboard/memoria-anual"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Ver Memoria Completa
             </Link>
-            
+
             {/* Period selector */}
             <div className="flex items-center">
               <label htmlFor="periodo" className="mr-2 text-sm font-medium text-gray-700">
@@ -76,31 +78,98 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        
+
         {/* Tarjetas de resumen */}
         <MaCardSummary summary={summary} loading={loading} />
-        
+
         {/* Mostrar mensaje de carga o error */}
         {loading && <MaLoading error={null} />}
         {error && <MaLoading error={error} />}
-        
+
         {!loading && !error && (
           <>
             {/* Gráfico de evolución */}
             {historicalCompanias && historicalCompanias.length > 0 ? (
-              <MaChartEvol 
-                periodos={periodos} 
-                historicalCompanias={historicalCompanias} 
+              <MaChartEvol
+                periodos={periodos}
+                historicalCompanias={historicalCompanias}
               />
             ) : (
               <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
                 <p className="text-gray-500 text-center">No hay datos históricos disponibles</p>
               </div>
             )}
-            
+
+            {/* Gráfico de participación de mercado */}
+            {concentracionMercado && Array.isArray(concentracionMercado) && concentracionMercado.length > 0 ? (
+              <div className="mb-6">
+                <MaChartPieGrupo concentracionMercado={concentracionMercado} />
+              </div>
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos de concentración disponibles</p>
+              </div>
+            )}
+
+            {/* Estructura de mercado sin HHI */}
+            {concentracionMercado && Array.isArray(concentracionMercado) && concentracionMercado.length > 0 ? (
+              <div className="mb-6">
+                <MaEstructuraMercado
+                  grupoGenerales={concentracionMercado.filter(item => item && item.tipo === 'GENERALES')}
+                  grupoVida={concentracionMercado.filter(item => item && item.tipo === 'VIDA')}
+                  selectedPeriodo={selectedPeriodo}
+                  periodos={periodos}
+                  historicalConcentracion={historicalConcentracion || []}
+                  concentracionMercado={concentracionMercado}
+                />
+              </div>
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos de concentración disponibles</p>
+              </div>
+            )}
+
+            {/* Gráfico HHI independiente */}
+            {historicalConcentracion && historicalConcentracion.length > 0 ? (
+              <div className="mb-6">
+                <MaChartHHI historicalConcentracion={historicalConcentracion || []} />
+              </div>
+            ) : (
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+                <p className="text-gray-500 text-center">No hay datos de concentración histórica disponibles</p>
+              </div>
+            )}
+
+            {/* Gráficos de movimientos */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {evolucionMercado && evolucionMercado.length > 0 ? (
+                <MaChartMovimientos
+                  datos={evolucionMercado}
+                  periodos={periodos}
+                  tipo="companias"
+                />
+              ) : (
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
+                  <p className="text-gray-500 text-center">No hay datos de evolución de compañías disponibles</p>
+                </div>
+              )}
+
+              {evolucionCorredores && evolucionCorredores.length > 0 ? (
+                <MaChartMovimientos
+                  datos={evolucionCorredores}
+                  periodos={periodos}
+                  tipo="corredores"
+                />
+              ) : (
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
+                  <p className="text-gray-500 text-center">No hay datos de evolución de corredores disponibles</p>
+                </div>
+              )}
+            </div>
+
             {/* Tabla de compañías con acordeón */}
             {companias && companias.length > 0 ? (
-              <MaTableCompanias 
+              <MaTableCompanias
                 companias={companias}
                 loading={loading}
                 historicalCompanias={historicalCompanias || []}
@@ -112,54 +181,7 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-center">No hay datos de compañías disponibles</p>
               </div>
             )}
-            
-            {/* Gráficos de movimientos */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              {evolucionMercado && evolucionMercado.length > 0 ? (
-                <MaChartMove 
-                  evolucionMercado={evolucionMercado}
-                  periodos={periodos}
-                />
-              ) : (
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
-                  <p className="text-gray-500 text-center">No hay datos de evolución disponibles</p>
-                </div>
-              )}
-              
-              {evolucionCorredores && evolucionCorredores.length > 0 ? (
-                <MaChartMoveCorredores 
-                  evolucionCorredores={evolucionCorredores}
-                  periodos={periodos}
-                />
-              ) : (
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
-                  <p className="text-gray-500 text-center">No hay datos de corredores disponibles</p>
-                </div>
-              )}
-            </div>
-            
-            {/* Estructura de mercado reorganizada */}
-            {concentracionMercado && Array.isArray(concentracionMercado) && concentracionMercado.length > 0 ? (
-              <>
-                <div className="mb-6">
-                  <MaChartPieGrupo concentracionMercado={concentracionMercado} />
-                </div>
-                <MaEstructuraMercado
-                  grupoGenerales={concentracionMercado.filter(item => item && item.tipo === 'GENERALES')}
-                  grupoVida={concentracionMercado.filter(item => item && item.tipo === 'VIDA')}
-                  selectedPeriodo={selectedPeriodo}
-                  periodos={periodos}
-                  historicalConcentracion={historicalConcentracion || []}
-                  concentracionMercado={concentracionMercado}
-                />
-              </>
-            ) : (
-              <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
-                <p className="text-gray-500 text-center">No hay datos de concentración disponibles</p>
-              </div>
-            )}
           </>
-          
         )}
       </div>
     </div>

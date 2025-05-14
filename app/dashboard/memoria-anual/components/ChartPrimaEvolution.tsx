@@ -5,14 +5,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { formatUF, formatCLP } from '../utils/formatters';
 
 interface ChartPrimaEvolutionProps {
-  data: Array<{
-    periodo: string;
-    total_clp?: number;
-    total_uf?: number;
-    [key: string]: any;
-  }>;
-  title?: string;
+  title: string;
   subtitle?: string;
+  data: any[];
+  periodos: string[]; // Changed from periodo to periodos for consistency
+  valueField: string;
+  growthField: string;
+  color: string;
 }
 
 export default function ChartPrimaEvolution({ data, title = "Evolución de Primas", subtitle }: ChartPrimaEvolutionProps) {

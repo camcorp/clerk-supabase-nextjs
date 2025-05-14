@@ -33,6 +33,20 @@ interface PeriodSummary {
 // Importar la función API
 import { getRamosData } from '../api/ramos';
 
+// Importar el nuevo sistema de colores y el componente de gráfico de movimientos
+import { colors } from '../utils/systemcolors';
+import ChartMovimientos from '../components/ChartMovimientos';
+
+// Define interface for historical data
+interface HistoricalData {
+  movimientos?: {
+    periodo: string;
+    entradas: number;
+    salidas: number;
+    neto: number;
+  }[];
+}
+
 export default function RamosView() {
   const [ramos, setRamos] = useState<Ramo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +57,9 @@ export default function RamosView() {
     ramoCount: 0,
     growth: null
   });
+  
+  // Mover la declaración de historicalData aquí, antes de usarla
+  const [historicalData, setHistoricalData] = useState<HistoricalData>({});
   
   // Obtener el cliente de Supabase
   const supabase = useSupabaseClient();
@@ -185,6 +202,17 @@ export default function RamosView() {
             ]}
           />
           
+          {/* Gráfico de movimientos si hay datos disponibles */}
+          {historicalData && historicalData.movimientos && historicalData.movimientos.length > 0 && (
+            <ChartMovimientos
+              data={historicalData.movimientos}
+              tipo="ramos"
+              title="Cambios en Ramos"
+              subtitle="Nuevos ramos y ramos descontinuados por período"
+              showNeto={true}
+            />
+          )}
+          
           {/* Tabla acordeón que ocupa todo el ancho */}
           <AccordeonTable 
             data={ramos} 
@@ -193,7 +221,6 @@ export default function RamosView() {
             subGroupBy="subgrupo"
             detailPath="/dashboard/memoria-anual/ramo"
           />
-          
         </div>
       )}
     </div>

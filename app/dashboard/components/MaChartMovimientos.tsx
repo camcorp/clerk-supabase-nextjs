@@ -2,16 +2,26 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatNumber } from '../memoria-anual/utils/formatters';
 
-interface MaChartMoveProps {
-  evolucionMercado: any[];
+interface MaChartMovimientosProps {
+  datos: any[];
   periodos: string[];
+  tipo: 'companias' | 'corredores';
 }
 
-export default function MaChartMove({ evolucionMercado, periodos }: MaChartMoveProps) {
+export default function MaChartMovimientos({ datos, periodos, tipo }: MaChartMovimientosProps) {
+  // Determinar el título y descripción según el tipo
+  const titulo = tipo === 'companias' 
+    ? 'Movimientos Históricos de Compañías' 
+    : 'Movimientos Históricos de Corredores';
+  
+  const descripcion = tipo === 'companias'
+    ? 'Entradas y salidas de compañías en el mercado asegurador'
+    : 'Entradas y salidas de corredores en el mercado';
+
   // Procesar datos para todos los períodos
   const movimientosData = periodos.map(periodo => {
     // Filtrar movimientos para este período
-    const movimientosPeriodo = evolucionMercado.filter(item => item.periodo === periodo);
+    const movimientosPeriodo = datos.filter(item => item.periodo === periodo);
     
     // Contar entradas y salidas
     const entradas = movimientosPeriodo.filter(item => item.tipo_cambio === 'entrada').length;
@@ -28,9 +38,9 @@ export default function MaChartMove({ evolucionMercado, periodos }: MaChartMoveP
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
       <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Movimientos Históricos de Corredores</h3>
+        <h3 className="text-lg leading-6 font-medium text-gray-900">{titulo}</h3>
         <p className="mt-1 max-w-2xl text-sm text-gray-500">
-          Entradas y salidas de actores en el mercado
+          {descripcion}
         </p>
       </div>
       <div className="px-4 py-5 sm:p-6">

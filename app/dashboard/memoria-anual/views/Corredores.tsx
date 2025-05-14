@@ -12,6 +12,11 @@ import { usePeriod } from '../context/PeriodContext';
 import { inter, spaceGrotesk } from '../fonts';
 import { getCorredoresData, getHistoricalCorredoresData } from '../api/corredores';
 import { formatUF } from '../utils/formatters';
+import { colors } from '../utils/systemcolors';
+import ChartMovimientos from '../components/ChartMovimientos';
+import ChartCountEvolution from '../components/ChartCountEvolution';
+import ChartPrimaEvolution from '../components/ChartPrimaEvolution';
+import ChartHHIEvolution from '../components/ChartHHIEvolution';
 
 // Definir interfaces
 interface Corredor {
@@ -32,41 +37,39 @@ interface PeriodSummary {
   hhi?: number;
 }
 
-interface HistoricalData {
-  evolution: Array<{
-    periodo: string;
-    total_clp: number;
-    total_uf: number;
-    num_corredores: number;
-    variacion_num_corredores: number | null;
-    variacion_total_uf: number | null;
-  }>;
-  concentracion: Array<{
-    periodo: string;
-    hhi_general: number;
-    grupo: string;
-    hhi_grupo: number;
-  }>;
-  movimientos: Array<{
-    periodo: string;
-    entradas: number;
-    salidas: number;
-    neto: number;
-  }>;
+// Define interface for historical data
+interface HistoricalDataItem {
+  periodo: string;
+  total_clp: number;
+  total_uf: number;
+  num_corredores: number;
+  variacion_num_corredores: number | null;
+  variacion_total_uf: number | null;
 }
 
-// Eliminar esta función y usar la importada
-// const formatUF = (value: number, decimals: number = 0) => { ... }
+interface ConcentracionItem {
+  hhi_general: number;
+  hhi_grupo: number;
+  periodo: any;
+  grupo: any;
+}
 
-// Importar los nuevos componentes
-import ChartPrimaEvolution from '../components/ChartPrimaEvolution';
-import ChartHHIEvolution from '../components/ChartHHIEvolution';
-import ChartMove from '../components/ChartMove';
-import ChartCountEvolution from '../components/ChartCountEvolution';
+interface MovimientoItem {
+  periodo: string;
+  entradas: number;
+  salidas: number;
+  neto: number;
+}
+
+interface CompleteHistoricalData {
+  evolution: HistoricalDataItem[];
+  concentracion: ConcentracionItem[];
+  movimientos: MovimientoItem[];
+}
 
 export default function CorredoresView() {
   const [corredores, setCorredores] = useState<Corredor[]>([]);
-  const [historicalData, setHistoricalData] = useState<HistoricalData>({
+  const [historicalData, setHistoricalData] = useState<CompleteHistoricalData>({
     evolution: [],
     concentracion: [],
     movimientos: []
@@ -137,6 +140,18 @@ export default function CorredoresView() {
             hhi: currentPeriodData.hhi_general
           });
         }
+        
+        // Cargar datos históricos
+        const { data: historicalDataResult, error: historicalError } = await supabase
+          .from('vista_corredores_periodo')
+          .select('*')
+          .order('periodo', { ascending: false });
+      
+        if (historicalError) throw historicalError;
+        
+        // Actualizar el estado con los datos históricos si es necesario
+        // Nota: Esto podría no ser necesario si ya estás cargando datos históricos en el otro useEffect
+        
       } catch (err) {
         console.error('Error al cargar corredores:', err);
         setError('No se pudieron cargar los corredores. Por favor, intenta de nuevo más tarde.');
@@ -207,10 +222,14 @@ export default function CorredoresView() {
           
           {/* Gráfico 2: Evolución de primas */}
           {historicalData.evolution && historicalData.evolution.length > 0 ? (
-            <ChartPrimaEvolution 
+            <ChartPrimaEvolution
               data={historicalData.evolution}
-              title="Evolución de Primas de Corredores"
-              subtitle="Primas intermediadas a lo largo del tiempo"
+              title="Evolución de Corredores"
+              subtitle="Evolución histórica de corredores"
+              periodos={periodos}
+              valueField="total_uf"
+              growthField="variacion_total_uf"
+              color={colors.corredores.primary}
             />
           ) : (
             <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] p-6">
@@ -239,9 +258,11 @@ export default function CorredoresView() {
           )}
           
           {/* Gráfico 4: Entradas y salidas de corredores */}
+          {/* Reemplazar el gráfico de movimientos existente */}
           {historicalData.movimientos && historicalData.movimientos.length > 0 ? (
-            <ChartMove 
+            <ChartMovimientos 
               data={historicalData.movimientos}
+              tipo="corredores"
               title="Movimientos de Corredores"
               subtitle="Entradas y salidas de corredores por período"
               showNeto={true}

@@ -10,6 +10,10 @@ import NoData from '../components/NoData';
 import SearchInput from '../components/SearchInput';
 import { formatUF, formatCLP, formatNumber } from '../utils/formatters';
 
+// Importar el nuevo sistema de colores y el componente de gráfico de movimientos
+import { colors } from '../utils/systemcolors';
+import ChartMovimientos from '../components/ChartMovimientos';
+
 // Definir la interfaz para los datos de compañías
 interface Compania {
   id: number;
@@ -28,6 +32,16 @@ interface Summary {
   growth: number | null;
 }
 
+// Define interface for historical data
+interface HistoricalData {
+  movimientos?: {
+    periodo: string;
+    entradas: number;  // Cambiado de ingresos a entradas
+    salidas: number;   // Cambiado de egresos a salidas
+    neto: number;
+  }[];
+}
+
 export default function CompaniasView() {
   const [companias, setCompanias] = useState<Compania[]>([]);
   const [filteredCompanias, setFilteredCompanias] = useState<Compania[]>([]);
@@ -40,6 +54,8 @@ export default function CompaniasView() {
     companyCount: 0,
     growth: null
   });
+  // Add historicalData state with proper typing
+  const [historicalData, setHistoricalData] = useState<HistoricalData>({});
   
   // Obtener el cliente de Supabase
   const supabase = useSupabaseClient();
@@ -111,6 +127,25 @@ export default function CompaniasView() {
             growth
           });
         }
+        
+        // Load historical data
+        const { data: historicalDataResult, error: historicalError } = await supabase
+          .from('vista_companias_periodo')
+          .select('*')
+          .order('periodo', { ascending: false });
+
+        if (historicalError) throw historicalError;
+        
+        // Process historical data to get movements
+        const movimientos = historicalDataResult?.map(item => ({
+          periodo: item.periodo,
+          entradas: item.ingresos || 0,  // Mapear ingresos a entradas
+          salidas: item.egresos || 0,    // Mapear egresos a salidas
+          neto: (item.ingresos || 0) - (item.egresos || 0)
+        })) || [];
+        
+        setHistoricalData({ movimientos });
+        
       } catch (err) {
         console.error('Error al cargar compañías:', err);
         setError('No se pudieron cargar las compañías. Por favor, intenta de nuevo más tarde.');
@@ -170,6 +205,7 @@ export default function CompaniasView() {
     return <NoData message={error} />;
   }
   
+  // Dentro del componente CompaniasView, donde se renderiza el contenido
   return (
     <div className="space-y-6 font-inter">
       {/* Summary Cards */}
@@ -178,7 +214,7 @@ export default function CompaniasView() {
           title="Total Prima UF"
           value={formatNumberValue(summary.totalPrimauf)}
           subtitle="Total de primas en UF"
-          trend={summary.growth ?? undefined}
+          trend={summary.growth}
           trendLabel="vs periodo anterior"
         />
         <SummaryCard
@@ -192,6 +228,15 @@ export default function CompaniasView() {
           subtitle="Número de compañías activas"
         />
       </div>
+      
+      {/* Gráfico de movimientos */}
+      {historicalData && historicalData.movimientos && historicalData.movimientos.length > 0 && (
+        <ChartMovimientos
+          data={historicalData.movimientos}
+          tipo="companias"
+          showNeto={true}
+        />
+      )}
       
       {/* Search and Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { colors } from '../utils/systemcolors';
 
 // Definir la interfaz para los items individuales
 interface SummaryItem {
@@ -10,13 +11,25 @@ interface SummaryItem {
 
 interface SummaryCardProps {
   title: string;
-  value?: string | number;
+  value?: string;
   subtitle?: string;
   icon?: React.ReactNode;
-  trend?: number;
+  trend?: number | null;
   trendLabel?: string;
   tooltip?: string;
-  items?: SummaryItem[];
+  items?: Array<{
+    label: string;
+    value: any;
+    format?: string;
+    trend?: number | null | string;
+    icon?: React.ReactNode;  // Add this property
+  }>;
+  color?: string;
+  data?: Array<{
+    label: string;
+    value: any;
+    format: string;
+  }>;
 }
 
 export default function SummaryCard({ 
@@ -30,16 +43,26 @@ export default function SummaryCard({
   items 
 }: SummaryCardProps) {
   // Determine trend color based on value
-  const getTrendColor = (trend: number | string) => {
-    if (typeof trend === 'number') {
-      if (trend >= 0) return 'text-[#2ECC71]'; // Success green
+  const getTrendColor = (trendValue: number | string | null | undefined) => {
+    if (trendValue === null || trendValue === undefined) {
+      return 'text-gray-500'; // Neutral
+    }
+    
+    if (typeof trendValue === 'number') {
+      if (trendValue >= 0) return 'text-[#2ECC71]'; // Success green
       return 'text-[#E74C3C]'; // Alert red
-    } else if (trend === 'up') {
+    } else if (trendValue === 'up') {
       return 'text-[#2ECC71]';
-    } else if (trend === 'down') {
+    } else if (trendValue === 'down') {
       return 'text-[#E74C3C]';
     }
     return 'text-gray-500'; // Neutral
+  };
+  
+  // Format trend value for display
+  const formatTrend = (trendValue: number | null | undefined): string => {
+    if (trendValue === null || trendValue === undefined) return '';
+    return trendValue > 0 ? `+${trendValue.toFixed(1)}%` : `${trendValue.toFixed(1)}%`;
   };
 
   // Renderizar la versión simple (un solo valor)
@@ -65,7 +88,7 @@ export default function SummaryCard({
           )}
         </div>
         
-        {trend !== undefined && (
+        {trend !== undefined && trend !== null && (
           <div className="mt-4 flex items-center">
             <span className={getTrendColor(trend)}>
               {trend >= 0 ? "↑" : "↓"} {Math.abs(trend).toFixed(1)}%
@@ -83,20 +106,28 @@ export default function SummaryCard({
       <h3 className="text-sm font-medium text-[#6C757D] font-['Inter'] mb-4">{title}</h3>
       
       <div className="space-y-4">
-        {items.map((item, index) => (
-          <div key={index} className="flex justify-between items-center">
-            <span className="text-sm text-[#6C757D]">{item.label}</span>
-            <div className="flex items-center">
-              <span className="font-semibold text-[#0F3460]">{item.value}</span>
-              
-              {item.trend && (
-                <span className={`ml-2 ${getTrendColor(item.trend)}`}>
-                  {item.trend === 'up' ? "↑" : item.trend === 'down' ? "↓" : ""}
-                </span>
-              )}
-            </div>
+        {items && items.length > 0 && (
+          <div className="mt-4 space-y-2">
+            {items.map((item, index) => (
+              <div key={index} className="flex justify-between text-sm">
+                <span className="text-sm text-[#6C757D]">{item.label}</span>
+                <div className="flex items-center">
+                  <span className="font-semibold text-[#0F3460]">{item.value}</span>
+                  
+                  {item.trend !== undefined && (
+                    <span className={`ml-2 ${getTrendColor(item.trend)}`}>
+                      {typeof item.trend === 'string' 
+                        ? (item.trend === 'up' ? "↑" : item.trend === 'down' ? "↓" : "") 
+                        : (item.trend !== null && typeof item.trend === 'number' 
+                          ? (item.trend >= 0 ? "↑" : "↓") + " " + Math.abs(item.trend).toFixed(1) + "%" 
+                          : "")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

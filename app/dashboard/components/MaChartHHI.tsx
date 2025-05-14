@@ -35,6 +35,9 @@ export default function MaChartHHI({ historicalConcentracion }: MaChartHHIProps)
     .map(([periodo, hhi]) => ({ periodo, hhi }))
     .sort((a, b) => a.periodo.localeCompare(b.periodo));
 
+  // Verificar si hay datos para mostrar
+  const hayDatos = hhiData.length > 0;
+
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
@@ -42,21 +45,27 @@ export default function MaChartHHI({ historicalConcentracion }: MaChartHHIProps)
           Evolución Índices de Concentración (HHI)
         </h3>
         <div className="mt-4 h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={hhiData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="periodo" />
-              <YAxis />
-              <Tooltip formatter={(value) => {
-                if (typeof value === 'number') {
-                  return formatNumber(value, 2);
-                }
-                return value;
-              }} />
-              <Legend />
-              <Line type="monotone" dataKey="hhi" stroke="#82ca9d" name="Índice HHI" />
-            </LineChart>
-          </ResponsiveContainer>
+          {hayDatos ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={hhiData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="periodo" />
+                <YAxis />
+                <Tooltip formatter={(value) => {
+                  if (typeof value === 'number') {
+                    return formatNumber(value, 2);
+                  }
+                  return value;
+                }} />
+                <Legend />
+                <Line type="monotone" dataKey="hhi" stroke="#82ca9d" name="Índice HHI" />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-gray-500">No hay datos de concentración disponibles</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

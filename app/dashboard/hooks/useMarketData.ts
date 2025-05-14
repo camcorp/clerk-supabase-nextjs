@@ -187,16 +187,30 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         }
         
         // 9. Cargar evolución de corredores
-        const { data: evolucionCorredoresData, error: evolucionCorredoresError } = await supabase
-          .from('vista_evolucion_corredores')
-          .select('periodo, rut, nombre, tipo_cambio, motivo')
-          .order('periodo', { ascending: true });
+        try {
+          // Usar el cliente Supabase que ya tiene configurada la autenticación
+          const { data: evolucionCorredoresData, error: evolucionCorredoresError } = await supabase
+            .from('vista_evolucion_corredores')
+            .select('*')  // Usar select('*') que funciona correctamente según los logs
+            .order('periodo', { ascending: true });
+              
+          if (evolucionCorredoresError) {
+            console.error('Error al cargar evolución de corredores:', evolucionCorredoresError);
+            setEvolucionCorredores([]);
+          } else {
+            console.log('Datos de evolución de corredores cargados correctamente:', evolucionCorredoresData?.length || 0);
             
-        if (evolucionCorredoresError) {
-          console.error('Error al cargar evolución de corredores:', evolucionCorredoresError);
+            // Asegurarse de que todos los registros tengan el campo tipo_cambio
+            const datosCorregidos = evolucionCorredoresData?.map(item => ({
+              ...item,
+              tipo_cambio: item.tipo_cambio || 'desconocido'
+            })) || [];
+            
+            setEvolucionCorredores(datosCorregidos);
+          }
+        } catch (err) {
+          console.error('Error inesperado al cargar evolución de corredores:', err);
           setEvolucionCorredores([]);
-        } else {
-          setEvolucionCorredores(evolucionCorredoresData || []);
         }
         
         // 10. Calcular resumen

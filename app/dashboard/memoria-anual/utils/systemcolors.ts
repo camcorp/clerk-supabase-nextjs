@@ -51,6 +51,12 @@ export const colors = {
     primary: '#E67E22',
     secondary: '#F39C12',
     light: '#FAD7A0'
+  },
+  
+  // Colores específicos para tipos de seguros
+  seguros: {
+    generales: '#CC3040', // Dark Red para Seguros Generales
+    vida: '#8A6DE8'       // Soft Violet para Seguros de Vida
   }
 };
 

@@ -9,6 +9,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import NoData from '../components/NoData';
 import SearchInput from '../components/SearchInput';
 import { formatUF, formatCLP, formatNumber } from '../utils/formatters';
+// Importar componentes de recharts
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 // Importar el nuevo sistema de colores y el componente de gráfico de movimientos
 import { colors } from '../utils/systemcolors';
@@ -42,6 +44,23 @@ interface HistoricalData {
   }[];
 }
 
+// Definir interfaz para datos de evolución por grupo
+interface GrupoEvolucionData {
+  periodo: string;
+  total_uf_generales: number;
+  total_uf_vida: number;
+  total_clp_generales: number;
+  total_clp_vida: number;
+}
+
+// Interfaz para los props del componente ChartPrimaEvolutionGrupos
+interface ChartPrimaEvolutionGruposProps {
+  data: GrupoEvolucionData[];
+  title: string;
+  subtitle: string;
+  periodos: string[];
+}
+
 export default function CompaniasView() {
   const [companias, setCompanias] = useState<Compania[]>([]);
   const [filteredCompanias, setFilteredCompanias] = useState<Compania[]>([]);
@@ -56,6 +75,8 @@ export default function CompaniasView() {
   });
   // Add historicalData state with proper typing
   const [historicalData, setHistoricalData] = useState<HistoricalData>({});
+  // Agregar estado para datos de evolución por grupo
+  const [evolucionPorGrupo, setEvolucionPorGrupo] = useState<GrupoEvolucionData[]>([]);
   
   // Obtener el cliente de Supabase
   const supabase = useSupabaseClient();
@@ -74,77 +95,130 @@ export default function CompaniasView() {
         // Realizar la consulta a Supabase usando la vista correcta
         const { data, error } = await supabase
           .from('vista_companias_periodo')
-          .select('nombrecia, total_primaclp, total_primauf, periodo')
+          .select('nombrecia, total_primaclp, total_primauf, periodo, grupo')
           .eq('periodo', selectedPeriodo)
           .order('nombrecia', { ascending: true });
         
         if (error) {
+          console.error('Error en la consulta:', error);
           throw error;
         }
         
+        // Verificar que data no sea undefined antes de procesarlo
+        if (!data) {
+          console.warn('No se recibieron datos de la consulta');
+          setCompanias([]);
+          setFilteredCompanias([]);
+          return;
+        }
+        
         // Transformar los datos al formato esperado
-        const transformedData = data?.map((item, index) => ({
+        const transformedData = data.map((item, index) => ({
           id: index, // Usar índice como ID ya que no hay ID explícito
           nombrecia: item.nombrecia,
-          primauf: item.total_primauf,
-          primaclp: item.total_primaclp,
+          primauf: item.total_primauf || 0,
+          primaclp: item.total_primaclp || 0,
           periodo: item.periodo
-        })) || [];
+        }));
         
         // Actualizar el estado con los datos transformados
         setCompanias(transformedData);
         setFilteredCompanias(transformedData);
         
         // Calculate summary statistics
-        if (data) {
-          const totalPrimauf = data.reduce((sum, company) => sum + (company.total_primauf || 0), 0);
-          const companyCount = data.length;
-          const totalPrimaclp = data.reduce((sum, company) => sum + (company.total_primaclp || 0), 0);
-          
-          // Get previous period data for growth calculation
-          const periodIndex = periodos.indexOf(selectedPeriodo);
-          let growth = null;
-          
-          if (periodIndex < periodos.length - 1) {
-            const prevPeriod = periodos[periodIndex + 1];
-            const { data: prevData, error: prevError } = await supabase
-              .from('vista_companias_periodo')
-              .select('total_uf')
-              .eq('periodo', prevPeriod);
-              
-            if (!prevError && prevData) {
-              const prevTotalPrimauf = prevData.reduce((sum, company) => sum + (company.total_uf || 0), 0);
-              if (prevTotalPrimauf > 0) {
-                growth = ((totalPrimauf - prevTotalPrimauf) / prevTotalPrimauf) * 100;
-              }
+        const totalPrimauf = data.reduce((sum, company) => sum + (company.total_primauf || 0), 0);
+        const companyCount = data.length;
+        const totalPrimaclp = data.reduce((sum, company) => sum + (company.total_primaclp || 0), 0);
+        
+        // Get previous period data for growth calculation
+        const periodIndex = periodos.indexOf(selectedPeriodo);
+        let growth = null;
+        
+        if (periodIndex < periodos.length - 1) {
+          const prevPeriod = periodos[periodIndex + 1];
+          const { data: prevData, error: prevError } = await supabase
+            .from('vista_companias_periodo')
+            .select('total_primauf')  // Cambiado de total_uf a total_primauf para consistencia
+            .eq('periodo', prevPeriod);
+            
+          if (!prevError && prevData && prevData.length > 0) {
+            const prevTotalPrimauf = prevData.reduce((sum, company) => sum + (company.total_primauf || 0), 0);
+            if (prevTotalPrimauf > 0) {
+              growth = ((totalPrimauf - prevTotalPrimauf) / prevTotalPrimauf) * 100;
             }
           }
-          
-          setSummary({
-            totalPrimauf,
-            totalPrimaclp,
-            companyCount,
-            growth
-          });
         }
+        
+        setSummary({
+          totalPrimauf,
+          totalPrimaclp,
+          companyCount,
+          growth
+        });
         
         // Load historical data
         const { data: historicalDataResult, error: historicalError } = await supabase
           .from('vista_companias_periodo')
           .select('*')
           .order('periodo', { ascending: false });
-
-        if (historicalError) throw historicalError;
+    
+        if (historicalError) {
+          console.error('Error al cargar datos históricos:', historicalError);
+        } else if (historicalDataResult) {
+          // Process historical data to get movements
+          const movimientos = historicalDataResult.map(item => ({
+            periodo: item.periodo,
+            entradas: item.ingresos || 0,  // Mapear ingresos a entradas
+            salidas: item.egresos || 0,    // Mapear egresos a salidas
+            neto: (item.ingresos || 0) - (item.egresos || 0)
+          }));
+          
+          setHistoricalData({ movimientos });
+        }
         
-        // Process historical data to get movements
-        const movimientos = historicalDataResult?.map(item => ({
-          periodo: item.periodo,
-          entradas: item.ingresos || 0,  // Mapear ingresos a entradas
-          salidas: item.egresos || 0,    // Mapear egresos a salidas
-          neto: (item.ingresos || 0) - (item.egresos || 0)
-        })) || [];
-        
-        setHistoricalData({ movimientos });
+        // Cargar datos de evolución por grupo
+        try {
+          const { data: evolucionData, error: evolucionError } = await supabase
+            .from('vista_companias_periodo')
+            .select('periodo, grupo, total_primauf, total_primaclp')
+            .order('periodo', { ascending: true });
+            
+          if (evolucionError) {
+            console.error('Error al cargar evolución por grupo:', evolucionError);
+          } else if (evolucionData && evolucionData.length > 0) {
+            // Procesar datos para el gráfico de evolución por grupo
+            // Agrupar datos por periodo y grupo
+            const datosPorPeriodo: Record<string, GrupoEvolucionData> = {};
+            
+            evolucionData.forEach(item => {
+              const periodo = item.periodo;
+              if (!datosPorPeriodo[periodo]) {
+                datosPorPeriodo[periodo] = {
+                  periodo,
+                  total_uf_generales: 0,
+                  total_uf_vida: 0,
+                  total_clp_generales: 0,
+                  total_clp_vida: 0
+                };
+              }
+              
+              // Sumar valores según el grupo (1 = Generales, 2 = Vida)
+              if (item.grupo === '1' || item.grupo === 'GENERALES') {
+                datosPorPeriodo[periodo].total_uf_generales += item.total_primauf || 0;
+                datosPorPeriodo[periodo].total_clp_generales += item.total_primaclp || 0;
+              } else if (item.grupo === '2' || item.grupo === 'VIDA') {
+                datosPorPeriodo[periodo].total_uf_vida += item.total_primauf || 0;
+                datosPorPeriodo[periodo].total_clp_vida += item.total_primaclp || 0;
+              }
+            });
+            
+            // Convertir a array para el gráfico
+            const evolucionArray = Object.values(datosPorPeriodo);
+            setEvolucionPorGrupo(evolucionArray);
+          }
+        } catch (evolucionErr) {
+          console.error('Error inesperado al cargar evolución por grupo:', evolucionErr);
+        }
         
       } catch (err) {
         console.error('Error al cargar compañías:', err);
@@ -255,6 +329,117 @@ export default function CompaniasView() {
           showTotals={true}
           emptyMessage="No se encontraron compañías para el período seleccionado."
         />
+      </div>
+      
+      {/* Gráfico de evolución de primas por grupo */}
+      {evolucionPorGrupo && evolucionPorGrupo.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Evolución de Primas por Grupo</h2>
+          <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] overflow-hidden">
+            <ChartPrimaEvolutionGrupos
+              data={evolucionPorGrupo}
+              title="Evolución de Primas por Grupo"
+              subtitle="Seguros Generales vs Seguros de Vida"
+              periodos={periodos}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Componente para mostrar la evolución de primas por grupo
+function ChartPrimaEvolutionGrupos({ data, title, subtitle, periodos }: ChartPrimaEvolutionGruposProps) {
+  const [moneda, setMoneda] = useState<'uf' | 'clp'>('uf');
+  
+  // Formatear valores según la moneda seleccionada
+  const formatValue = (value: number) => {
+    if (moneda === 'uf') {
+      return formatUF(value, 2, false);
+    } else {
+      return formatCLP(value, false);
+    }
+  };
+  
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">{title}</h3>
+          {subtitle && <p className="text-sm text-[#6C757D]">{subtitle}</p>}
+        </div>
+        
+        {/* Selector de moneda */}
+        <div className="flex space-x-2 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setMoneda('uf')}
+            className={`px-3 py-1 rounded-md text-sm ${
+              moneda === 'uf' 
+                ? 'bg-white shadow-sm text-[#1A7F8E]' 
+                : 'text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            UF
+          </button>
+          <button
+            onClick={() => setMoneda('clp')}
+            className={`px-3 py-1 rounded-md text-sm ${
+              moneda === 'clp' 
+                ? 'bg-white shadow-sm text-[#1A7F8E]' 
+                : 'text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            CLP
+          </button>
+        </div>
+      </div>
+      
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+            <XAxis 
+              dataKey="periodo" 
+              tick={{ fontSize: 12 }}
+              tickLine={{ stroke: '#E9ECEF' }}
+            />
+            <YAxis 
+              tickFormatter={(value) => formatValue(value)}
+              tick={{ fontSize: 12 }}
+              tickLine={{ stroke: '#E9ECEF' }}
+            />
+            <Tooltip 
+              formatter={(value: number) => [
+                formatValue(value), 
+                moneda.toUpperCase()
+              ]}
+              labelFormatter={(label) => `Período: ${label}`}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey={moneda === 'uf' ? "total_uf_generales" : "total_clp_generales"} 
+              name="Seguros Generales" 
+              stroke={colors.seguros.generales} 
+              strokeWidth={2}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6, stroke: colors.seguros.generales, strokeWidth: 2 }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey={moneda === 'uf' ? "total_uf_vida" : "total_clp_vida"} 
+              name="Seguros de Vida" 
+              stroke={colors.seguros.vida} 
+              strokeWidth={2}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6, stroke: colors.seguros.vida, strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

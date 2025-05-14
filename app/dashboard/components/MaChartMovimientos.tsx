@@ -23,9 +23,27 @@ export default function MaChartMovimientos({ datos, periodos, tipo }: MaChartMov
     // Filtrar movimientos para este período
     const movimientosPeriodo = datos.filter(item => item.periodo === periodo);
     
-    // Contar entradas y salidas
-    const entradas = movimientosPeriodo.filter(item => item.tipo_cambio === 'entrada').length;
-    const salidas = movimientosPeriodo.filter(item => item.tipo_cambio === 'salida').length;
+    console.log(`Movimientos para período ${periodo}:`, movimientosPeriodo);
+    
+    // Verificar la estructura de los datos
+    if (movimientosPeriodo.length > 0) {
+      console.log('Ejemplo de estructura de datos:', JSON.stringify(movimientosPeriodo[0]));
+    }
+    
+    // Contar entradas y salidas con verificación de tipo_cambio
+    const entradas = movimientosPeriodo.filter(item => 
+      item.tipo_cambio === 'entrada' || 
+      item.tipo_cambio === 'ENTRADA' || 
+      item.tipo_cambio === 1
+    ).length;
+    
+    const salidas = movimientosPeriodo.filter(item => 
+      item.tipo_cambio === 'salida' || 
+      item.tipo_cambio === 'SALIDA' || 
+      item.tipo_cambio === 0
+    ).length;
+    
+    console.log(`Período ${periodo}: entradas=${entradas}, salidas=${salidas}`);
     
     return {
       periodo,

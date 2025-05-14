@@ -154,6 +154,14 @@ export default function Dashboard() {
                 </div>
               )}
 
+              {/* Verificación de datos (sin console.log en JSX) */}
+              {(() => {
+                // Podemos ejecutar el console.log aquí sin afectar el renderizado
+                console.log('Datos de evolución de corredores:', evolucionCorredores);
+                console.log('Longitud de datos:', evolucionCorredores?.length || 0);
+                return null; // No renderiza nada
+              })()}
+              
               {evolucionCorredores && evolucionCorredores.length > 0 ? (
                 <MaChartMovimientos
                   datos={evolucionCorredores}
@@ -181,6 +189,13 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-center">No hay datos de compañías disponibles</p>
               </div>
             )}
+            {/* Depuración de datos de evolución de corredores */}
+            <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Datos de evolución de corredores (Debug)</h3>
+              <pre className="text-xs overflow-auto max-h-40">
+                {JSON.stringify(evolucionCorredores, null, 2)}
+              </pre>
+            </div>
           </>
         )}
       </div>

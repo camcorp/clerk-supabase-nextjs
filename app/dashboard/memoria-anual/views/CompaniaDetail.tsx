@@ -130,7 +130,7 @@ export default function CompaniaDetail() {
           <div className="flex items-center space-x-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
               style={{ 
-                backgroundColor: colors.companias.background,
+                backgroundColor: colors.companias.light,
                 color: colors.companias.primary 
               }}
             >

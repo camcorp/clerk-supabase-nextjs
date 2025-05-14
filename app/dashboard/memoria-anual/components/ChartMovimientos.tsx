@@ -86,7 +86,7 @@ export default function ChartMovimientos({
               />
               <Legend />
               <Bar dataKey="entradas" fill={colors.status.success} name="Entradas" />
-              <Bar dataKey="salidas" fill={colors.status.danger} name="Salidas" />
+              <Bar dataKey="salidas" fill={colors.status.error} name="Salidas" />
               {showNeto && <Bar dataKey="neto" fill={primaryColor} name="Neto" />}
             </BarChart>
           </ResponsiveContainer>

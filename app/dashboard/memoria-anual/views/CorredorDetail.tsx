@@ -128,7 +128,7 @@ export default function CorredorDetail() {
           <div className="flex items-center space-x-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" 
               style={{ 
-                backgroundColor: colors.corredores.background,
+                backgroundColor: colors.corredores.light,
                 color: colors.corredores.primary 
               }}
             >

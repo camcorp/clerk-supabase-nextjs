@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useSupabaseClient } from '@/lib/supabase-client';
+import { useQuery } from '@tanstack/react-query';
 
 interface PeriodContextType {
   selectedPeriodo: string;
@@ -14,52 +15,49 @@ const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
 
 export function PeriodProvider({ children }: { children: ReactNode }) {
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
-  const [periodos, setPeriodos] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient();
 
-  useEffect(() => {
-    async function loadPeriodos() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('periodos')
-          .select('periodo')
-          .order('periodo', { ascending: false });
-        
-        if (error) throw error;
-        
-        if (!data || data.length === 0) {
-          // Handle empty data case
-          setPeriodos([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Obtener valores únicos
-        const uniquePeriods = Array.from(
-          new Map(data.map(item => [item.periodo, item.periodo])).values()
-        );
-        setPeriodos(uniquePeriods);
-        
-        // Establecer el período más reciente como predeterminado
-        if (uniquePeriods.length > 0 && !selectedPeriodo) {
-          setSelectedPeriodo(uniquePeriods[0]);
-        }
-      } catch (err) {
-        console.error('Error al cargar periodos:', err);
-        // Set empty array to avoid undefined errors
-        setPeriodos([]);
-      } finally {
-        setLoading(false);
+  // Usar React Query para manejar la caché automáticamente
+  const { data: periodos = [], isLoading } = useQuery({
+    queryKey: ['periodos'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('periodos')
+        .select('periodo')
+        .order('periodo', { ascending: false });
+      
+      if (error) {
+        console.error('Error al cargar periodos:', error);
+        return [] as string[];
       }
+      
+      if (!data || data.length === 0) {
+        return [] as string[];
+      }
+      
+      // Obtener valores únicos
+      return Array.from(
+        new Map(data.map(item => [item.periodo, item.periodo])).values()
+      ) as string[];
+    },
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 días (reemplaza a cacheTime)
+  });
+
+  // Usar useEffect para establecer el período predeterminado
+  useEffect(() => {
+    if (periodos.length > 0 && !selectedPeriodo) {
+      setSelectedPeriodo(periodos[0]);
     }
-    
-    loadPeriodos();
-  }, [supabase, selectedPeriodo]); // Incluir selectedPeriodo en las dependencias
+  }, [periodos, selectedPeriodo]);
 
   return (
-    <PeriodContext.Provider value={{ selectedPeriodo, setSelectedPeriodo, periodos, loading }}>
+    <PeriodContext.Provider value={{ 
+      selectedPeriodo, 
+      setSelectedPeriodo, 
+      periodos: periodos as string[], 
+      loading: isLoading 
+    }}>
       {children}
     </PeriodContext.Provider>
   );

@@ -40,15 +40,7 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
     ...config
   };
   
-  // Función para generar una clave de caché basada en la tabla y los parámetros
-  const generateCacheKey = (table: string, params: Record<string, any>): string => {
-    return JSON.stringify(params);
-  };
-  
-  // Función para verificar si un elemento en caché es válido
-  const isCacheValid = (item: CacheItem<any>): boolean => {
-    return Date.now() - item.timestamp < cacheConfig.ttl;
-  };
+  // Remove the generateCacheKey function from here
   
   // Función para obtener datos con caché
   const fetchWithCache = useCallback(async <T>(
@@ -63,8 +55,18 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
     try {
       setLoading(true);
       
+      // Move the generateCacheKey function inside the useCallback
+      const generateCacheKey = (table: string, params: Record<string, any>): string => {
+        return JSON.stringify(params);
+      };
+      
       // Generar clave de caché
       const cacheKey = generateCacheKey(table, params);
+      
+      // isCacheValid function is already inside the useCallback
+      const isCacheValid = (item: CacheItem<any>): boolean => {
+        return Date.now() - item.timestamp < cacheConfig.ttl;
+      };
       
       // Verificar si los datos están en caché y son válidos
       if (cache[table] && cache[table][cacheKey] && isCacheValid(cache[table][cacheKey])) {
@@ -95,6 +97,12 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
         : await query;
       
       if (error) {
+        // Check if it's a "no rows returned" error for single query
+        if (params.single && error.code === 'PGRST116') {
+          // For "no rows returned" in single query, return empty object but don't throw
+          console.warn(`No rows found in ${table} with params:`, params);
+          return (params.single ? {} : []) as T;
+        }
         throw error;
       }
       
@@ -130,12 +138,15 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
       return data as T;
     } catch (err: any) {
       console.error(`Error al obtener datos de ${table}:`, err);
-      setError(err.message);
-      throw err;
+      setError(err.message || JSON.stringify(err));
+      
+      // Return empty array or object but log more details
+      console.warn(`Returning empty result for ${table} due to error:`, err);
+      return (params.single ? {} : []) as T;
     } finally {
       setLoading(false);
     }
-  }, [cache, cacheConfig.maxSize, cacheConfig.ttl, supabase]);
+  }, [cache, cacheConfig.ttl, cacheConfig.maxSize, supabase]);
   
   // Función para invalidar el caché de una tabla específica
   const invalidateCache = useCallback((table?: string) => {
@@ -168,9 +179,17 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
   
   // Función para obtener datos de concentración del mercado por período
   const getConcentracionMercado = useCallback(async (periodo: string) => {
-    return fetchWithCache('vista_concentracion_mercado', {
-      eq: { periodo }
-    });
+    try {
+      const result = await fetchWithCache('vista_concentracion_mercado', {
+        eq: { periodo }
+      });
+      
+      // Ensure we always return an array, even if the result is empty
+      return Array.isArray(result) ? result : [];
+    } catch (err) {
+      console.error(`Error in getConcentracionMercado for period ${periodo}:`, err);
+      return []; // Always return an array on error
+    }
   }, [fetchWithCache]);
   
   // Función para obtener datos históricos de compañías
@@ -222,6 +241,7 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
     getHistoricalConcentracion,
     getRamosByPeriodo,
     getCorredoresByPeriodo,
-    getEvolucionCorredores
+    getEvolucionCorredores,
+    supabase // Expose the Supabase client
   };
 }

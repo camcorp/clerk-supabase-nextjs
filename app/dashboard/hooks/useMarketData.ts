@@ -62,7 +62,8 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
     getHistoricalConcentracion,
     getCorredoresByPeriodo,
     getEvolucionCorredores,
-    fetchWithCache
+    fetchWithCache,
+    supabase // Add this to get access to the Supabase client
   } = useSupabaseCache();
   
   useEffect(() => {
@@ -81,31 +82,59 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         setEvolucionMercado(evolucionData);
         
         // 3. Cargar concentración del mercado usando caché
-        const concentracionData = await getConcentracionMercado(selectedPeriodo) as any[] || [];
-        
-        // Transformar los datos para que tengan la estructura esperada por los componentes
-        const transformedConcentracionData = Array.isArray(concentracionData) 
-          ? concentracionData.map((item: any) => ({
-              ...item,
-              grupo: item.grupo,
-              total_uf: item.total_uf || 0,
-              participacion_porcentaje: item.participacion_porcentaje || 0,
-              hhi: item.hhi || 0,
-              tipo: item.grupo?.includes('Vida') ? 'VIDA' : 'GENERALES'
-            }))
-          : [];
-        
-        setConcentracionMercado(transformedConcentracionData);
-        
-        // 4. Cargar actores salientes
         try {
-          const actoresSalientesData = await fetchWithCache('actores_salientes', {
-            eq: { fecha_salida: selectedPeriodo }
-          }) as any[] || [];
-          setActoresSalientes(actoresSalientesData);
+          const concentracionData = await getConcentracionMercado(selectedPeriodo) as any[] || [];
+          
+          // Transformar los datos para que tengan la estructura esperada por los componentes
+          const transformedConcentracionData = Array.isArray(concentracionData) 
+            ? concentracionData.map((item: any) => ({
+                ...item,
+                grupo: item.grupo,
+                total_uf: item.total_uf || 0,
+                participacion_porcentaje: item.participacion_porcentaje || 0,
+                hhi: item.hhi || 0,
+                tipo: item.grupo?.includes('Vida') ? 'VIDA' : 'GENERALES'
+              }))
+            : [];
+          
+          setConcentracionMercado(transformedConcentracionData);
+        } catch (err) {
+          console.error('Error al obtener datos de vista_concentracion_mercado:', err);
+          // Proporcionar un array vacío en lugar de mostrar el error
+          setConcentracionMercado([]);
+          // No establecer el error global para que la interfaz siga funcionando
+        }
+        
+        // 4. Cargar actores salientes - Corregido para manejar errores adecuadamente
+        try {
+          // Verificar si la tabla existe primero o usar una consulta alternativa
+          const { data: tablesData } = await supabase
+            .from('information_schema.tables')
+            .select('table_name')
+            .eq('table_name', 'actores_salientes');
+            
+          if (tablesData && tablesData.length > 0) {
+            const actoresSalientesData = await fetchWithCache('actores_salientes', {
+              eq: { fecha_salida: selectedPeriodo }
+            }) as any[] || [];
+            setActoresSalientes(actoresSalientesData);
+          } else {
+            // Tabla no existe, usar datos de evolución como alternativa
+            const actoresSalientes = evolucionData
+              .filter((item: any) => item.tipo_cambio === 'salida' && item.periodo === selectedPeriodo);
+            setActoresSalientes(actoresSalientes);
+          }
         } catch (err) {
           console.error('Error al cargar actores salientes:', err);
-          setActoresSalientes([]);
+          // Usar un enfoque alternativo en caso de error
+          try {
+            const actoresSalientes = evolucionData
+              .filter((item: any) => item.tipo_cambio === 'salida' && item.periodo === selectedPeriodo);
+            setActoresSalientes(actoresSalientes);
+          } catch (innerErr) {
+            console.error('Error al procesar actores salientes alternativos:', innerErr);
+            setActoresSalientes([]);
+          }
         }
         
         // 5. Cargar datos históricos de compañías
@@ -113,8 +142,13 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
         setHistoricalCompanias(historicalCompaniasData);
         
         // 6. Cargar datos históricos de concentración
-        const historicalConcentracionData = await getHistoricalConcentracion() as any[] || [];
-        setHistoricalConcentracion(historicalConcentracionData);
+        try {
+          const historicalConcentracionData = await getHistoricalConcentracion() as any[] || [];
+          setHistoricalConcentracion(historicalConcentracionData);
+        } catch (err) {
+          console.error('Error al cargar datos históricos de concentración:', err);
+          setHistoricalConcentracion([]);
+        }
         
         // 7. Cargar movimientos de compañías (reutilizamos los datos de evolución)
         setMovimientosCompanias(evolucionData);
@@ -145,8 +179,10 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
           
           setEvolucionCorredores(datosCorregidos);
         } catch (err) {
-          console.error('Error inesperado al cargar evolución de corredores:', err);
+          console.error('Error al obtener datos de vista_evolucion_corredores:', err);
+          // Proporcionar un array vacío en lugar de mostrar el error
           setEvolucionCorredores([]);
+          // No establecer el error global para que la interfaz siga funcionando
         }
         
         // 10. Calcular resumen
@@ -235,7 +271,8 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
     getHistoricalConcentracion,
     getCorredoresByPeriodo,
     getEvolucionCorredores,
-    fetchWithCache
+    fetchWithCache,
+    supabase // Add supabase to the dependency array
   ]);
   
   return {

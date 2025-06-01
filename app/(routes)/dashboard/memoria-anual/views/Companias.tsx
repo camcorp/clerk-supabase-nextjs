@@ -1,7 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSupabaseClient } from '@/lib/supabase/client';
+// Replace this import:
+// import { useSupabaseClient } from '@/lib/supabase/client';
+
+// With this:
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
+// Then in the component, replace:
+// const supabase = useSupabaseClient();
+
+// With:
+const supabase = createClientComponentClient();
 import { usePeriod } from '../context/PeriodContext';
 import DataTable from '@/app/components/ui/charts/tables/DataTable';
 import ChartMovimientos from '@/app/components/ui/charts/common/ChartMovimientos';
@@ -10,11 +20,9 @@ import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
 import NoData from '@/app/components/ui/charts/NoData';
 import SearchInput from '@/app/components/ui/charts/SearchInput';
 import { formatUF, formatCLP, formatNumber, formatChartTooltip } from '@/lib/utils/formatters';
-// Importar componentes de recharts
+import Link from 'next/link';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { DollarSign, Building2, TrendingUp } from 'lucide-react'; // <--- ICONOS AÑADIDOS
-
-// Importar el nuevo sistema de colores y el componente de gráfico de movimientos
+import { DollarSign, Building2, TrendingUp, Eye } from 'lucide-react';
 import { colors } from '@/lib/utils/colors';
 
 
@@ -270,43 +278,38 @@ export default function CompaniasView() {
   }, [searchTerm, companias]);
   
   // Definir las columnas para la tabla
-  // Add import at the top
-  import Link from 'next/link';
-  import { Eye } from 'lucide-react';
-  
-  // Update the columns definition (around line 260):
   const columns = [
-  {
-  header: 'Compañía',
-  accessor: 'nombrecia' as keyof Compania,
-  isSortable: true,
-  cell: (value: string, row: Compania) => (
-  <div className="flex items-center justify-between">
-  <span>{value}</span>
-  <Link 
-  href={`/dashboard/memoria-anual/compania/${encodeURIComponent(value)}`}
-  className="ml-2 p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
-  title="Ver detalle"
-  >
-  <Eye className="h-4 w-4" />
-  </Link>
-  </div>
-  )
-  },
-  {
-  header: 'Prima UF',
-  accessor: 'primauf' as keyof Compania,
-  isSortable: true,
-  isNumeric: true,
-  cell: (value: number) => formatUF(value, 2, true)
-  },
-  {
-  header: 'Prima CLP (Miles)',
-  accessor: 'primaclp' as keyof Compania,
-  isSortable: true,
-  isNumeric: true,
-  cell: (value: number) => formatCLP(value)
-  }
+    {
+      header: 'Compañía',
+      accessor: 'nombrecia' as keyof Compania,
+      isSortable: true,
+      cell: (value: string, row: Compania) => (
+        <div className="flex items-center justify-between">
+          <span>{value}</span>
+          <Link 
+            href={`/dashboard/memoria-anual/compania/${encodeURIComponent(value)}`}
+            className="ml-2 p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
+            title="Ver detalle"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
+        </div>
+      )
+    },
+    {
+      header: 'Prima UF',
+      accessor: 'primauf' as keyof Compania,
+      isSortable: true,
+      isNumeric: true,
+      cell: (value: number) => formatUF(value, 2, true)
+    },
+    {
+      header: 'Prima CLP (Miles)',
+      accessor: 'primaclp' as keyof Compania,
+      isSortable: true,
+      isNumeric: true,
+      cell: (value: number) => formatCLP(value)
+    }
   ];
   
   // Formatear números para mostrar en las tarjetas de resumen

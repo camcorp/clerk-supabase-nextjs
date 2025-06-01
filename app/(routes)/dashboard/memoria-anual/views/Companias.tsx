@@ -1,17 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// Replace this import:
-// import { useSupabaseClient } from '@/lib/supabase/client';
-
-// With this:
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
-// Then in the component, replace:
-// const supabase = useSupabaseClient();
-
-// With:
-const supabase = createClientComponentClient();
 import { usePeriod } from '../context/PeriodContext';
 import DataTable from '@/app/components/ui/charts/tables/DataTable';
 import ChartMovimientos from '@/app/components/ui/charts/common/ChartMovimientos';
@@ -92,11 +82,9 @@ export default function CompaniasView() {
   const [evolucionPorGrupo, setEvolucionPorGrupo] = useState<GrupoEvolucionData[]>([]);
   
   // Obtener el cliente de Supabase
-  const supabase = useSupabaseClient();
+  const supabase = createClientComponentClient();
   
   // Usar el contexto de período global
-  // Asegúrate de que periodos esté definido al nivel del componente
-  // Si no está ya definido, añade esto cerca de la parte superior de tu componente:
   const { selectedPeriodo, periodos } = usePeriod();
   
   // Load companies for the selected period

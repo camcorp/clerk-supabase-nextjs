@@ -339,3 +339,34 @@ export default function Dashboard() {
     </>
   );
 }
+
+
+## Additional Debugging Steps
+
+1. **Check the period format**: The database shows periods like `201212`, make sure your `selectedPeriodo` matches this format exactly.
+
+2. **Verify the data flow**: Add these console logs to see what's happening:
+```typescript
+// Around line 206-221, add debugging
+console.log('concentracionRamos en page.tsx:', {
+  tipo: typeof concentracionRamos,
+  esArray: Array.isArray(concentracionRamos),
+  longitud: Array.isArray(concentracionRamos) ? concentracionRamos.length : 'N/A',
+  datos: concentracionRamos
+});
+
+{/* Estructura de concentración de ramos */}
+{concentracionRamos && Array.isArray(concentracionRamos) && concentracionRamos.length > 0 ? (
+  <div>
+    <MaEstructuraRamos
+      concentracionRamos={concentracionRamos}
+      selectedPeriodo={selectedPeriodo}
+      periodos={periodos}
+    />
+  </div>
+) : (
+  <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
+    <p className="text-gray-500 text-center">No hay datos de concentración de ramos disponibles</p>
+    <p className="text-xs text-gray-400 mt-2">Debug: {JSON.stringify({concentracionRamos, selectedPeriodo})}</p>
+  </div>
+)}

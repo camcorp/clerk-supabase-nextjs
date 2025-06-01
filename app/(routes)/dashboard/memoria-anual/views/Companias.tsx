@@ -9,62 +9,12 @@ import SummaryCard from '@/app/components/ui/charts/SummaryCard';
 import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
 import NoData from '@/app/components/ui/charts/NoData';
 import SearchInput from '@/app/components/ui/charts/SearchInput';
-import { formatUF, formatCLP, formatNumber, formatChartTooltip } from '@/lib/utils/formatters';
+import { formatUF, formatCLP, formatChartTooltip } from '@/app/lib/utils/formatters';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { DollarSign, Building2, TrendingUp, Eye } from 'lucide-react';
-import { colors } from '@/lib/utils/colors';
+import { Eye } from 'lucide-react';
 
-
-import MaChartHHI from '@/app/components/ui/charts/MaChartHHI';
-
-// Definir la interfaz para los datos de compañías
-interface Compania {
-  id: number;
-  nombrecia: string;
-  primauf: number;
-  primaclp?: number;
-  periodo: string;
-  // Nota: primauf se mantiene para compatibilidad, pero internamente usa total_primauf
-}
-
-// Definir la interfaz para las estadísticas de resumen
-interface Summary {
-  totalPrimauf: number;
-  totalPrimaclp: number;
-  companyCount: number;
-  growth: number | null;
-}
-
-// Define interface for historical data
-interface HistoricalData {
-  movimientos?: {
-    periodo: string;
-    entradas: number;  // Cambiado de ingresos a entradas
-    salidas: number;   // Cambiado de egresos a salidas
-    neto: number;
-  }[];
-  concentracion?: any[];
-}
-
-// Definir interfaz para datos de evolución por grupo
-interface GrupoEvolucionData {
-  periodo: string;
-  total_uf_generales: number;
-  total_uf_vida: number;
-  total_clp_generales: number;
-  total_clp_vida: number;
-}
-
-// Interfaz para los props del componente ChartPrimaEvolutionGrupos
-interface ChartPrimaEvolutionGruposProps {
-  data: GrupoEvolucionData[];
-  title: string;
-  subtitle: string;
-  periodos: string[];
-}
-
-export default function CompaniasView() {
+export default function Companias() {
   const [companias, setCompanias] = useState<Compania[]>([]);
   const [filteredCompanias, setFilteredCompanias] = useState<Compania[]>([]);
   const [loading, setLoading] = useState(true);

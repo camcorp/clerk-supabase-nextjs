@@ -76,10 +76,17 @@ export function useRamos(selectedPeriodo: string, periodos: string[]) {
         
         // 3. Cargar datos de concentración de ramos para el período seleccionado
         try {
+          console.log('Llamando a getConcentracionRamos con periodo:', selectedPeriodo);
           const concentracionData = await getConcentracionRamos(selectedPeriodo);
-          console.log('Datos de concentración obtenidos en useRamos:', concentracionData);
+          console.log('Datos de concentración obtenidos en useRamos:', {
+            tipo: typeof concentracionData,
+            esArray: Array.isArray(concentracionData),
+            longitud: Array.isArray(concentracionData) ? concentracionData.length : 'N/A',
+            datos: concentracionData
+          });
+          
           // Asegurarse de que concentracionData es un array antes de asignarlo
-          setConcentracionRamos(concentracionData || []);
+          setConcentracionRamos(Array.isArray(concentracionData) ? concentracionData : []);
         } catch (err) {
           console.error('Error al obtener datos de concentración de ramos:', err);
           setConcentracionRamos([]);

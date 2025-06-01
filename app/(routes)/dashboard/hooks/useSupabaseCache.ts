@@ -292,40 +292,49 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
     try {
       console.log('Iniciando consulta de concentración de ramos para periodo:', periodo);
       
-      // Normalizar el formato del período (eliminar guiones, espacios, etc. si existen)
-      const periodoNormalizado = periodo.replace(/[^0-9]/g, '');
-      console.log('Período normalizado para consulta:', periodoNormalizado);
-      
-      const result = await fetchWithCache('vista_concentracion_ramos', {
-        eq: { periodo: periodoNormalizado } // CORREGIDO: usar 'periodo' como nombre del campo
+      // First, try to get all data to debug
+      const allData = await fetchWithCache('vista_concentracion_ramos', {
+        order: { periodo: { ascending: false } }
       });
       
-      console.log('Resultado de concentración de ramos:', result);
+      console.log('Todos los datos de vista_concentracion_ramos:', allData);
+      console.log('Periodos disponibles:', Array.isArray(allData) ? [...new Set(allData.map(item => item.periodo))] : 'No es array');
       
-      // Si no hay resultados, intentar con una consulta sin filtro de período
-      if (Array.isArray(result) && result.length === 0) {
-        console.log('No se encontraron datos para el período específico, obteniendo datos más recientes...');
-        const allResults = await fetchWithCache('vista_concentracion_ramos', {
-          order: { periodo: { ascending: false } }
-        });
+      // Now filter by the specific period
+      const result = await fetchWithCache('vista_concentracion_ramos', {
+        eq: { periodo: periodo }
+      });
+      
+      console.log('Resultado filtrado para periodo', periodo, ':', result);
+      
+      // If no data for the specific period, try to get the most recent period
+      if (!result || (Array.isArray(result) && result.length === 0)) {
+        console.log('No se encontraron datos para el periodo específico, buscando el más reciente');
         
-        // Si necesitamos limitar los resultados, podemos hacerlo después de obtenerlos
-        const limitedResults = Array.isArray(allResults) ? allResults.slice(0, 10) : [];
-        // Agrupar por período y tomar el más reciente
-        if (Array.isArray(allResults) && allResults.length > 0) {
-          const periodoMasReciente = allResults[0].periodo;
-          const resultadosFiltrados = allResults.filter(item => item.periodo === periodoMasReciente);
-          console.log('Usando datos del período más reciente:', periodoMasReciente);
-          return resultadosFiltrados;
+        if (Array.isArray(allData) && allData.length > 0) {
+          // Get the most recent period
+          const periodos = [...new Set(allData.map(item => item.periodo))].sort().reverse();
+          const mostRecentPeriod = periodos[0];
+          
+          console.log('Periodo más reciente encontrado:', mostRecentPeriod);
+          
+          const recentResult = await fetchWithCache('vista_concentracion_ramos', {
+            eq: { periodo: mostRecentPeriod }
+          });
+          
+          console.log('Datos del periodo más reciente:', recentResult);
+          return Array.isArray(recentResult) ? recentResult : [];
         }
       }
       
-      // Ensure we always return an array, even if the result is empty
       return Array.isArray(result) ? result : [];
     } catch (err: any) {
-      // Manejo de errores existente
-      console.error('Error en getConcentracionRamos:', err);
-      return []; // Añadir este return para asegurar que siempre devuelve un array
+      console.error('Error detallado al obtener datos de vista_concentracion_ramos:', {
+        error: err,
+        message: err.message,
+        periodo: periodo
+      });
+      return [];
     }
   }, [fetchWithCache]);
   // Función para obtener datos de grupos por período

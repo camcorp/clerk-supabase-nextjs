@@ -1,10 +1,10 @@
 import React from 'react';
-import { Hero } from '../components/Hero';
-import { Benefits } from '../components/Benefits';
-import { Stats } from '../components/Stats';
-import { PricingTable } from '../components/PricingTable';
-import { RegistrationCTA } from '../components/RegistrationCTA';
-import { Footer } from '../components/Footer';
+import { Hero } from '@/app/components/ui/Hero';
+import { Benefits } from '@/app/components/ui/Benefits';
+import { Stats } from '@/app/components/ui/Stats';
+import { PricingTable } from '@/app/components/ui/PricingTable';
+import { RegistrationCTA } from '@/app/components/ui/RegistrationCTA';
+import { Footer } from '@/app/components/ui/Footer';
 export function App() {
   return <div className="font-['SF Pro Display','Inter',system-ui,sans-serif] antialiased bg-gradient-to-br from-slate-50 to-white text-slate-900">
       <Hero />

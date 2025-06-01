@@ -1,12 +1,12 @@
 'use client';
 
 import { SignUpButton, SignedIn, SignedOut } from '@clerk/nextjs';
-import { Stats } from '../components/Stats';
-import { Benefits } from '../components/Benefits';
-import { Hero } from '../components/Hero';
-import { PricingTable } from '../components/PricingTable';
-import { RegistrationCTA } from '../components/RegistrationCTA';
-import { Footer } from '../components/Footer';
+import { Stats } from '@/app/components/ui/Stats';
+import { Benefits } from '@/app/components/ui/Benefits';
+import { Hero } from '@/app/components/ui/Hero';
+import { PricingTable } from '@/app/components/ui/PricingTable';
+import { RegistrationCTA } from '@/app/components/ui/RegistrationCTA';
+import { Footer } from '@/app/components/ui//Footer';
 import Link from 'next/link';
 
 export default function LandingPage() {

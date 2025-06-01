@@ -1,3 +1,6 @@
+// Importar otras dependencias
+import '@/app/lib/utils/chartConfig';
+
 import {
   ClerkProvider,
   SignInButton,
@@ -8,13 +11,26 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import Link from "next/link";
-import UserButtonWrapper from './components/UserButtonWrapper';
+import UserButtonWrapper from './components/ui/UserButtonWrapper';
+import { Metadata } from 'next';
 
 // Verify environment variables are available during build
 const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 if (!clerkPubKey) {
   console.error("Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
 }
+
+export const metadata: Metadata = {
+  icons: {
+    icon: '/icons/favicon-32x32.png',
+    shortcut: '/icons/favicon-16x16.png',
+    apple: '/icons/apple-touch-icon.png',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/icons/apple-touch-icon.png',
+    },
+  },
+};
 
 export default function RootLayout({
   children,

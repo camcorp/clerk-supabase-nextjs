@@ -6,24 +6,27 @@ import { usePeriod } from './memoria-anual/context/PeriodContext';
 import { useMarketData } from './hooks/useMarketData';
 
 // Importar componentes
-import MaCardSummary from '@/app/components/ui/charts/cards/MaCardSummary';
-import MaChartEvol from '@/app/components/ui/charts/MaChartEvol';
-import MaTableCompanias from '@/app/components/ui/charts/MaTableCompanias';
-import MaLoading from '@/app/components/ui/charts/MaLoading';
-import MaChartPieGrupo from '@/app/components/ui/charts/MaChartPieGrupo';
-import MaEstructuraMercado from '@/app/components/ui/charts/MaEstructuraMercado';
-import MaChartHHI from '@/app/components/ui/charts/MaChartHHI';
-import MaChartCorredoresMovimientos from '@/app/components/ui/charts/MaChartCorredoresMovimientos';
-import ChartMovimientos from '@/app/components/ui/charts/common/ChartMovimientos'; // <<<--- AÑADIR ESTA LÍNEA
+import MaCardSummary from '@/components/ui/charts/cards/MaCardSummary';
+import MaChartEvol from '@/components/ui/charts/MaChartEvol'; // ✅ Ruta corregida
+import MaTableCompanias from '@/components/ui/charts/MaTableCompanias';
+import MaLoading from '@/components/ui/charts/MaLoading';
+import MaChartPieGrupo from '@/components/ui/charts/MaChartPieGrupo';
+import MaEstructuraMercado from '@/components/ui/charts/MaEstructuraMercado';
+import MaChartHHI from '@/components/ui/charts/MaChartHHI';
+import MaChartCorredoresMovimientos from '@/components/ui/charts/MaChartCorredoresMovimientos';
+import ChartMovimientos from '@/components/ui/charts/common/ChartMovimientos'; // <<<--- AÑADIR ESTA LÍNEA
 
 // Importar los nuevos componentes
-import MaChartCorredoresRegion from '@/app/components/ui/charts/MaChartCorredoresRegion';
-import MaChartCorredoresTipoPersona from '@/app/components/ui/charts/MaChartCorredoresTipoPersona';
+import MaChartCorredoresRegion from '@/components/ui/charts/MaChartCorredoresRegion';
+import MaChartCorredoresTipoPersona from '@/components/ui/charts/MaChartCorredoresTipoPersona';
 // Importar el nuevo componente (añadir esta línea con las demás importaciones)
-import MaMemoriaCard from '@/app/components/ui/charts/MaMemoriaCard';
+import MaMemoriaCard from '@/components/ui/charts/MaMemoriaCard';
 
 // Añadir la importación del nuevo componente
-import MaEstructuraRamos from '@/app/components/ui/charts/MaEstructuraRamos';
+import MaEstructuraRamos from '@/components/ui/charts/MaEstructuraRamos';
+
+// Importar el nuevo componente HHIChart
+import HHIChart from '@/components/ui/charts/HHIChart';
 
 export default function Dashboard() {
   // Usar el contexto de período
@@ -207,10 +210,13 @@ export default function Dashboard() {
               {/* Estructura de concentración de ramos */}
               {concentracionRamos && Array.isArray(concentracionRamos) && concentracionRamos.length > 0 ? (
                 <div>
-                  <MaEstructuraRamos
-                    concentracionRamos={concentracionRamos}
+                  <MaEstructuraMercado
+                    grupoGenerales={concentracionRamos.filter(item => item && item.grupo === '1')}
+                    grupoVida={concentracionRamos.filter(item => item && item.grupo === '2')}
                     selectedPeriodo={selectedPeriodo}
                     periodos={periodos}
+                    historicalConcentracion={historicalConcentracion || []}
+                    concentracionMercado={concentracionRamos}
                   />
                 </div>
               ) : (
@@ -222,8 +228,12 @@ export default function Dashboard() {
               {/* Gráfico HHI independiente */}
               {historicalConcentracion && historicalConcentracion.length > 0 ? (
                 <div>
-                  <MaChartHHI 
-                    historicalConcentracion={historicalConcentracion || []} 
+                  <HHIChart 
+                    data={historicalConcentracion || []} 
+                    title="Índice de Concentración HHI por Grupo"
+                    subtitle="Evolución histórica del índice Herfindahl-Hirschman"
+                    mode="multi"
+                    threshold={1500}
                   />
                 </div>
               ) : (
@@ -341,32 +351,3 @@ export default function Dashboard() {
 }
 
 
-## Additional Debugging Steps
-
-1. **Check the period format**: The database shows periods like `201212`, make sure your `selectedPeriodo` matches this format exactly.
-
-2. **Verify the data flow**: Add these console logs to see what's happening:
-```typescript
-// Around line 206-221, add debugging
-console.log('concentracionRamos en page.tsx:', {
-  tipo: typeof concentracionRamos,
-  esArray: Array.isArray(concentracionRamos),
-  longitud: Array.isArray(concentracionRamos) ? concentracionRamos.length : 'N/A',
-  datos: concentracionRamos
-});
-
-{/* Estructura de concentración de ramos */}
-{concentracionRamos && Array.isArray(concentracionRamos) && concentracionRamos.length > 0 ? (
-  <div>
-    <MaEstructuraRamos
-      concentracionRamos={concentracionRamos}
-      selectedPeriodo={selectedPeriodo}
-      periodos={periodos}
-    />
-  </div>
-) : (
-  <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
-    <p className="text-gray-500 text-center">No hay datos de concentración de ramos disponibles</p>
-    <p className="text-xs text-gray-400 mt-2">Debug: {JSON.stringify({concentracionRamos, selectedPeriodo})}</p>
-  </div>
-)}

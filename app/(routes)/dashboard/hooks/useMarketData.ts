@@ -22,16 +22,21 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
   const marketTotal = useMarketTotal(selectedPeriodo, periodos);
   const companiasData = useCompanias(selectedPeriodo, periodos);
   const corredoresHookData = useCorredores(selectedPeriodo, periodos);
-  const ramosData = useRamos(selectedPeriodo, periodos); // Añadir hook de ramos
+  const {
+    ramosData,
+    concentracionRamos,
+    loading: ramosLoading,
+    error: ramosError
+  } = useRamos(selectedPeriodo, periodos);
   
   // Actualizar el estado de carga y error basado en los hooks modulares
   useEffect(() => {
-    const isLoading = marketTotal.loading || companiasData.loading || corredoresHookData.loading || ramosData.loading;
+    const isLoading = marketTotal.loading || companiasData.loading || corredoresHookData.loading || ramosLoading;
     setLoading(isLoading);
     
-    const firstError = marketTotal.error || companiasData.error || corredoresHookData.error || ramosData.error;
+    const firstError = marketTotal.error || companiasData.error || corredoresHookData.error || ramosError;
     setError(firstError);
-  }, [marketTotal, companiasData, corredoresHookData, ramosData]);
+  }, [marketTotal, companiasData, corredoresHookData, ramosData, ramosLoading, ramosError]);
   
   // Retornar todos los datos combinados de los hooks modulares
   return {
@@ -56,9 +61,9 @@ export function useMarketData(selectedPeriodo: string, periodos: string[]) {
     corredoresTipoPersona: corredoresHookData.corredoresTipoPersona,
     
     // Datos de ramos
-    ramos: ramosData.ramos,
-    historicalRamos: ramosData.historicalRamos,
-    concentracionRamos: ramosData.concentracionRamos,
+    ramos: ramosData, // Cambiar de ramosData.ramos a ramosData
+    historicalRamos: [], // Por ahora usar array vacío hasta que implementemos datos históricos
+    concentracionRamos,
     
     // Estado general
     loading,

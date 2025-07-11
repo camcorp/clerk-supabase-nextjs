@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Salud de Supabase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .section { margin-bottom: 30px; }
+        .section h2 { color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .table th { background-color: #f2f2f2; }
+        .status-ok { color: #4CAF50; }
+        .status-error { color: #f44336; }
+        .status-warning { color: #ff9800; }
+        .recommendation { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .recommendation.critical { background: #f8d7da; border-color: #f5c6cb; }
+        .recommendation.high { background: #fff3cd; border-color: #ffeaa7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Reporte de Salud de Supabase</h1>
+            <p>Generado el: 10/7/2025, 20:09:06</p>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Resumen General</h2>
+            <table class="table">
+                <tr><td><strong>Políticas RLS</strong></td><td>0</td></tr>
+                <tr><td><strong>Tablas con RLS</strong></td><td>0</td></tr>
+                <tr><td><strong>Tablas Accesibles</strong></td><td>18</td></tr>
+                <tr><td><strong>Vistas</strong></td><td>0</td></tr>
+                <tr><td><strong>Funciones</strong></td><td>0</td></tr>
+                <tr><td><strong>Buckets de Storage</strong></td><td>0</td></tr>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>🔒 Políticas RLS</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>Tabla</th><th>Política</th><th>Comando</th><th>Roles</th></tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 Acceso a Tablas</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>Tabla</th><th>Estado</th><th>Registros</th><th>Error</th></tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            <td>profiles</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>users</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>usuarios</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>empresas</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>companies</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>2</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>companias</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>55</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>productos</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>10</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>products</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>2</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>corredores</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>4080</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>reportes</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>comentarios</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>archivos</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>pagos</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>24</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>carrito</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>accesos_usuarios</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>12</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>transacciones_flow</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>7</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>reportes_individuales</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>7</td>
+                            <td>-</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>user_subscriptions</td>
+                            <td class="status-ok">
+                                ✓ Accesible
+                            </td>
+                            <td>0</td>
+                            <td>-</td>
+                        </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>💡 Recomendaciones</h2>
+            
+                <div class="recommendation high">
+                    <h4>Tablas sin RLS habilitado</h4>
+                    <p>Las siguientes tablas no tienen RLS habilitado: profiles, users, usuarios, empresas, companies, companias, productos, products, corredores, reportes, comentarios, archivos, pagos, carrito, accesos_usuarios, transacciones_flow, reportes_individuales, user_subscriptions</p>
+                    <p><strong>Acción:</strong> Habilitar RLS y crear políticas apropiadas</p>
+                </div>
+            
+                <div class="recommendation medium">
+                    <h4>Tablas no utilizadas en la aplicación</h4>
+                    <p>Estas tablas existen pero no se usan: profiles, usuarios, empresas, companies, products, comentarios, archivos, carrito</p>
+                    <p><strong>Acción:</strong> Revisar si son necesarias o implementar su uso</p>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>
+    

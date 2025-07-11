@@ -1,0 +1,21 @@
+# Please visit https://dashboard.clerk.com to find your API Keys
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YWJsZS1wYXJha2VldC03NC5jbGVyay5hY2NvdW50cy5kZXYk
+CLERK_SECRET_KEY=sk_test_6YLLZeqbC18Ts8yJ609czBRUy3trRiCTTDrxYAWwsn
+CLERK_JWT_KEY=-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtPp7bgHZMn9yzN6dSrE9
+71h1akWt0FXg0O2s+Ut7zFY6Vcv+rZnwRKEHDDUN9FLwZPVfqS3OR+/gPp9eWfgr
+plyg44bmWr73X0yJnirgguzMk8GCiUoJLTJNE9+Y3nBQ8v6XdFX62IaXFzwOtmKN
+iDFO+gfuZe4Zs0x1uHIN+pJeXLQu8XFWOdOM40IRO/T1+Kz1ElAlHvXIL0kW3CjN
+PNHdbzZusdaRrHaAB1PGXMeGzefA6k2lpgaxKy5tbLIWiM6/yWTfmeJNujSPFr4w
+04W239oCfVGwnEgXCLcWHNPVta+t8BevK2UzuDztGpvoarjEZNaKCdyRJzK+pSBJ
+xwIDAQAB
+-----END PUBLIC KEY-----
+
+# === SUPABASE CONFIGURATION (NUEVAS API KEYS) ===
+NEXT_PUBLIC_SUPABASE_URL=https://ebfauwdaoxfkzymozmqr.supabase.co
+# Migrado a nuevas claves - eliminar referencias legacy
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_new_publishable_key_here
+SUPABASE_SECRET_KEY=your_new_secret_key_here
+
+NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/registro-completo
+NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/dashboard

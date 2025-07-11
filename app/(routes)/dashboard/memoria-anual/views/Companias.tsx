@@ -9,10 +9,48 @@ import SummaryCard from '@/app/components/ui/charts/SummaryCard';
 import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
 import NoData from '@/app/components/ui/charts/NoData';
 import SearchInput from '@/app/components/ui/charts/SearchInput';
-import { formatUF, formatCLP, formatChartTooltip } from '@/app/lib/utils/formatters';
+import { formatUF, formatCLP, formatChartTooltip, formatNumber } from '@/app/lib/utils/formatters';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
-import { Eye } from 'lucide-react';
+import { Eye, DollarSign, Building2, TrendingUp } from 'lucide-react';
+// Importaciones faltantes que necesitas agregar:
+import MaChartHHI from '@/app/components/ui/charts/MaChartHHI';
+import { colors } from '@/app/config/theme';
+import type { ChartPrimaEvolutionGruposProps } from '../types/charts';
+
+// Definiciones de tipos
+interface Compania {
+  id: number;
+  nombrecia: string;
+  primauf: number;
+  primaclp: number;
+  periodo: string;
+}
+
+interface Summary {
+  totalPrimauf: number;
+  totalPrimaclp: number;
+  companyCount: number;
+  growth: number | null;
+}
+
+interface HistoricalData {
+  movimientos?: Array<{
+    periodo: string;
+    entradas: number;
+    salidas: number;
+    neto: number;
+  }>;
+  concentracion?: any[];
+}
+
+interface GrupoEvolucionData {
+  periodo: string;
+  total_uf_generales: number;
+  total_uf_vida: number;
+  total_clp_generales: number;
+  total_clp_vida: number;
+}
 
 export default function Companias() {
   const [companias, setCompanias] = useState<Compania[]>([]);
@@ -118,33 +156,42 @@ export default function Companias() {
         if (historicalError) {
           console.error('Error al cargar datos históricos:', historicalError);
         } else if (historicalDataResult) {
-          // Process historical data to get movements
-          const movimientos = historicalDataResult.map(item => ({
-            periodo: item.periodo,
-            entradas: item.ingresos || 0,  // Mapear ingresos a entradas
-            salidas: item.egresos || 0,    // Mapear egresos a salidas
-            neto: (item.ingresos || 0) - (item.egresos || 0)
-          }));
-          
-          // Cargar datos de concentración histórica
-          try {
-            const { data: concentracionData, error: concentracionError } = await supabase
-              .from('vista_concentracion_mercado')
-              .select('*')
-              .order('periodo', { ascending: true });
-              
-            if (concentracionError) {
-              console.error('Error al cargar datos de concentración histórica:', concentracionError);
+          // Load historical data for movements
+          const { data: movimientosData, error: movimientosError } = await supabase
+            .from('vista_mercado_periodo')
+            .select('periodo, num_entradas, num_salidas')
+            .order('periodo', { ascending: true });
+
+          if (movimientosError) {
+            console.error('Error al cargar datos de movimientos:', movimientosError);
+          } else if (movimientosData) {
+            const movimientos = movimientosData.map(item => ({
+              periodo: item.periodo,
+              entradas: Number(item.num_entradas || 0),
+              salidas: Number(item.num_salidas || 0),
+              neto: Number(item.num_entradas || 0) - Number(item.num_salidas || 0)
+            }));
+            
+            // Cargar datos de concentración histórica
+            try {
+              const { data: concentracionData, error: concentracionError } = await supabase
+                .from('vista_concentracion_mercado')
+                .select('*')
+                .order('periodo', { ascending: true });
+                
+              if (concentracionError) {
+                console.error('Error al cargar datos de concentración histórica:', concentracionError);
+                setHistoricalData({ movimientos });
+              } else {
+                setHistoricalData({ 
+                  movimientos,
+                  concentracion: concentracionData || []
+                });
+              }
+            } catch (concentracionErr) {
+              console.error('Error inesperado al cargar concentración histórica:', concentracionErr);
               setHistoricalData({ movimientos });
-            } else {
-              setHistoricalData({ 
-                movimientos,
-                concentracion: concentracionData || []
-              });
             }
-          } catch (concentracionErr) {
-            console.error('Error inesperado al cargar concentración histórica:', concentracionErr);
-            setHistoricalData({ movimientos });
           }
         }
         
@@ -358,7 +405,6 @@ export default function Companias() {
 }
 
 // Componente para mostrar la evolución de primas por grupo
-// Replace the ChartPrimaEvolutionGrupos component (lines 401-496) with:
 function ChartPrimaEvolutionGrupos({ data, title, subtitle, periodos }: ChartPrimaEvolutionGruposProps) {
   const [moneda, setMoneda] = useState<'uf' | 'clp'>('uf');
   
@@ -459,25 +505,3 @@ function ChartPrimaEvolutionGrupos({ data, title, subtitle, periodos }: ChartPri
   );
 }
 
-// Replace the movements data fetching logic (around lines 160-180) with:
-// Load historical data for movements
-const { data: movimientosData, error: movimientosError } = await supabase
-  .from('vista_mercado_periodo')
-  .select('periodo, num_entradas, num_salidas')
-  .order('periodo', { ascending: true });
-
-if (movimientosError) {
-  console.error('Error al cargar datos de movimientos:', movimientosError);
-} else if (movimientosData) {
-  const movimientos = movimientosData.map(item => ({
-    periodo: item.periodo,
-    entradas: Number(item.num_entradas || 0),
-    salidas: Number(item.num_salidas || 0),
-    neto: Number(item.num_entradas || 0) - Number(item.num_salidas || 0)
-  }));
-  
-  setHistoricalData({ 
-    movimientos,
-    concentracion: [] // Will be loaded separately if needed
-  });
-}

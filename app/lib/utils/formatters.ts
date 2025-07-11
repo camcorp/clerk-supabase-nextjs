@@ -115,6 +115,75 @@ export function formatDate(date: Date | string): string {
 export const formatCurrency = formatCLP;
 export const formatPercentage = formatPercent;
 
+/**
+ * Formatea un RUT chileno
+ * @param rut RUT a formatear
+ * @returns RUT formateado con puntos y guión (ej: "12.345.678-9")
+ */
+export function formatRUT(rut: string): string {
+  // Remover puntos y guiones existentes
+  const cleanRUT = rut.replace(/[.-]/g, '');
+  
+  if (cleanRUT.length < 2) return rut;
+  
+  // Separar número y dígito verificador
+  const number = cleanRUT.slice(0, -1);
+  const dv = cleanRUT.slice(-1);
+  
+  // Agregar puntos cada 3 dígitos
+  const formattedNumber = number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+  return `${formattedNumber}-${dv}`;
+}
+
+/**
+ * Determina el color para mostrar crecimiento/decrecimiento
+ * @param value Valor numérico
+ * @returns Clase CSS de color
+ */
+export function getGrowthColor(value: number): string {
+  if (value > 0) return 'text-green-600';
+  if (value < 0) return 'text-red-600';
+  return 'text-gray-600';
+}
+
+/**
+ * Determina el color de fondo para badges de crecimiento
+ * @param value Valor numérico
+ * @returns Clase CSS de color de fondo
+ */
+export function getGrowthBadgeColor(value: number): string {
+  if (value > 0) return 'bg-green-100 text-green-800';
+  if (value < 0) return 'bg-red-100 text-red-800';
+  return 'bg-gray-100 text-gray-800';
+}
+
+/**
+ * Determina el ícono para mostrar crecimiento/decrecimiento
+ * @param value Valor numérico
+ * @returns Nombre del ícono
+ */
+export function getGrowthIcon(value: number): string {
+  if (value > 0) return 'TrendingUp';
+  if (value < 0) return 'TrendingDown';
+  return 'Minus';
+}
+
+/**
+ * Determina el estilo del badge de concentración basado en el índice HHI
+ * @param hhi Índice Herfindahl-Hirschman
+ * @returns Objeto con clase CSS y etiqueta
+ */
+export function getConcentrationBadge(hhi: number): { className: string; label: string } {
+  if (hhi < 0.15) {
+    return { className: 'bg-green-100 text-green-800', label: 'Baja' };
+  } else if (hhi < 0.25) {
+    return { className: 'bg-yellow-100 text-yellow-800', label: 'Moderada' };
+  } else {
+    return { className: 'bg-red-100 text-red-800', label: 'Alta' };
+  }
+}
+
 
 /**
  * Formatea valores para tooltips de gráficos, asegurando que no tengan decimales

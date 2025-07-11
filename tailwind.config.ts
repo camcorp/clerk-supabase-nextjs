@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        lufthansa: "hsl(var(--lufthansa))",
+        "lufthansa-foreground": "hsl(var(--lufthansa-foreground))",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

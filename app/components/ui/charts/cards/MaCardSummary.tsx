@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-// import { useMarketData } from '@/app/hooks/api/useMarketData'; // Eliminar esta línea, no se usa
+// import { useMarketData } from '@/hooks/api/useMarketData'; // Eliminar esta línea, no se usa
 import { formatUF, formatCLP, formatPercent, formatNumber } from '@/lib/utils/formatters';
 
 interface MaCardSummaryProps {

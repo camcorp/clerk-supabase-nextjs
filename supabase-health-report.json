@@ -1,0 +1,753 @@
+{
+  "timestamp": "2025-07-11T00:09:06.274Z",
+  "apiKeyInfo": {
+    "type": "Legacy Key",
+    "canCreateRPC": true,
+    "canAccessInformationSchema": true
+  },
+  "rlsPolicies": [],
+  "rlsEnabledTables": [],
+  "tableAccess": {
+    "profiles": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "users": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "usuarios": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "empresas": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "companies": {
+      "accessible": true,
+      "recordCount": 2
+    },
+    "companias": {
+      "accessible": true,
+      "recordCount": 55
+    },
+    "productos": {
+      "accessible": true,
+      "recordCount": 10
+    },
+    "products": {
+      "accessible": true,
+      "recordCount": 2
+    },
+    "corredores": {
+      "accessible": true,
+      "recordCount": 4080
+    },
+    "reportes": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "comentarios": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "archivos": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "pagos": {
+      "accessible": true,
+      "recordCount": 24
+    },
+    "carrito": {
+      "accessible": true,
+      "recordCount": 0
+    },
+    "accesos_usuarios": {
+      "accessible": true,
+      "recordCount": 12
+    },
+    "transacciones_flow": {
+      "accessible": true,
+      "recordCount": 7
+    },
+    "reportes_individuales": {
+      "accessible": true,
+      "recordCount": 7
+    },
+    "user_subscriptions": {
+      "accessible": true,
+      "recordCount": 0
+    }
+  },
+  "views": [],
+  "functions": [],
+  "storage": {
+    "buckets": [],
+    "totalBuckets": 0
+  },
+  "applicationUsage": {
+    "apiRoutes": [
+      {
+        "file": "/app/api/carrito/procesar/route.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "pagos",
+          "accesos_usuarios"
+        ]
+      },
+      {
+        "file": "/app/api/corredores/buscar/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/flow/webhook/route.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "pagos"
+        ]
+      },
+      {
+        "file": "/app/api/pagos/[transactionId]/route.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "pagos"
+        ]
+      },
+      {
+        "file": "/app/api/productos/[codigo]/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/reportes/[rut]/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/reportes/comprar/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/reportes/flujo-simulado/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/reportes/mis-reportes/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/reportes/simular-compra/route.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/supabase-health/route.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/api/user-role/route.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "user_subscriptions"
+        ]
+      }
+    ],
+    "components": [
+      {
+        "file": "/app/components/SupabaseHealthDashboard.tsx",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/forms/ProfileForm.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/shop/CartItem.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/shop/OrderSummary.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/shop/ShoppingCart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/AuthButtons.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/Benefits.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/Card.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/ClientOnly.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/Footer.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/GraficoPrimas.tsx",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "intermediacion_anual"
+        ]
+      },
+      {
+        "file": "/app/components/ui/Hero.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/PricingTable.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/RegistrationCTA.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/SearchBox.tsx",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/Sidebar.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/Stats.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/SupabaseExample.tsx",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "examples"
+        ]
+      },
+      {
+        "file": "/app/components/ui/UpgradeSubscription.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/UserButtonWrapper.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/alert.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/badge.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/button.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/AccordeonTable.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/ChartCountEvolution.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/ChartHHIEvolution.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/ChartPrimaEvolution.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/HHIChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/LoadingSpinner.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartBarEstructura.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartCorredoresMovimientos.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartCorredoresRegion.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartCorredoresTipoPersona.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartEvol.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartHHI.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartLineEvol.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartMove.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartMoveCorredores.tsx",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "vista_evolucion_corredores"
+        ]
+      },
+      {
+        "file": "/app/components/ui/charts/MaChartPieGrupo.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaEstructuraMercado.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaEstructuraRamos.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaHeader.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaLoading.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaMemoriaCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/MaTableCompanias.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/ModernCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/NoData.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/PeriodSelector.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/SearchInput.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/SummaryCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/ChartCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/DataCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/MaCardCompanias.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/MaCardMovimiento.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/MaCardPrima.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/MaCardSummary.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/MaChartMovimientos.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/ModernCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/cards/SummaryCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/BarChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/ChartCard.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/ChartDualAxis.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/ChartMove.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/ChartMovimientos.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/common/ChartPrimaEvolution.tsx",
+        "usesSupabase": false,
+        "tablesUsed": [
+          "periodo"
+        ]
+      },
+      {
+        "file": "/app/components/ui/charts/simplified/DualAxisChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/simplified/MultiSeriesChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/simplified/PieChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/simplified/SimpleLineChart.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/tables/AccordeonTable.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/charts/tables/DataTable.tsx",
+        "usesSupabase": false,
+        "tablesUsed": [
+          "the"
+        ]
+      },
+      {
+        "file": "/app/components/ui/input.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/components/ui/tabs.tsx",
+        "usesSupabase": false,
+        "tablesUsed": []
+      }
+    ],
+    "hooks": [
+      {
+        "file": "/app/hooks/api/useCompanias.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/hooks/api/useMarketData.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/hooks/market/useMarketTotal.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "vista_corredores_periodo",
+          "vista_evolucion_corredores"
+        ]
+      },
+      {
+        "file": "/app/hooks/supabase/useSupabaseCache.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "companias",
+          "evolucion_mercado",
+          "historical_companias",
+          "corredores",
+          "ramos",
+          "hhi_data",
+          "memoria_anual",
+          "movimientos_companias",
+          "movimientos_corredores",
+          "periodos",
+          "vista_concentracion_mercado",
+          "historical_concentracion",
+          "dependency"
+        ]
+      },
+      {
+        "file": "/app/hooks/supabase/useSupabaseQuery.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/hooks/useSeriesHistoricasAgrupadas.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/index.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useAccessCheck.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "accesos"
+        ]
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useCompanias.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useCorredores.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useIndividualReportAccess.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "reporte_individual",
+          "pagos"
+        ]
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useMarketData.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useMarketTotal.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "vista_corredores_periodo",
+          "vista_evolucion_corredores",
+          "vista_concentracion_mercado",
+          "db"
+        ]
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useRamos.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/(routes)/dashboard/hooks/useSupabaseCache.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "here"
+        ]
+      },
+      {
+        "file": "/app/lib/api/carrito.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "productos"
+        ]
+      },
+      {
+        "file": "/app/lib/api/memoriaAnual.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "periodos",
+          "vista_companias_periodo",
+          "vista_ramos_periodo",
+          "vista_corredores_periodo"
+        ]
+      },
+      {
+        "file": "/app/lib/api/reportes.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "corredores",
+          "productos",
+          "indicadores_generales_corredor",
+          "intercia",
+          "prodramo",
+          "ramos",
+          "accesos_usuarios",
+          "reportes_individuales",
+          "pagos",
+          "transacciones_flow",
+          "reportes"
+        ]
+      },
+      {
+        "file": "/app/lib/flow/client.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/supabase/admin.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "users"
+        ]
+      },
+      {
+        "file": "/app/lib/supabase/client.ts",
+        "usesSupabase": true,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/supabase/server.ts",
+        "usesSupabase": true,
+        "tablesUsed": [
+          "a"
+        ]
+      },
+      {
+        "file": "/app/lib/utils/chartConfig.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/utils/colors.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/utils/formatters.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/utils.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      },
+      {
+        "file": "/app/lib/validations/database.ts",
+        "usesSupabase": false,
+        "tablesUsed": []
+      }
+    ],
+    "schemas": [
+      "CompaniaSchema",
+      "ProfileSchema",
+      "CompaniaRealSchema",
+      "CompanySchema",
+      "ProductSchema",
+      "CorredorSchema"
+    ]
+  },
+  "recommendations": [
+    {
+      "type": "security",
+      "priority": "high",
+      "title": "Tablas sin RLS habilitado",
+      "description": "Las siguientes tablas no tienen RLS habilitado: profiles, users, usuarios, empresas, companies, companias, productos, products, corredores, reportes, comentarios, archivos, pagos, carrito, accesos_usuarios, transacciones_flow, reportes_individuales, user_subscriptions",
+      "action": "Habilitar RLS y crear políticas apropiadas"
+    },
+    {
+      "type": "optimization",
+      "priority": "medium",
+      "title": "Tablas no utilizadas en la aplicación",
+      "description": "Estas tablas existen pero no se usan: profiles, usuarios, empresas, companies, products, comentarios, archivos, carrito",
+      "action": "Revisar si son necesarias o implementar su uso"
+    }
+  ]
+}

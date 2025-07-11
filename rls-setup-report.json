@@ -1,0 +1,266 @@
+{
+  "timestamp": "2025-06-22T21:39:10.342Z",
+  "summary": {
+    "enabledTables": 0,
+    "createdPolicies": 0,
+    "errors": 45
+  },
+  "details": {
+    "enabledTables": [],
+    "createdPolicies": [],
+    "errors": [
+      {
+        "table": "profiles",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "users",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "usuarios",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "empresas",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "companies",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "companias",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "productos",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "products",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "corredores",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "reportes",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "comentarios",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "archivos",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "pagos",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "carrito",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "accesos_usuarios",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "transacciones_flow",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "reportes_individuales",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "user_subscriptions",
+        "action": "enable_rls",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "profiles",
+        "policy": "Users can view own profile",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "profiles",
+        "policy": "Users can update own profile",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "profiles",
+        "policy": "Users can insert own profile",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "users",
+        "policy": "Users can view own user record",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "users",
+        "policy": "Users can update own user record",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "usuarios",
+        "policy": "Users can view own usuario record",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "usuarios",
+        "policy": "Users can update own usuario record",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "pagos",
+        "policy": "Users can view own payments",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "pagos",
+        "policy": "Users can insert own payments",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "carrito",
+        "policy": "Users can manage own cart",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "transacciones_flow",
+        "policy": "Users can view own transactions",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "transacciones_flow",
+        "policy": "Users can insert own transactions",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "accesos_usuarios",
+        "policy": "Users can view own access",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "accesos_usuarios",
+        "policy": "Users can insert own access",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "user_subscriptions",
+        "policy": "Users can manage own subscriptions",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "reportes_individuales",
+        "policy": "Users can manage own reports",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "companias",
+        "policy": "Authenticated users can read companias",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "companies",
+        "policy": "Authenticated users can read companies",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "empresas",
+        "policy": "Authenticated users can read empresas",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "productos",
+        "policy": "Authenticated users can read productos",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "products",
+        "policy": "Authenticated users can read products",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "corredores",
+        "policy": "Authenticated users can read corredores",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "reportes",
+        "policy": "Authenticated users can read reportes",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "comentarios",
+        "policy": "Users can view all comments",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "comentarios",
+        "policy": "Users can manage own comments",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "archivos",
+        "policy": "Users can view accessible files",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      },
+      {
+        "table": "archivos",
+        "policy": "Users can manage own files",
+        "action": "create_policy",
+        "error": "Could not find the function public.exec_sql(sql_query) in the schema cache"
+      }
+    ]
+  }
+}

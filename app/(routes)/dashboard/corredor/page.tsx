@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAccessCheck } from '../hooks/useAccessCheck';
 import { useIndividualReportAccess } from '../hooks/useIndividualReportAccess';
 import ProcesoPago from './components/ProcesoPago';
-import SearchBox from '@/app/components/ui/SearchBox';
+import SearchBox from '@/components/ui/SearchBox';
 
 type Corredor = {
   id: number;

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { formatCurrency } from '@/app/lib/utils/formatters';
+import { formatCurrency } from '@/lib/utils/formatters';
 
 // ... existing code ...
 

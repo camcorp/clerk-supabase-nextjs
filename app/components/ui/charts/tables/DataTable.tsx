@@ -154,15 +154,20 @@ export default function DataTable<T extends Record<string, any>>({
               </th>
             )}
             {columns.map((column, index) => (
+              // In the table header section, update the th element:
               <th
                 key={index}
                 scope="col"
-                className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${
                   column.isSortable ? 'cursor-pointer select-none' : ''
-                } ${column.isNumeric ? 'text-right' : ''}`}
+                } ${
+                  column.isNumeric ? 'text-right' : 'text-left'
+                }`}
                 onClick={() => column.isSortable && handleSort(column.accessor)}
               >
-                <div className="flex items-center justify-between">
+                <div className={`flex items-center ${
+                  column.isNumeric ? 'justify-end' : 'justify-between'
+                }`}>
                   <span>{column.header}</span>
                   {column.isSortable && (
                     <span className="ml-2">

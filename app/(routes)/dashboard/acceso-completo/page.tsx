@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useSupabaseClient } from '@/app/lib/supabase/client';
+import { useSupabaseClient } from '@/lib/supabase/client'; // Cambiar de @/lib/supabase/client
 
 export default function AccesoCompletoPage() {
   const { user, isLoaded } = useUser();

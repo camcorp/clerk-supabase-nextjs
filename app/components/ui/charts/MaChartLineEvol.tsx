@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
-import { formatUF, formatChartTooltip } from '@/app/lib/utils/formatters';
+import { formatUF, formatChartTooltip } from '@/lib/utils/formatters';
 
 interface MaChartLineEvolProps {
   data: any[];

@@ -1,5 +1,6 @@
 // Importar otras dependencias
-import '@/app/lib/utils/chartConfig';
+import '@/lib/utils/chartConfig';
+import { Inter } from 'next/font/google';
 
 import {
   ClerkProvider,
@@ -10,6 +11,8 @@ import {
   SignUpButton,
 } from "@clerk/nextjs";
 import "./globals.css";
+
+const inter = Inter({ subsets: ['latin'] });
 import Link from "next/link";
 import UserButtonWrapper from './components/ui/UserButtonWrapper';
 import { Metadata } from 'next';
@@ -38,9 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/registro-completo"
+    >
       <html lang="es">
-        <body>
+        <body className={inter.className}>
           <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
@@ -70,8 +76,11 @@ export default function RootLayout({
                       <Link href="/perfil" className="text-gray-600 hover:text-blue-600">
                         Mi Perfil
                       </Link>
-                      <Link href="/reportes" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/dashboard/corredor/reportes" className="text-gray-600 hover:text-blue-600">
                         Reportes
+                        </Link>
+                      <Link href="/dashboard/corredor/mockup" className="text-gray-600 hover:text-blue-600">
+                        Reporte Ejemplo
                       </Link>
                       <Link href="/configuracion" className="text-gray-600 hover:text-blue-600">
                         Configuración

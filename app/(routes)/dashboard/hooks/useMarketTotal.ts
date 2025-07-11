@@ -162,7 +162,29 @@ export function useMarketTotal(selectedPeriodo: string, periodos: string[]) {
         // 4. Cargar datos históricos de concentración
         try {
           const historicalConcentracionData = await getHistoricalConcentracion() as any[] || [];
-          setHistoricalConcentracion(historicalConcentracionData);
+          
+          // Procesar datos para el gráfico de concentración histórica
+          const processedData = historicalConcentracionData.reduce((acc, item) => {
+            let periodEntry = acc.find(p => p.periodo === item.periodo);
+            if (!periodEntry) {
+              periodEntry = { 
+                periodo: item.periodo, 
+                hhi_general: item.hhi_general 
+              };
+              acc.push(periodEntry);
+            }
+
+            // Asignar hhi_grupo basado en el grupo
+            if (item.grupo === '1') { // SEGUROS GENERALES
+              periodEntry.hhi_generales = item.hhi_grupo;
+            } else if (item.grupo === '2') { // SEGUROS DE VIDA
+              periodEntry.hhi_vida = item.hhi_grupo;
+            }
+
+            return acc;
+          }, []);
+
+          setHistoricalConcentracion(processedData);
         } catch (err) {
           console.error('Error al cargar datos históricos de concentración:', err);
           setHistoricalConcentracion([]);

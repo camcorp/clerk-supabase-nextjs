@@ -7,7 +7,8 @@ interface PeriodContextType {
   selectedPeriodo: string;
   periodos: string[];
   setSelectedPeriodo: (periodo: string) => void;
-  loading: boolean; // Add this line
+  loading: boolean;
+  error: string | null; // Add error to the interface
 }
 
 const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
@@ -15,41 +16,55 @@ const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
 export function PeriodProvider({ children }: { children: ReactNode }) {
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
   const [periodos, setPeriodos] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Add this line
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null); // Add error state
   const supabase = useSupabaseClient();
   
   useEffect(() => {
     async function loadPeriodos() {
       try {
-        setLoading(true); // Add this line
+        setLoading(true);
+        setError(null); // Reset error state
+        // Change back to 'periodos' table as confirmed by user
         const { data, error } = await supabase
           .from('periodos')
           .select('periodo')
           .order('periodo', { ascending: false });
           
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading periods:', error);
+          throw error;
+        }
+        
+        console.log('Periods data loaded:', data);
         
         if (data && data.length > 0) {
-          const periodosList = data.map(item => item.periodo);
+          // Get unique periods
+          const periodosList = [...new Set(data.map(item => item.periodo))];
+          console.log('Available periods:', periodosList);
           setPeriodos(periodosList);
           
-          // Seleccionar el período más reciente por defecto
+          // Select the most recent period by default
           if (!selectedPeriodo && periodosList.length > 0) {
+            console.log('Setting default period:', periodosList[0]);
             setSelectedPeriodo(periodosList[0]);
           }
+        } else {
+          console.warn('No periods found in database');
         }
       } catch (err) {
         console.error('Error al cargar períodos:', err);
+        setError('Failed to load periods');
       } finally {
-        setLoading(false); // Add this line
+        setLoading(false);
       }
     }
     
     loadPeriodos();
-  }, [supabase, selectedPeriodo]);
+  }, [supabase]);
   
   return (
-    <PeriodContext.Provider value={{ selectedPeriodo, periodos, setSelectedPeriodo, loading }}> // Add loading here
+    <PeriodContext.Provider value={{ selectedPeriodo, periodos, setSelectedPeriodo, loading, error }}>
       {children}
     </PeriodContext.Provider>
   );

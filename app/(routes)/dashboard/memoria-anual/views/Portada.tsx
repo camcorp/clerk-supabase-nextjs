@@ -12,23 +12,29 @@ interface PortadaProps {
   selectedPeriodo: string;
 }
 
+// Actualizar la interfaz MarketSummary:
 interface MarketSummary {
-  totalPrimaMercado: number;
+  totalPrimaMercado: number;     // ← AGREGAR esta línea
   totalCompanias: number;
-  totalCorredores: number;
+  totalCorredores: number;       // ← AGREGAR esta línea también
   totalRamos: number;
   crecimientoMercado: number;
+  crecimientoCompanias: number;
+  crecimientoRamos: number;
 }
 
 export default function Portada({ selectedPeriodo }: PortadaProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Actualizar el estado inicial (líneas 29-35):
   const [summary, setSummary] = useState<MarketSummary>({
     totalPrimaMercado: 0,
     totalCompanias: 0,
     totalCorredores: 0,
     totalRamos: 0,
     crecimientoMercado: 0,
+    crecimientoCompanias: 0,    // ← AGREGAR
+    crecimientoRamos: 0         // ← AGREGAR
   });
 
   useEffect(() => {
@@ -118,12 +124,13 @@ export default function Portada({ selectedPeriodo }: PortadaProps) {
         const totalRamosPrev = ramosDataPrev?.length || 0;
         const crecimientoRamos = totalRamosPrev > 0 ? ((totalRamos - totalRamosPrev) / totalRamosPrev) * 100 : 0;
 
+        // Corregir línea 129 - cambiar 'crecimiento' por 'crecimientoMercado':
         setSummary({
           totalPrimaMercado: mercadoData.total_primauf || 0,
           totalCompanias: totalCompanias,
           totalCorredores: corredoresData?.num_corredores || 0,
           totalRamos: totalRamos,
-          crecimiento: crecimiento,
+          crecimientoMercado: crecimiento,
           crecimientoCompanias: crecimientoCompanias,
           crecimientoRamos: crecimientoRamos
         });

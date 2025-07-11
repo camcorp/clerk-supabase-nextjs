@@ -1,0 +1,1961 @@
+select * from reportes_individuales where rut ='760096229'
+
+[
+  {
+    "id": "684c3321-4787-430b-9e23-d979aa8715e0",
+    "user_id": "user_2witt4wDGLn9Rxdc5rO5w7QdRNH",
+    "rut": "760096229",
+    "periodo": "202412",
+    "datos_reporte": {
+      "ramos": [
+        {
+          "cod": "4",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 604523
+        },
+        {
+          "cod": "10",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 258672
+        },
+        {
+          "cod": "212",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 215270
+        },
+        {
+          "cod": "1",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 184008
+        },
+        {
+          "cod": "27",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 82956
+        },
+        {
+          "cod": "209",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 60657
+        },
+        {
+          "cod": "15",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 47748
+        },
+        {
+          "cod": "3",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 40939
+        },
+        {
+          "cod": "28",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 39369
+        },
+        {
+          "cod": "2",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 38595
+        },
+        {
+          "cod": "16",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 27253
+        },
+        {
+          "cod": "7",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 25975
+        },
+        {
+          "cod": "5",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 24190
+        },
+        {
+          "cod": "18",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 23225
+        },
+        {
+          "cod": "36",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 20264
+        },
+        {
+          "cod": "6",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 16288
+        },
+        {
+          "cod": "17",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 14759
+        },
+        {
+          "cod": "8",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 12164
+        },
+        {
+          "cod": "202",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 10105
+        },
+        {
+          "cod": "14",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 7099
+        },
+        {
+          "cod": "31",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 6549
+        },
+        {
+          "cod": "13",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 5752
+        },
+        {
+          "cod": "24",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 5162
+        },
+        {
+          "cod": "23",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 4552
+        },
+        {
+          "cod": "22",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 3848
+        },
+        {
+          "cod": "20",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 3158
+        },
+        {
+          "cod": "208",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 3058
+        },
+        {
+          "cod": "21",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 1011
+        },
+        {
+          "cod": "9",
+          "grupo": 1,
+          "primauf": null,
+          "primaclp": 961
+        },
+        {
+          "cod": "102",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 610
+        },
+        {
+          "cod": "302",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 261
+        },
+        {
+          "cod": "210",
+          "grupo": 2,
+          "primauf": null,
+          "primaclp": 177
+        }
+      ],
+      "corredor": {
+        "rut": "760096229",
+        "ciudad": "SANTIAGO",
+        "nombre": "RAFAEL BUZETA CORREDORES DE SEGUROS Y COMPAÑIA LIMITADA",
+        "region": 13,
+        "telefono": "24665947"
+      },
+      "companias": [
+        {
+          "grupo": "1",
+          "rutcia": "99147000K",
+          "primauf": 10554.423090589013,
+          "primaclp": 405466,
+          "nombrecia": "BCI"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "767434928",
+          "primauf": 9382.250266746041,
+          "primaclp": 360435,
+          "nombrecia": "REALE"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "945100001",
+          "primauf": 7520.8717877568315,
+          "primaclp": 288927,
+          "nombrecia": "RENTA NACIONAL"
+        },
+        {
+          "grupo": "2",
+          "rutcia": "762133296",
+          "primauf": 5683.15489960223,
+          "primaclp": 218328,
+          "nombrecia": "HELP SEGUROS"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "965082107",
+          "primauf": 3268.7876024717384,
+          "primaclp": 125576,
+          "nombrecia": "MAPFRE"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "760942340",
+          "primauf": 3184.162925020349,
+          "primaclp": 122325,
+          "nombrecia": "SOLUNION"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "990370001",
+          "primauf": 2967.01772068338,
+          "primaclp": 113983,
+          "nombrecia": "ZURICH CHILE G"
+        },
+        {
+          "grupo": "2",
+          "rutcia": "990120005",
+          "primauf": 1224.8322278676274,
+          "primaclp": 47054,
+          "nombrecia": "CONSORCIO NACIONAL"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "761732587",
+          "primauf": 1092.0774278054669,
+          "primaclp": 41954,
+          "nombrecia": "UNNIO"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "990610002",
+          "primauf": 691.6004476179494,
+          "primaclp": 26569,
+          "nombrecia": "HDI G"
+        },
+        {
+          "grupo": "2",
+          "rutcia": "96573600K",
+          "primauf": 365.5442465241019,
+          "primaclp": 14043,
+          "nombrecia": "BCI"
+        },
+        {
+          "grupo": "2",
+          "rutcia": "96933030K",
+          "primauf": 272.0692490685689,
+          "primaclp": 10452,
+          "nombrecia": "MAPFRE"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "966541806",
+          "primauf": 133.6918927684816,
+          "primaclp": 5136,
+          "nombrecia": "CONSORCIO NACIONAL"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "992880007",
+          "primauf": 121.84808217470064,
+          "primaclp": 4681,
+          "nombrecia": "SOUTHBRIDGE"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "992250003",
+          "primauf": 56.53792661470835,
+          "primaclp": 2172,
+          "nombrecia": "CHUBB GENERALES"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "769818758",
+          "primauf": 30.95008966155075,
+          "primaclp": 1189,
+          "nombrecia": "CONTEMPORA"
+        },
+        {
+          "grupo": "1",
+          "rutcia": "990170002",
+          "primauf": 15.800424242692435,
+          "primaclp": 607,
+          "nombrecia": "SURAMERICANA G"
+        },
+        {
+          "grupo": "2",
+          "rutcia": "995880601",
+          "primauf": 6.793922120828213,
+          "primaclp": 261,
+          "nombrecia": "CHUBB VIDA"
+        }
+      ],
+      "reportData": {
+        "ramos": [],
+        "periodo": "202412",
+        "rankings": {
+          "por_ramo": [],
+          "por_compania": [
+            {
+              "rutcia": "99147000K",
+              "ranking": 1,
+              "nombrecia": "BCI",
+              "total_prima": 369810274.17061543
+            },
+            {
+              "rutcia": "767434928",
+              "ranking": 2,
+              "nombrecia": "REALE",
+              "total_prima": 328739194.3361115
+            },
+            {
+              "rutcia": "945100001",
+              "ranking": 3,
+              "nombrecia": "RENTA NACIONAL",
+              "total_prima": 263519439.57148913
+            },
+            {
+              "rutcia": "762133296",
+              "ranking": 4,
+              "nombrecia": "HELP SEGUROS",
+              "total_prima": 199128749.48607805
+            },
+            {
+              "rutcia": "965082107",
+              "ranking": 5,
+              "nombrecia": "MAPFRE",
+              "total_prima": 114533142.08651084
+            },
+            {
+              "rutcia": "760942340",
+              "ranking": 6,
+              "nombrecia": "SOLUNION",
+              "total_prima": 111568027.37571222
+            },
+            {
+              "rutcia": "990370001",
+              "ranking": 7,
+              "nombrecia": "ZURICH CHILE G",
+              "total_prima": 103959603.2239183
+            },
+            {
+              "rutcia": "990120005",
+              "ranking": 8,
+              "nombrecia": "CONSORCIO NACIONAL",
+              "total_prima": 42916181.97536696
+            },
+            {
+              "rutcia": "761732587",
+              "ranking": 9,
+              "nombrecia": "UNNIO",
+              "total_prima": 38264663.973191336
+            },
+            {
+              "rutcia": "990610002",
+              "ranking": 10,
+              "nombrecia": "HDI G",
+              "total_prima": 24232584.66662823
+            },
+            {
+              "rutcia": "96573600K",
+              "ranking": 11,
+              "nombrecia": "BCI",
+              "total_prima": 12808091.628343565
+            },
+            {
+              "rutcia": "96933030K",
+              "ranking": 12,
+              "nombrecia": "MAPFRE",
+              "total_prima": 9532875.717399912
+            },
+            {
+              "rutcia": "966541806",
+              "ranking": 13,
+              "nombrecia": "CONSORCIO NACIONAL",
+              "total_prima": 4684352.246896856
+            },
+            {
+              "rutcia": "992880007",
+              "ranking": 14,
+              "nombrecia": "SOUTHBRIDGE",
+              "total_prima": 4269363.876114522
+            },
+            {
+              "rutcia": "992250003",
+              "ranking": 15,
+              "nombrecia": "CHUBB GENERALES",
+              "total_prima": 1980999.4315147921
+            },
+            {
+              "rutcia": "769818758",
+              "ranking": 16,
+              "nombrecia": "CONTEMPORA",
+              "total_prima": 1084442.1381542762
+            },
+            {
+              "rutcia": "990170002",
+              "ranking": 17,
+              "nombrecia": "SURAMERICANA G",
+              "total_prima": 553621.8484942352
+            },
+            {
+              "rutcia": "995880601",
+              "ranking": 18,
+              "nombrecia": "CHUBB VIDA",
+              "total_prima": 238048.27422898746
+            }
+          ]
+        },
+        "companias": [
+          {
+            "grupo": "1",
+            "rutcia": "760942340",
+            "ranking": 2782,
+            "prima_uf": 3184.162925020349,
+            "nombrecia": "SOLUNION",
+            "prima_clp": 122325,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 3184.162925020349,
+                "prima_clp": 122325
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 3271.625274264081,
+                "prima_clp": 120361
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 3784.6850187605132,
+                "prima_clp": 132884
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 2208.2335486810357,
+                "prima_clp": 68437
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 2111.224743578762,
+                "prima_clp": 61374
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 2536.741511991901,
+                "prima_clp": 71815
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 954.9154948942149,
+                "prima_clp": 26323
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 1478.5727666173846,
+                "prima_clp": 39623
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 1385.6090675641929,
+                "prima_clp": 36508
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 1128.4442795276773,
+                "prima_clp": 28921
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 1973.3545565657346,
+                "prima_clp": 48598
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "761732587",
+            "ranking": 5467,
+            "prima_uf": 1092.0774278054669,
+            "nombrecia": "UNNIO",
+            "prima_clp": 41954,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 1092.0774278054669,
+                "prima_clp": 41954
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 163.199359814903,
+                "prima_clp": 6004
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 164.62086788805098,
+                "prima_clp": 5780
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 540.4665888394778,
+                "prima_clp": 16750
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 645.3659108788927,
+                "prima_clp": 18761
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 1649.4913094128776,
+                "prima_clp": 46697
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 9909.130121066728,
+                "prima_clp": 273153
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 1816.991776294922,
+                "prima_clp": 48692
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 6623.809491277889,
+                "prima_clp": 174524
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 7615.525951175013,
+                "prima_clp": 195179
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 6080.293660236081,
+                "prima_clp": 149740
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "767434928",
+            "ranking": 1215,
+            "prima_uf": 9382.250266746041,
+            "nombrecia": "REALE",
+            "prima_clp": 360435,
+            "participacion": 0.01,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 9382.250266746041,
+                "prima_clp": 360435
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 10450.684654476185,
+                "prima_clp": 384474
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 5125.034960573587,
+                "prima_clp": 179945
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 9008.948836044701,
+                "prima_clp": 279203
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 9824.931467926233,
+                "prima_clp": 285614
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 4519.931868453271,
+                "prima_clp": 127959
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 9079.732523537326,
+                "prima_clp": 250290
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 5628.823492973766,
+                "prima_clp": 150842
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "769818758",
+            "ranking": 16126,
+            "prima_uf": 30.95008966155075,
+            "nombrecia": "CONTEMPORA",
+            "prima_clp": 1189,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 30.95008966155075,
+                "prima_clp": 1189
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 1804.8153052947916,
+                "prima_clp": 66398
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 1481.673254349494,
+                "prima_clp": 52023
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "945100001",
+            "ranking": 1403,
+            "prima_uf": 7520.8717877568315,
+            "nombrecia": "RENTA NACIONAL",
+            "prima_clp": 288927,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 7520.8717877568315,
+                "prima_clp": 288927
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 8545.106519928588,
+                "prima_clp": 314369
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 6646.069121397352,
+                "prima_clp": 233350
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 6034.027131100093,
+                "prima_clp": 187005
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 4704.96894944089,
+                "prima_clp": 136775
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 4245.787875212734,
+                "prima_clp": 120198
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 93.3040554977746,
+                "prima_clp": 2572
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 76.90832274180222,
+                "prima_clp": 2061
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 93.5555590978891,
+                "prima_clp": 2465
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 61.02440625086572,
+                "prima_clp": 1564
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 60.94911702961372,
+                "prima_clp": 1501
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 61.73432703148408,
+                "prima_clp": 1439
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "965082107",
+            "ranking": 2608,
+            "prima_uf": 3268.7876024717384,
+            "nombrecia": "MAPFRE",
+            "prima_clp": 125576,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 3268.7876024717384,
+                "prima_clp": 125576
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 2267.122885529947,
+                "prima_clp": 83406
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 634.7302182963848,
+                "prima_clp": 22286
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 650.1409730463665,
+                "prima_clp": 20149
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 724.7939737870192,
+                "prima_clp": 21070
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 636.0663427757177,
+                "prima_clp": 18007
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 1415.631476551189,
+                "prima_clp": 39023
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 5120.877792264687,
+                "prima_clp": 137230
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 7465.01249811181,
+                "prima_clp": 196688
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 7909.878969561541,
+                "prima_clp": 202723
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 7151.79619199987,
+                "prima_clp": 176128
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 7884.619014687536,
+                "prima_clp": 183787
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "966541806",
+            "ranking": 11960,
+            "prima_uf": 133.6918927684816,
+            "nombrecia": "CONSORCIO NACIONAL",
+            "prima_clp": 5136,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 133.6918927684816,
+                "prima_clp": 5136
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 76.95159687474857,
+                "prima_clp": 2831
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 182.50701062744474,
+                "prima_clp": 6408
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 160.33304357870838,
+                "prima_clp": 4969
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 95.25175668800458,
+                "prima_clp": 2769
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 348.8174118348538,
+                "prima_clp": 9875
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 254.5909259266649,
+                "prima_clp": 7018
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 449.9939174883033,
+                "prima_clp": 12059
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 797.5943506864663,
+                "prima_clp": 21015
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 100.7839139040832,
+                "prima_clp": 2583
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 7354.215478070905,
+                "prima_clp": 181113
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 6292.010660003878,
+                "prima_clp": 146664
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "990170002",
+            "ranking": 16570,
+            "prima_uf": 15.800424242692435,
+            "nombrecia": "SURAMERICANA G",
+            "prima_clp": 607,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 15.800424242692435,
+                "prima_clp": 607
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 28.785496676212905,
+                "prima_clp": 1059
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 25.832374943678587,
+                "prima_clp": 907
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 205.50637040708267,
+                "prima_clp": 6369
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 414.4775790298906,
+                "prima_clp": 12049
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 469.30512745699923,
+                "prima_clp": 13286
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 546.0754072348371,
+                "prima_clp": 15053
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 3043.9052859638764,
+                "prima_clp": 81571
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 2980.8357225107957,
+                "prima_clp": 78539
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 3012.631349767003,
+                "prima_clp": 77211
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 3425.657101323339,
+                "prima_clp": 84364
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 1315.6404496695777,
+                "prima_clp": 30667
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "990370001",
+            "ranking": 2816,
+            "prima_uf": 2967.01772068338,
+            "nombrecia": "ZURICH CHILE G",
+            "prima_clp": 113983,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 2967.01772068338,
+                "prima_clp": 113983
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 1368.683771612227,
+                "prima_clp": 50353
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 1519.7525104682352,
+                "prima_clp": 53360
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 874.1684074530826,
+                "prima_clp": 27092
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 999.5758562080307,
+                "prima_clp": 29058
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 880.6094255233321,
+                "prima_clp": 24930
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 798.6711064692868,
+                "prima_clp": 22016
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 877.5609053464158,
+                "prima_clp": 23517
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 836.2310886830793,
+                "prima_clp": 22033
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 751.5678473172477,
+                "prima_clp": 19262
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 618.0183618858899,
+                "prima_clp": 15220
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 677.618968354615,
+                "prima_clp": 15795
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "990610002",
+            "ranking": 6040,
+            "prima_uf": 691.6004476179494,
+            "nombrecia": "HDI G",
+            "prima_clp": 26569,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 691.6004476179494,
+                "prima_clp": 26569
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 90.62692069546335,
+                "prima_clp": 3182
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 97.76798592141003,
+                "prima_clp": 3030
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 96.9717234032087,
+                "prima_clp": 2819
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 234.0873912131216,
+                "prima_clp": 6627
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 592.98137292637,
+                "prima_clp": 16346
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 842.5957920960186,
+                "prima_clp": 22580
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 1298.2399409746022,
+                "prima_clp": 34206
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 2414.1707723528225,
+                "prima_clp": 61873
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 2919.7104003313425,
+                "prima_clp": 71904
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 2970.0260322374165,
+                "prima_clp": 69230
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "99147000K",
+            "ranking": 1070,
+            "prima_uf": 10554.423090589013,
+            "nombrecia": "BCI",
+            "prima_clp": 405466,
+            "participacion": 0.01,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 10554.423090589013,
+                "prima_clp": 405466
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 10830.957646449951,
+                "prima_clp": 398464
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 8385.809795112526,
+                "prima_clp": 294434
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 8876.365121803423,
+                "prima_clp": 275094
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 9110.044502418788,
+                "prima_clp": 264832
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 10341.102806999945,
+                "prima_clp": 292756
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 9243.05089750738,
+                "prima_clp": 254792
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 9766.909195936732,
+                "prima_clp": 261735
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 8230.04268258895,
+                "prima_clp": 216845
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 7659.187275084679,
+                "prima_clp": 196298
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 7609.868803066541,
+                "prima_clp": 187409
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 6225.342734912199,
+                "prima_clp": 145110
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "992250003",
+            "ranking": 14311,
+            "prima_uf": 56.53792661470835,
+            "nombrecia": "CHUBB GENERALES",
+            "prima_clp": 2172,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 56.53792661470835,
+                "prima_clp": 2172
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 55.39645158274023,
+                "prima_clp": 2038
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 87.63640319922713,
+                "prima_clp": 3077
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 88.7010538937149,
+                "prima_clp": 2749
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 68.72986993955693,
+                "prima_clp": 1998
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": -9.501962914792472,
+                "prima_clp": -269
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 132.08400702464903,
+                "prima_clp": 3641
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 325.7315619666141,
+                "prima_clp": 8729
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 265.5232013991205,
+                "prima_clp": 6996
+              }
+            ]
+          },
+          {
+            "grupo": "1",
+            "rutcia": "992880007",
+            "ranking": 12474,
+            "prima_uf": 121.84808217470064,
+            "nombrecia": "SOUTHBRIDGE",
+            "prima_clp": 4681,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 121.84808217470064,
+                "prima_clp": 4681
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 167.82026107548486,
+                "prima_clp": 6174
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 159.3233797518611,
+                "prima_clp": 5594
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 187.95330626805722,
+                "prima_clp": 5825
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 284.89528670641164,
+                "prima_clp": 8282
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 512.7527645766822,
+                "prima_clp": 14516
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 388.23483745613675,
+                "prima_clp": 10702
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 97.58139930607125,
+                "prima_clp": 2615
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 254.93415434503896,
+                "prima_clp": 6717
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 454.60061203889796,
+                "prima_clp": 11651
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 665.6894234400315,
+                "prima_clp": 16394
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 450.0728456478801,
+                "prima_clp": 10491
+              }
+            ]
+          },
+          {
+            "grupo": "2",
+            "rutcia": "762133296",
+            "ranking": 1814,
+            "prima_uf": 5683.15489960223,
+            "nombrecia": "HELP SEGUROS",
+            "prima_clp": 218328,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 5683.15489960223,
+                "prima_clp": 218328
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 5743.970539308104,
+                "prima_clp": 211317
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 4956.9393961661,
+                "prima_clp": 174043
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 5747.918638966383,
+                "prima_clp": 178138
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 6542.065397950419,
+                "prima_clp": 190180
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": -1.554224417289475,
+                "prima_clp": -44
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 15537.338128165382,
+                "prima_clp": 428299
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 17257.541008443124,
+                "prima_clp": 462470
+              }
+            ]
+          },
+          {
+            "grupo": "2",
+            "rutcia": "96573600K",
+            "ranking": 9085,
+            "prima_uf": 365.5442465241019,
+            "nombrecia": "BCI",
+            "prima_clp": 14043,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 365.5442465241019,
+                "prima_clp": 14043
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 410.6622132051223,
+                "prima_clp": 15108
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 399.6185808541943,
+                "prima_clp": 14031
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 381.1338117833978,
+                "prima_clp": 11812
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 368.24487372520366,
+                "prima_clp": 10705
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 344.5079714050966,
+                "prima_clp": 9753
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 295.87398003104573,
+                "prima_clp": 8156
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 300.91640688495545,
+                "prima_clp": 8064
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 2672.576797158644,
+                "prima_clp": 70417
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 7559.144706269321,
+                "prima_clp": 193734
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 659.6797836529677,
+                "prima_clp": 16246
+              },
+              {
+                "periodo": "201312",
+                "prima_uf": 725.6250225229477,
+                "prima_clp": 16914
+              }
+            ]
+          },
+          {
+            "grupo": "2",
+            "rutcia": "96933030K",
+            "ranking": 10022,
+            "prima_uf": 272.0692490685689,
+            "nombrecia": "MAPFRE",
+            "prima_clp": 10452,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 272.0692490685689,
+                "prima_clp": 10452
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 257.7375632519837,
+                "prima_clp": 9482
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 247.55788645033547,
+                "prima_clp": 8692
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 342.86555062736073,
+                "prima_clp": 10626
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 289.71119350898323,
+                "prima_clp": 8422
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 405.4406332192862,
+                "prima_clp": 11478
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 416.74844073034,
+                "prima_clp": 11488
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 385.7357264347451,
+                "prima_clp": 10337
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 602.0575391358275,
+                "prima_clp": 15863
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 385.4214098120534,
+                "prima_clp": 9878
+              }
+            ]
+          },
+          {
+            "grupo": "2",
+            "rutcia": "990120005",
+            "ranking": 5045,
+            "prima_uf": 1224.8322278676274,
+            "nombrecia": "CONSORCIO NACIONAL",
+            "prima_clp": 47054,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 1224.8322278676274,
+                "prima_clp": 47054
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 877.889694194191,
+                "prima_clp": 32297
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 845.4904989835088,
+                "prima_clp": 29686
+              },
+              {
+                "periodo": "202112",
+                "prima_uf": 811.8292164299262,
+                "prima_clp": 25160
+              },
+              {
+                "periodo": "202012",
+                "prima_uf": 888.9819964204053,
+                "prima_clp": 25843
+              },
+              {
+                "periodo": "201912",
+                "prima_uf": 868.1403069028052,
+                "prima_clp": 24577
+              },
+              {
+                "periodo": "201812",
+                "prima_uf": 175.87016370653626,
+                "prima_clp": 4848
+              },
+              {
+                "periodo": "201712",
+                "prima_uf": 151.68963219089085,
+                "prima_clp": 4065
+              },
+              {
+                "periodo": "201612",
+                "prima_uf": 158.45617007451804,
+                "prima_clp": 4175
+              },
+              {
+                "periodo": "201512",
+                "prima_uf": 151.74163421330996,
+                "prima_clp": 3889
+              },
+              {
+                "periodo": "201412",
+                "prima_uf": 108.09230481867536,
+                "prima_clp": 2662
+              }
+            ]
+          },
+          {
+            "grupo": "2",
+            "rutcia": "995880601",
+            "ranking": 18613,
+            "prima_uf": 6.793922120828213,
+            "nombrecia": "CHUBB VIDA",
+            "prima_clp": 261,
+            "participacion": 0,
+            "series_historicas": [
+              {
+                "periodo": "202412",
+                "prima_uf": 6.793922120828213,
+                "prima_clp": 261
+              },
+              {
+                "periodo": "202312",
+                "prima_uf": 6.849806574509587,
+                "prima_clp": 252
+              },
+              {
+                "periodo": "202212",
+                "prima_uf": 6.522176253696137,
+                "prima_clp": 229
+              }
+            ]
+          }
+        ],
+        "produccion": {
+          "total_prima_uf": 46572.41422933626,
+          "ranking_general": 197,
+          "total_prima_clp": 1789158,
+          "crecimiento_periodo_anterior": 0
+        },
+        "concentracion": {
+          "hhi_ramos": 1668.22,
+          "hhi_companias": 1481.46,
+          "top_5_ramos_participacion": 75.2,
+          "top_3_companias_participacion": 58.96
+        },
+        "top_performers": {
+          "ramos_mayor_crecimiento": [],
+          "ramos_mayor_decrecimiento": [],
+          "companias_mayor_crecimiento": [],
+          "companias_mayor_decrecimiento": []
+        }
+      },
+      "indicadores": null,
+      "nombresRamos": [
+        {
+          "ramo": "Incendio",
+          "codigo": "1-00"
+        },
+        {
+          "ramo": "Pérdida de Beneficios por Incendio",
+          "codigo": "2-00"
+        },
+        {
+          "ramo": "Otros Riesgos Adicionales a Incendio",
+          "codigo": "3-00"
+        },
+        {
+          "ramo": "Terremoto y Tsunami",
+          "codigo": "4-00"
+        },
+        {
+          "ramo": "Pérdida de Beneficios por Terremoto",
+          "codigo": "5-00"
+        },
+        {
+          "ramo": "Otros Riesgo de la Naturaleza",
+          "codigo": "6-00"
+        },
+        {
+          "ramo": "Terrorismo",
+          "codigo": "7-00"
+        },
+        {
+          "ramo": "Robo",
+          "codigo": "8-00"
+        },
+        {
+          "ramo": "Cristales",
+          "codigo": "9-00"
+        },
+        {
+          "ramo": "Daños Físicos Vehículos Motorizados",
+          "codigo": "10-00"
+        },
+        {
+          "ramo": "Casco Marítimo",
+          "codigo": "11-00"
+        },
+        {
+          "ramo": "Casco Aéreo",
+          "codigo": "12-00"
+        },
+        {
+          "ramo": "Responsabilidad Civil Hogar y Condominios",
+          "codigo": "13-00"
+        },
+        {
+          "ramo": "Responsabilidad Civil Profesional",
+          "codigo": "14-00"
+        },
+        {
+          "ramo": "Responsabilidad Civil Industria, Infraestructura y Comercio",
+          "codigo": "15-00"
+        },
+        {
+          "ramo": "Responsabilidad Civil Vehículos Motorizados",
+          "codigo": "16-00"
+        },
+        {
+          "ramo": "Transporte Terrestre",
+          "codigo": "17-00"
+        },
+        {
+          "ramo": "Transporte Marítimo",
+          "codigo": "18-00"
+        },
+        {
+          "ramo": "Transporte Aéreo",
+          "codigo": "19-00"
+        },
+        {
+          "ramo": "Equipo Contratista",
+          "codigo": "20-00"
+        },
+        {
+          "ramo": "Todo Riesgo Construcción y Montaje",
+          "codigo": "21-00"
+        },
+        {
+          "ramo": "Avería de Maquinaria",
+          "codigo": "22-00"
+        },
+        {
+          "ramo": "Equipo Electrónico",
+          "codigo": "23-00"
+        },
+        {
+          "ramo": "Garantía",
+          "codigo": "24-00"
+        },
+        {
+          "ramo": "Fidelidad",
+          "codigo": "25-00"
+        },
+        {
+          "ramo": "Seguro Extensión y Garantía",
+          "codigo": "26-00"
+        },
+        {
+          "ramo": "Seguro de Crédito por Ventas a Plazo",
+          "codigo": "27-00"
+        },
+        {
+          "ramo": "Seguro de Crédito a la Exportación",
+          "codigo": "28-00"
+        },
+        {
+          "ramo": "Otros Seguros de Crédito",
+          "codigo": "29-00"
+        },
+        {
+          "ramo": "Salud",
+          "codigo": "30-00"
+        },
+        {
+          "ramo": "Accidentes Personales",
+          "codigo": "31-00"
+        },
+        {
+          "ramo": "Seguro Obligatorio de Accidentes Personales (SOAP)",
+          "codigo": "32-00"
+        },
+        {
+          "ramo": "Seguro Cesantía",
+          "codigo": "33-00"
+        },
+        {
+          "ramo": "Seguro de Título",
+          "codigo": "34-00"
+        },
+        {
+          "ramo": "Seguro Agrícola",
+          "codigo": "35-00"
+        },
+        {
+          "ramo": "Seguro de Asistencia",
+          "codigo": "36-00"
+        },
+        {
+          "ramo": "Otros Seguros",
+          "codigo": "50-00"
+        },
+        {
+          "ramo": "Vida Entera ",
+          "codigo": "101-100"
+        },
+        {
+          "ramo": "Temporal de Vida",
+          "codigo": "102-100"
+        },
+        {
+          "ramo": "Seguros con Cuenta Única de Inversión (CUI)",
+          "codigo": "103-100"
+        },
+        {
+          "ramo": "Mixto o Dotal",
+          "codigo": "104-100"
+        },
+        {
+          "ramo": "Rentas Privadas y Otras Rentas",
+          "codigo": "105-100"
+        },
+        {
+          "ramo": "Dotal puro o Capital Diferido",
+          "codigo": "106-100"
+        },
+        {
+          "ramo": "Protección Familiar",
+          "codigo": "107-100"
+        },
+        {
+          "ramo": "Incapacidad o Invalidez",
+          "codigo": "108-100"
+        },
+        {
+          "ramo": "Salud",
+          "codigo": "109-100"
+        },
+        {
+          "ramo": "Accidentes Personales",
+          "codigo": "110-100"
+        },
+        {
+          "ramo": "Asistencia",
+          "codigo": "111-100"
+        },
+        {
+          "ramo": "Desgravamen Hipotecario",
+          "codigo": "112-100"
+        },
+        {
+          "ramo": "Desgravamen Consumos y Otros",
+          "codigo": "113-100"
+        },
+        {
+          "ramo": "SOAP",
+          "codigo": "114-100"
+        },
+        {
+          "ramo": "Otros",
+          "codigo": "150-100"
+        },
+        {
+          "ramo": "Vida Entera ",
+          "codigo": "201-200"
+        },
+        {
+          "ramo": "Temporal de Vida",
+          "codigo": "202-200"
+        },
+        {
+          "ramo": "Seguros con Cuenta Única de inversión (CUI)",
+          "codigo": "203-200"
+        },
+        {
+          "ramo": "Mixto o Dotal",
+          "codigo": "204-200"
+        },
+        {
+          "ramo": "Rentas Privadas y Otras Rentas",
+          "codigo": "205-200"
+        },
+        {
+          "ramo": "Dotal puro o Capital Diferido",
+          "codigo": "206-200"
+        },
+        {
+          "ramo": "Protección Familiar",
+          "codigo": "207-200"
+        },
+        {
+          "ramo": "Incapacidad o Invalidez",
+          "codigo": "208-200"
+        },
+        {
+          "ramo": "Salud",
+          "codigo": "209-200"
+        },
+        {
+          "ramo": "Accidentes Personales",
+          "codigo": "210-200"
+        },
+        {
+          "ramo": "Asistencia",
+          "codigo": "211-200"
+        },
+        {
+          "ramo": "Desgravamen Hipotecario",
+          "codigo": "212-200"
+        },
+        {
+          "ramo": "Desgravamen Consumos y Otros",
+          "codigo": "213-200"
+        },
+        {
+          "ramo": "SOAP",
+          "codigo": "214-200"
+        },
+        {
+          "ramo": "Otros",
+          "codigo": "250-200"
+        },
+        {
+          "ramo": "Vida Entera ",
+          "codigo": "301-400"
+        },
+        {
+          "ramo": "Temporal de Vida",
+          "codigo": "302-400"
+        },
+        {
+          "ramo": "Seguros con Cuenta Única de inversión (CUI)",
+          "codigo": "303-400"
+        },
+        {
+          "ramo": "Mixto o Dotal",
+          "codigo": "304-400"
+        },
+        {
+          "ramo": "Rentas Privadas y Otras Rentas",
+          "codigo": "305-400"
+        },
+        {
+          "ramo": "Dotal puro o Capital Diferido",
+          "codigo": "306-400"
+        },
+        {
+          "ramo": "Protección Familiar",
+          "codigo": "307-400"
+        },
+        {
+          "ramo": "Incapacidad o Invalidez",
+          "codigo": "308-400"
+        },
+        {
+          "ramo": "Salud",
+          "codigo": "309-400"
+        },
+        {
+          "ramo": "Accidentes Personales",
+          "codigo": "310-400"
+        },
+        {
+          "ramo": "Asistencia",
+          "codigo": "311-400"
+        },
+        {
+          "ramo": "Desgravamen Hipotecario",
+          "codigo": "312-400"
+        },
+        {
+          "ramo": "Desgravamen Consumos y Otros",
+          "codigo": "313-400"
+        },
+        {
+          "ramo": "SOAP",
+          "codigo": "314-400"
+        },
+        {
+          "ramo": "Otros",
+          "codigo": "350-400"
+        },
+        {
+          "ramo": "Seguro Invalidez y Sobrevivencia (SIS)",
+          "codigo": "420-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Vejez",
+          "codigo": "421-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Vejez Normal",
+          "codigo": "421,1-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Vejez Anticipada",
+          "codigo": "421,2-400"
+        },
+        {
+          "ramo": "Renta Vitalicia Invalidez",
+          "codigo": "422-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Invalidez Total",
+          "codigo": "422,1-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Invalidez Parcial",
+          "codigo": "422,2-400"
+        },
+        {
+          "ramo": "Renta Vitalicia de Sobrevivencia",
+          "codigo": "423-400"
+        },
+        {
+          "ramo": "Invalidez y Sobrevivencia (C-528)",
+          "codigo": "424-400"
+        },
+        {
+          "ramo": "Seguro con Ahorro Previsional (APV)",
+          "codigo": "425-400"
+        },
+        {
+          "ramo": "Seguro con Ahorro Previsional Colectivo (APVC)",
+          "codigo": "426-400"
+        }
+      ]
+    },
+    "fecha_generacion": "2025-07-03 13:10:02.646",
+    "fecha_expiracion": "2025-10-03 12:10:02.645",
+    "activo": true,
+    "fecha_creacion": "2025-07-03 13:10:02.789561",
+    "fecha_actualizacion": "2025-07-07 15:02:35.234975"
+  }
+]

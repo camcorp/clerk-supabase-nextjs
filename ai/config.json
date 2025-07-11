@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ai.vercel.com/schema.json",
+  "providers": {
+    "openai": {
+      "apiKey": "OPENAI_API_KEY"
+    }
+  },
+  "models": {
+    "default": "gpt-4",
+    "chat": "gpt-4",
+    "completion": "gpt-3.5-turbo"
+  },
+  "features": {
+    "streaming": true,
+    "functionCalling": true,
+    "tools": true
+  },
+  "middleware": {
+    "rateLimit": {
+      "requests": 100,
+      "window": "1h"
+    },
+    "logging": true
+  }
+}

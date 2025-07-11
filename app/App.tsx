@@ -6,7 +6,7 @@ import { PricingTable } from '@/app/components/ui/PricingTable';
 import { RegistrationCTA } from '@/app/components/ui/RegistrationCTA';
 import { Footer } from '@/app/components/ui/Footer';
 export function App() {
-  return <div className="font-['SF Pro Display','Inter',system-ui,sans-serif] antialiased bg-gradient-to-br from-slate-50 to-white text-slate-900">
+  return <div className="font-sans antialiased bg-gradient-to-br from-slate-50 to-white text-slate-900">
       <Hero />
       <Benefits />
       <Stats />

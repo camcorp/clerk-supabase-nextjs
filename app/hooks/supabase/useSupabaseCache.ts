@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 
 // Definir tipos para el caché
 interface CacheItem<T> {
@@ -37,10 +37,13 @@ const DEFAULT_EXPIRATION = 5 * 60 * 1000;
  * @param config Configuración opcional del caché
  */
 export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  );
   
   // Añadir logs para verificar la conexión con Supabase
-  console.log('Estado de conexión Supabase:', supabase ? 'Disponible' : 'No disponible');
+  console.log('Estado de conexión Supabase (Nuevas API Keys):', supabase ? 'Disponible' : 'No disponible');
   
   // Verificar la sesión de autenticación (esto debe ejecutarse en un useEffect)
   useEffect(() => {

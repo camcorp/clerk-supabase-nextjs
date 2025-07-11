@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { usePeriod } from '../../context/PeriodContext';
-import SummaryCard from '@/app/components/ui/charts/SummaryCard';
-import ModernCard from '@/app/components/ui/charts/ModernCard';
-import ChartDualAxis from '@/app/components/ui/charts/common/ChartDualAxis';
-import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
-import NoData from '@/app/components/ui/charts/NoData';
+import SummaryCard from '@/components/ui/charts/SummaryCard';
+import ModernCard from '@/components/ui/charts/ModernCard';
+// Cambiar esta importación
+import DualAxisChart from '@/components/ui/charts/simplified/DualAxisChart';
+import LoadingSpinner from '@/components/ui/charts/LoadingSpinner';
+import NoData from '@/components/ui/charts/NoData';
 import { formatUF, formatCLP, formatPercent } from '@/lib/utils/formatters';
-import { colors } from '@/app/lib/utils/colors';
+import { colors } from '@/lib/utils/colors';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
@@ -192,14 +193,19 @@ export default function RamoDetailPage() {
       </div>
       
       {/* Gráfico de evolución con doble eje */}
-      <ChartDualAxis
+      <DualAxisChart
         data={historicalData}
+        xAxisKey="periodo"
         title="Evolución de Prima y Crecimiento"
         subtitle="Prima UF y porcentaje de crecimiento por período"
-        primaryColor={colors.ramos.primary}
-        secondaryColor={colors.status.info}
-        valueLabel="Prima UF"
-        growthLabel="Crecimiento %"
+        Y1dataKey="valor"
+        Y1valueLabel="Prima UF"
+        Y1valueType="UF"
+        Y1color={colors.ramos.primary}
+        Y2dataKey="crecimiento"
+        Y2valueLabel="Crecimiento %"
+        Y2valueType="PERCENT"
+        Y2color={colors.status.info}
       />
       
       {/* Tabla de compañías */}

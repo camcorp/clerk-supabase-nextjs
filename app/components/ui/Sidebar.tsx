@@ -29,7 +29,7 @@ export default function Sidebar() {
   ];
 
   const secondaryNavigation = [
-    { name: 'Reportes', href: '/dashboard/reportes', icon: DocumentIcon },
+    { name: 'Reportes', href: '/dashboard/corredor/reportes', icon: DocumentIcon },
     { name: 'Configuración', href: '/dashboard/configuracion', icon: CogIcon },
   ];
 

@@ -3,7 +3,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatNumber, formatChartTooltip } from '@/lib/utils/formatters';
-import { colors, typography, theme, getDomainColor, getStatusColor } from '@/app/config/theme';
+import { colors, typography, theme, getDomainColor, getStatusColor } from '@/config/theme';
 
 interface ChartMovimientosProps {
   data: Array<{

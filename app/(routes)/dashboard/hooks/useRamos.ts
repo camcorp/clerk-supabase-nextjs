@@ -110,7 +110,8 @@ export function useRamos(selectedPeriodo: string, periodos: string[]) {
   ]);
   
   return {
-    ramosData: ramos,
+    ramos,
+    historicalRamos,
     concentracionRamos,
     loading,
     error

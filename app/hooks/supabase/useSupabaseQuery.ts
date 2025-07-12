@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { PostgrestError } from '@supabase/supabase-js';
 import supabase from '@/lib/supabase/client';
 
@@ -30,7 +31,7 @@ export function useSupabaseQuery<T = any>(
   const [orderBy, setOrderBy] = useState<OrderBy | null>(initialOrderBy);
   
   // Función para aplicar filtros a la consulta
-  const applyFilters = useCallback((query: any, filters: Filters) => {
+  const applyFilters = useCallback((query: PostgrestFilterBuilder<any, any, any[]>, filters: Filters) => {
     let filteredQuery = query;
     
     // Aplicar cada filtro a la consulta

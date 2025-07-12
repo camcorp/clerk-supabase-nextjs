@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { comprarReporte } from '@/lib/api/reportes';
+import { comprarReporte } from '@/app/lib/api/reportes';
 
 /**
  * API endpoint para simular la compra de un reporte

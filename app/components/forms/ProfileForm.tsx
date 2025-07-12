@@ -1,4 +1,4 @@
-import { ProfileSchema } from '@/lib/validations/database'
+import { ProfileSchema } from '@/app/lib/validations/database'
 
 export function ProfileForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

@@ -44,26 +44,11 @@ export default function SearchBox({
     setError(null);
     
     try {
-      // Limpiar el RUT removiendo puntos y guiones para la búsqueda
-      let searchValue = searchTerm;
-      if (searchField === 'rut') {
-        searchValue = searchTerm.replace(/[.-]/g, '').toUpperCase();
-        
-        // Validar que el RUT tenga al menos 4 caracteres
-        if (searchValue.length < 4) {
-          setError('El RUT debe tener al menos 4 caracteres');
-          setIsSearching(false);
-          return;
-        }
-      }
-      
-      console.log('Buscando en tabla:', tableName, 'campo:', searchField, 'valor:', searchValue);
-      
       // Construir la consulta base
       let query = supabase
         .from(tableName)
         .select(displayFields.join(', '))
-        .ilike(searchField, `%${searchValue}%`)
+        .ilike(searchField, `%${searchTerm}%`)
         .limit(limit);
       
       // Añadir ordenamiento si se especifica
@@ -71,23 +56,14 @@ export default function SearchBox({
         query = query.order(orderBy.field, { ascending: orderBy.ascending });
       }
       
-      console.log('Ejecutando consulta...');
       const { data, error } = await query;
       
-      if (error) {
-        console.error('Error de Supabase:', error);
-        throw error;
-      }
+      if (error) throw error;
       
-      console.log('Resultados encontrados:', data?.length || 0, data);
       setSearchResults(data || []);
-      
-      if (!data || data.length === 0) {
-        setError('No se encontraron resultados para la búsqueda');
-      }
     } catch (err: any) {
       console.error(`Error al buscar en ${tableName}:`, err.message);
-      setError(`Error al realizar la búsqueda: ${err.message}`);
+      setError(`Error al realizar la búsqueda. Por favor intente nuevamente.`);
       setSearchResults([]);
     } finally {
       setIsSearching(false);

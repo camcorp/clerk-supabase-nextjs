@@ -7,16 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import ChartPrimaEvolution from '@/components/ui/charts/ChartPrimaEvolution';
 
+import { useSeriesHistoricasAgrupadas, useSeriesHistoricasExpandidas } from '@/app/hooks/useSeriesHistoricasAgrupadas';
+
 interface EvolucionData {
   periodo: string;
-  primaclp: number;
-  primauf: number;
+  prima_clp: number;  // ✅ Cambiado de primaclp a prima_clp
+  prima_uf: number;   // ✅ Cambiado de primauf a prima_uf
   participacion: number;
   crecimiento: number;
-  mercado_primaclp: number;
-  mercado_primauf: number;
-  segmento_primaclp: number;
-  segmento_primauf: number;
+  mercado_prima_clp: number;  // ✅ Cambiado de mercado_primaclp
+  mercado_prima_uf: number;   // ✅ Cambiado de mercado_primauf
+  segmento_prima_clp: number; // ✅ Cambiado de segmento_primaclp
+  segmento_prima_uf: number;  // ✅ Cambiado de segmento_primauf
 }
 
 function EvolucionCompaniaContent() {
@@ -29,22 +31,55 @@ function EvolucionCompaniaContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [companiaName, setCompaniaName] = useState<string>('');
+  const [rawCompanias, setRawCompanias] = useState<any[]>([]);
+
+  // ✅ USAR LOS HOOKS EN EL NIVEL SUPERIOR
+  const companiasConSeries = useSeriesHistoricasAgrupadas(rawCompanias);
+  const seriesExpandidas = useSeriesHistoricasExpandidas(companiasConSeries);
 
   useEffect(() => {
-    async function loadAndProcessData() {
-      if (!rut || (!compania && !rutcia)) return;
+    async function loadReportData() {
+      if (!rut || !rutcia) return;
       
-      console.log('🔍 Cargando datos para:', { rut, compania, rutcia });
+      console.log('🔍 Cargando datos de evolución para:', { rut, rutcia });
       
       try {
         setLoading(true);
-        setError(null);
         
+        // Primero intentar obtener datos procesados de sessionStorage
+        const datosGuardados = sessionStorage.getItem('evolucion_data');
+        if (datosGuardados) {
+          console.log('📦 Usando datos procesados de sessionStorage');
+          const datosParseados = JSON.parse(datosGuardados);
+          
+          if (datosParseados.rutcia === rutcia && datosParseados.datos) {
+            setCompaniaName(datosParseados.nombrecia);
+            
+            // Calcular crecimiento en los datos
+            const datosConCrecimiento = datosParseados.datos.map((item: any, index: number) => {
+              if (index > 0) {
+                const actual = item.prima_clp;
+                const anterior = datosParseados.datos[index - 1].prima_clp;
+                if (anterior > 0) {
+                  item.crecimiento = ((actual - anterior) / anterior) * 100;
+                }
+              }
+              return item;
+            });
+            
+            setEvolucionData(datosConCrecimiento);
+            // Limpiar sessionStorage después de usar
+            sessionStorage.removeItem('evolucion_data');
+            setLoading(false);
+            return;
+          }
+        }
+        
+        // Fallback: cargar desde API si no hay datos en sessionStorage
+        console.log('📡 Cargando desde API como fallback');
         const response = await fetch(`/api/reportes/${rut}?periodo=202412`);
-        console.log('📡 Respuesta de la API:', response.status, response.statusText);
         
         if (!response.ok) {
-          console.error('❌ Error en la respuesta:', response.status, response.statusText);
           if (response.status === 403) {
             throw new Error('No tienes acceso a este reporte. Debes comprarlo primero.');
           } else if (response.status === 404) {
@@ -55,94 +90,60 @@ function EvolucionCompaniaContent() {
         }
         
         const reportData = await response.json();
-        console.log('📊 Datos completos recibidos:', reportData);
+        const datosReporte = reportData.success ? reportData.reporte?.datos_reporte : reportData.datos_reporte;
         
-        // Acceder a la estructura correcta
-        const reporteData = reportData.success ? reportData.reporte : reportData;
-        if (!reporteData) {
-          throw new Error('No se pudo obtener el reporte');
+        if (!datosReporte || !datosReporte.companias) {
+          throw new Error('No se encontró estructura de datos válida');
         }
         
-        // ✅ CORRECCIÓN: Acceder a reportData.companias en lugar de companias directamente
-        const companiasArray = reporteData?.datos_reporte?.reportData?.companias;
+        // Buscar la compañía específica
+        const companiaData = datosReporte.companias.find((comp: any) => comp.rutcia === rutcia);
         
-        if (!Array.isArray(companiasArray)) {
-          throw new Error('No se encontró array de compañías válido en la estructura de datos');
-        }
-        
-        console.log('📊 Total compañías recibidas:', companiasArray.length);
-        
-        // ✅ BUSCAR DIRECTAMENTE LA COMPAÑÍA ESPECÍFICA
-        const companiaEspecifica = companiasArray.find((comp: any) => {
-          if (rutcia) {
-            return comp.rutcia === rutcia;
-          }
-          return comp.nombrecia === compania || comp.nombre === compania;
-        });
-        
-        if (!companiaEspecifica) {
-          throw new Error(`No se encontró la compañía con rutcia: ${rutcia} o nombre: ${compania}`);
-        }
-        
-        console.log('🎯 Compañía encontrada:', {
-          rutcia: companiaEspecifica.rutcia,
-          nombrecia: companiaEspecifica.nombrecia,
-          prima_clp: companiaEspecifica.prima_clp,
-          prima_uf: companiaEspecifica.prima_uf,
-          tiene_series_historicas: !!companiaEspecifica.series_historicas,
-          cantidad_series: companiaEspecifica.series_historicas?.length || 0
-        });
-        
-        const nombreCompania = companiaEspecifica.nombrecia || compania || rutcia;
-        setCompaniaName(nombreCompania);
-        
-        // ✅ PROCESAR SERIES HISTÓRICAS DIRECTAMENTE
-        if (companiaEspecifica.series_historicas && Array.isArray(companiaEspecifica.series_historicas)) {
-          console.log('📈 Procesando series históricas:', companiaEspecifica.series_historicas);
+        if (companiaData) {
+          setCompaniaName(companiaData.nombrecia);
           
-          // Ordenar series por periodo (más antiguo primero)
-          const seriesOrdenadas = [...companiaEspecifica.series_historicas].sort((a, b) => {
-            return a.periodo.localeCompare(b.periodo);
-          });
-          
-          // Calcular crecimiento y transformar datos
-          const evolucionDataProcessed = seriesOrdenadas.map((serie: any, index: number) => {
-            const prevSerie = index > 0 ? seriesOrdenadas[index - 1] : null;
-            const crecimiento = prevSerie && prevSerie.prima_clp > 0 ? 
-              ((serie.prima_clp - prevSerie.prima_clp) / prevSerie.prima_clp) * 100 : 0;
+          // Procesar series históricas o usar fallback
+          if (companiaData.series_historicas && companiaData.series_historicas.length > 0) {
+            const evolucionDataProcessed = companiaData.series_historicas.map((item: any) => ({
+              periodo: item.periodo,
+              prima_clp: item.prima_clp || 0,
+              prima_uf: item.prima_uf || 0,
+              participacion: 0,
+              crecimiento: 0,
+              mercado_prima_clp: (item.prima_clp || 0) * 20,
+              mercado_prima_uf: (item.prima_uf || 0) * 20,
+              segmento_prima_clp: (item.prima_clp || 0) * 8,
+              segmento_prima_uf: (item.prima_uf || 0) * 8
+            }));
             
-            return {
-              periodo: serie.periodo,
-              primaclp: serie.prima_clp || 0,
-              primauf: serie.prima_uf || 0,
-              participacion: (companiaEspecifica.participacion || 0) * 100,
-              crecimiento,
-              mercado_primaclp: (serie.prima_clp || 0) * 20, // Simulación del mercado
-              mercado_primauf: (serie.prima_uf || 0) * 20,
-              segmento_primaclp: (serie.prima_clp || 0) * 8, // Simulación del segmento
-              segmento_primauf: (serie.prima_uf || 0) * 8
-            };
-          });
-          
-          console.log('✅ Datos de evolución procesados:', evolucionDataProcessed);
-          setEvolucionData(evolucionDataProcessed);
+            // Calcular crecimiento
+            for (let i = 1; i < evolucionDataProcessed.length; i++) {
+              const actual = evolucionDataProcessed[i].prima_clp;
+              const anterior = evolucionDataProcessed[i - 1].prima_clp;
+              if (anterior > 0) {
+                evolucionDataProcessed[i].crecimiento = ((actual - anterior) / anterior) * 100;
+              }
+            }
+            
+            setEvolucionData(evolucionDataProcessed);
+          } else {
+            // Fallback con datos actuales
+            const fallbackData = [{
+              periodo: '202412',
+              prima_clp: companiaData.prima_clp || companiaData.primaclp || 0,
+              prima_uf: companiaData.prima_uf || companiaData.primauf || 0,
+              participacion: 0,
+              crecimiento: 0,
+              mercado_prima_clp: (companiaData.prima_clp || companiaData.primaclp || 0) * 20,
+              mercado_prima_uf: (companiaData.prima_uf || companiaData.primauf || 0) * 20,
+              segmento_prima_clp: (companiaData.prima_clp || companiaData.primaclp || 0) * 8,
+              segmento_prima_uf: (companiaData.prima_uf || companiaData.primauf || 0) * 8
+            }];
+            setEvolucionData(fallbackData);
+          }
         } else {
-          // Fallback con datos actuales solamente
-          console.log('⚠️ No se encontraron series históricas, usando solo datos actuales');
-          const fallbackData = [{
-            periodo: '202412',
-            primaclp: companiaEspecifica.prima_clp || 0,
-            primauf: companiaEspecifica.prima_uf || 0,
-            participacion: (companiaEspecifica.participacion || 0) * 100,
-            crecimiento: 0,
-            mercado_primaclp: (companiaEspecifica.prima_clp || 0) * 20,
-            mercado_primauf: (companiaEspecifica.prima_uf || 0) * 20,
-            segmento_primaclp: (companiaEspecifica.prima_clp || 0) * 8,
-            segmento_primauf: (companiaEspecifica.prima_uf || 0) * 8
-          }];
-          setEvolucionData(fallbackData);
+          setError(`No se encontró la compañía con rutcia: ${rutcia}`);
         }
-        
       } catch (err: any) {
         console.error('Error loading report data:', err);
         setError(err.message);
@@ -151,8 +152,73 @@ function EvolucionCompaniaContent() {
       }
     }
     
-    loadAndProcessData();
-  }, [rut, compania, rutcia]); // ✅ DEPENDENCIAS ESTABLES
+    loadReportData();
+  }, [rut, rutcia]);
+
+  // ✅ PROCESAR LOS DATOS CUANDO LOS HOOKS HAYAN TERMINADO
+  useEffect(() => {
+    if (companiasConSeries.length > 0 && (compania || rutcia)) {
+      const companiaData = companiasConSeries.find(
+        (comp: any) => {
+          if (rutcia) {
+            return comp.rutcia === rutcia;
+          }
+          return comp.nombrecia === compania || comp.nombre === compania;
+        }
+      );
+      
+      if (companiaData) {
+        const nombreCompania = companiaData.nombrecia || compania || rutcia;
+        setCompaniaName(nombreCompania);
+        
+        // Filtrar las series expandidas para esta compañía específica
+        const seriesDeEstaCompania = seriesExpandidas.filter(
+          (item: any) => item.rutcia === companiaData.rutcia
+        );
+        
+        if (seriesDeEstaCompania.length > 0) {
+          // En el useEffect donde se procesan los datos
+          const evolucionDataProcessed = seriesDeEstaCompania.map((item: any) => ({
+            periodo: item.periodo,
+            prima_clp: item.prima_clp_periodo || 0,  // ✅ Mantener prima_clp
+            prima_uf: item.prima_uf_periodo || 0,    // ✅ Mantener prima_uf
+            participacion: (item.participacion || 0) * 100,
+            crecimiento: item.crecimiento,
+            mercado_prima_clp: (item.prima_clp_periodo || 0) * 20,  // ✅ Nomenclatura consistente
+            mercado_prima_uf: (item.prima_uf_periodo || 0) * 20,    // ✅ Nomenclatura consistente
+            segmento_prima_clp: (item.prima_clp_periodo || 0) * 8,  // ✅ Nomenclatura consistente
+            segmento_prima_uf: (item.prima_uf_periodo || 0) * 8     // ✅ Nomenclatura consistente
+          }));
+          
+          // Ordenar por periodo (más antiguo primero)
+          evolucionDataProcessed.sort((a, b) => {
+            const yearA = parseInt(a.periodo);
+            const yearB = parseInt(b.periodo);
+            return yearA - yearB;
+          });
+          
+          setEvolucionData(evolucionDataProcessed);
+        } else {
+          // Fallback con datos actuales
+          console.log('⚠️ No se encontraron series históricas, usando solo datos actuales');
+          const fallbackData = [{
+            periodo: '202412',
+            prima_clp: companiaData.prima_clp || 0,  // ✅ Usar prima_clp directamente
+            prima_uf: companiaData.prima_uf || 0,    // ✅ Usar prima_uf directamente
+            participacion: (companiaData.participacion || 0) * 100,
+            crecimiento: 0,
+            mercado_prima_clp: (companiaData.prima_clp || 0) * 20,  // ✅ Nomenclatura consistente
+            mercado_prima_uf: (companiaData.prima_uf || 0) * 20,    // ✅ Nomenclatura consistente
+            segmento_prima_clp: (companiaData.prima_clp || 0) * 8,  // ✅ Nomenclatura consistente
+            segmento_prima_uf: (companiaData.prima_uf || 0) * 8     // ✅ Nomenclatura consistente
+          }];
+          setEvolucionData(fallbackData);
+        }
+      } else {
+        setError(`No se encontró la compañía con rutcia: ${rutcia} o nombre: ${compania}`);
+      }
+    }
+  }, [companiasConSeries, seriesExpandidas, compania, rutcia]);
 
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value);
@@ -213,14 +279,14 @@ function EvolucionCompaniaContent() {
         </div>
       </div>
 
-      {/* Summary Cards */}
+      {/* Summary Cards - MANTENIDAS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Prima Actual (CLP)</p>
-                <p className="text-lg font-semibold">{formatCurrency(latestData.primaclp)}</p>
+                <p className="text-lg font-semibold">{formatCurrency(latestData.prima_clp)}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-blue-500" />
             </div>
@@ -232,7 +298,7 @@ function EvolucionCompaniaContent() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Prima Actual (UF)</p>
-                <p className="text-lg font-semibold">{latestData.primauf.toLocaleString()} UF</p>
+                <p className="text-lg font-semibold">{latestData.prima_uf.toLocaleString()} UF</p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-500" />
             </div>
@@ -278,8 +344,8 @@ function EvolucionCompaniaContent() {
           <ChartPrimaEvolution 
             data={evolucionData.map(item => ({
               periodo: item.periodo,
-              total_clp: item.primaclp,
-              total_uf: item.primauf
+              total_clp: item.prima_clp,  // ✅ Usar prima_clp
+              total_uf: item.prima_uf     // ✅ Usar prima_uf
             }))}
             periodos={evolucionData.map(item => item.periodo)}
             valueField="total_clp"
@@ -301,9 +367,9 @@ function EvolucionCompaniaContent() {
               <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
                 <span className="font-medium">{item.periodo}</span>
                 <div className="text-right">
-                  <div className="text-sm text-gray-600">Compañía: {formatCurrency(item.primaclp)}</div>
-                  <div className="text-sm text-gray-600">Mercado: {formatCurrency(item.mercado_primaclp)}</div>
-                  <div className="text-sm text-gray-600">Promedio Segmento: {formatCurrency(item.segmento_primaclp)}</div>
+                  <div className="text-sm text-gray-600">Compañía: {formatCurrency(item.prima_clp)}</div>
+                  <div className="text-sm text-gray-600">Mercado: {formatCurrency(item.mercado_prima_clp)}</div>
+                  <div className="text-sm text-gray-600">Promedio Segmento: {formatCurrency(item.segmento_prima_clp)}</div>
                 </div>
               </div>
             ))}
@@ -331,12 +397,12 @@ function EvolucionCompaniaContent() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {evolucionData.map((item, index) => {
-                  const marketShare = item.mercado_primaclp > 0 ? (item.primaclp / item.mercado_primaclp) * 100 : 0;
+                  const marketShare = item.mercado_prima_clp > 0 ? (item.prima_clp / item.mercado_prima_clp) * 100 : 0;
                   return (
                     <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="px-4 py-4 text-sm font-medium text-gray-900">{item.periodo}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500">{formatCurrency(item.primaclp)}</td>
-                      <td className="px-4 py-4 text-sm text-gray-500">{item.primauf.toLocaleString()} UF</td>
+                      <td className="px-4 py-4 text-sm text-gray-500">{formatCurrency(item.prima_clp)}</td>
+                      <td className="px-4 py-4 text-sm text-gray-500">{item.prima_uf.toLocaleString()} UF</td>
                       <td className="px-4 py-4 text-sm text-gray-500">{formatPercentage(item.participacion)}</td>
                       <td className={`px-4 py-4 text-sm ${getGrowthColor(item.crecimiento)}`}>
                         {formatPercentage(item.crecimiento)}
@@ -361,4 +427,52 @@ export default function EvolucionCompaniaPage() {
     </Suspense>
   );
 }
+
+const processEvolucionData = (reportData: any): EvolucionData[] => {
+  console.log('🔍 Estructura datos_reporte:', reportData.reporte?.datos_reporte);
+  
+  // Acceso directo a reportData.companias
+  const companias = reportData.reporte?.datos_reporte?.reportData?.companias || [];
+  
+  console.log(`📊 COMPANIAS encontradas: ${companias.length}`);
+  console.log('📊 Compañías disponibles:', companias.length);
+  
+  return companias.map((comp: any, index: number) => {
+    console.log(`📊 Compañía ${index + 1}:`, {
+      rutcia: comp.rutcia,
+      nombrecia: comp.nombrecia,
+      prima_clp: comp.prima_clp,
+      prima_uf: comp.prima_uf,
+      tiene_series_historicas: !!comp.series_historicas,
+      cantidad_series: comp.series_historicas?.length || 0
+    });
+    
+    if (comp.series_historicas) {
+      console.log(`  📈 Series históricas:`, comp.series_historicas);
+    } else {
+      console.log(`  ❌ ${comp.nombrecia} NO tiene series_historicas`);
+    }
+
+    // Procesar series históricas directamente
+    const seriesData = comp.series_historicas || [];
+    const periodos = seriesData.map((s: any) => s.periodo).sort();
+    
+    return {
+      compania: comp.nombrecia,
+      rut: comp.rutcia,
+      primaActualCLP: comp.prima_clp || 0,
+      primaActualUF: comp.prima_uf || 0,
+      participacion: comp.participacion || 0,
+      ranking: comp.ranking || 0,
+      crecimiento: seriesData.length >= 2 ? 
+        ((seriesData[0]?.prima_uf - seriesData[1]?.prima_uf) / seriesData[1]?.prima_uf * 100) || 0 : 0,
+      periodos,
+      seriesHistoricas: seriesData.map((s: any) => ({
+        periodo: s.periodo,
+        prima_clp: s.prima_clp || 0,
+        prima_uf: s.prima_uf || 0
+      }))
+    };
+  }).filter(comp => comp.seriesHistoricas.length > 0);
+};
 

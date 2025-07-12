@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, Eye, Calendar, Loader2, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
-import { CarritoCompras } from '@/lib/api/carrito';
+import { CarritoCompras } from '@/app/lib/api/carrito';
 
 interface ReporteComprado {
   rut: string;
@@ -99,7 +99,7 @@ export default function ReportesCorredoresPage() {
             <Link href="/dashboard/shop/cart">
               <Button className="flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4" />
-                Ver Carrito (${carrito.calcularTotal().toLocaleString('es-CL')})
+                Ver Carrito (${carrito.obtenerEstado().total.toLocaleString('es-CL')})
               </Button>
             </Link>
           </div>

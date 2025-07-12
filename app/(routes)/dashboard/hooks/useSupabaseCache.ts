@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 // Tipo para la configuración de caché
 interface CacheConfig {
@@ -29,10 +29,7 @@ const DEFAULT_CONFIG: CacheConfig = {
 };
 
 export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClientComponentClient();
   
   // Añadir logs para verificar la conexión con Supabase
   console.log('Estado de conexión Supabase:', supabase ? 'Disponible' : 'No disponible');
@@ -190,7 +187,7 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
       
       // Return empty array or object but log more details
       console.warn(`Devolviendo resultado vacío para ${table} debido a error:`, err);
-      throw err; // Re-lanzar el error para que el llamador pueda manejarlo
+      return (params.single ? {} : []) as T;
     } finally {
       setLoading(false);
     }
@@ -293,27 +290,53 @@ export function useSupabaseCache(config: Partial<CacheConfig> = {}) {
   // Función para obtener datos de concentración de ramos por período
   const getConcentracionRamos = useCallback(async (periodo: string) => {
     try {
-      console.log('Obteniendo datos de concentración de ramos para el período:', periodo);
+      console.log('Iniciando consulta de concentración de ramos para periodo:', periodo);
       
-      const result = await fetchWithCache('vista_concentracion_ramos', {
-        eq: { periodo },
-        order: { grupo: { ascending: true } }
+      // First, try to get all data to debug
+      const allData = await fetchWithCache('vista_concentracion_ramos', {
+        order: { periodo: { ascending: false } }
       });
-
-      console.log('Resultado de concentración de ramos:', result);
-
+      
+      console.log('Todos los datos de vista_concentracion_ramos:', allData);
+      console.log('Periodos disponibles:', Array.isArray(allData) ? [...new Set(allData.map(item => item.periodo))] : 'No es array');
+      
+      // Now filter by the specific period
+      const result = await fetchWithCache('vista_concentracion_ramos', {
+        eq: { periodo: periodo }
+      });
+      
+      console.log('Resultado filtrado para periodo', periodo, ':', result);
+      
+      // If no data for the specific period, try to get the most recent period
+      if (!result || (Array.isArray(result) && result.length === 0)) {
+        console.log('No se encontraron datos para el periodo específico, buscando el más reciente');
+        
+        if (Array.isArray(allData) && allData.length > 0) {
+          // Get the most recent period
+          const periodos = [...new Set(allData.map(item => item.periodo))].sort().reverse();
+          const mostRecentPeriod = periodos[0];
+          
+          console.log('Periodo más reciente encontrado:', mostRecentPeriod);
+          
+          const recentResult = await fetchWithCache('vista_concentracion_ramos', {
+            eq: { periodo: mostRecentPeriod }
+          });
+          
+          console.log('Datos del periodo más reciente:', recentResult);
+          return Array.isArray(recentResult) ? recentResult : [];
+        }
+      }
+      
       return Array.isArray(result) ? result : [];
     } catch (err: any) {
-      console.error('Error detallado al obtener datos de concentración de ramos:', {
-        mensaje: err.message,
-        codigo: err.code,
-        detalles: err.details,
+      console.error('Error detallado al obtener datos de vista_concentracion_ramos:', {
+        error: err,
+        message: err.message,
         periodo: periodo
       });
       return [];
     }
   }, [fetchWithCache]);
-
   // Función para obtener datos de grupos por período
 const getGruposByPeriodo = useCallback(async (periodo: string) => {
   return fetchWithCache('vista_grupos_periodo', {

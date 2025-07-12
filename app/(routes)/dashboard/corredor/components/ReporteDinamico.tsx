@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +37,18 @@ interface ReporteDinamicoProps {
 export default function ReporteDinamico({ reporte }: ReporteDinamicoProps) {
   const router = useRouter();
   const supabase = useSupabaseClient();
+  
+  // Verificar que reporte y datos_reporte existen
+  if (!reporte?.datos_reporte) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Error: Datos del reporte no disponibles</p>
+        </div>
+      </div>
+    );
+  }
+  
   const { corredor, periodo, ramos, companias } = reporte.datos_reporte;
   
   // Estados para el mapeo dinámico de ramos y visualización de tablas
@@ -45,48 +57,54 @@ export default function ReporteDinamico({ reporte }: ReporteDinamicoProps) {
   const [showAllRamos, setShowAllRamos] = useState(false);
   const [loadingRamos, setLoadingRamos] = useState(true);
 
-  // Obtener nombres de ramos dinámicamente
-  useEffect(() => {
-    async function fetchRamosNames() {
-      try {
-        const { data: nombresRamos, error } = await supabase
-          .from('ramos')
-          .select('codigo, ramo');
+  // Memoizar la función de fetch para evitar re-renders innecesarios
+  const fetchRamosNames = useCallback(async () => {
+    try {
+      setLoadingRamos(true);
+      const { data: nombresRamos, error } = await supabase
+        .from('ramos')
+        .select('codigo, ramo');
 
-        if (error) {
-          console.error('Error obteniendo nombres de ramos:', error);
-          return;
-        }
-
-        // Crear el mapeo dinámico
-        const mapeo: { [key: string]: string } = {};
-        nombresRamos?.forEach((ramo) => {
-          mapeo[ramo.codigo] = ramo.ramo;
-        });
-        
-        setRamosMap(mapeo);
-      } catch (error) {
-        console.error('Error al cargar nombres de ramos:', error);
-      } finally {
-        setLoadingRamos(false);
+      if (error) {
+        console.error('Error obteniendo nombres de ramos:', error);
+        return;
       }
-    }
 
-    fetchRamosNames();
+      // Crear el mapeo dinámico
+      const mapeo: { [key: string]: string } = {};
+      nombresRamos?.forEach((ramo) => {
+        mapeo[ramo.codigo] = ramo.ramo;
+      });
+      
+      setRamosMap(mapeo);
+    } catch (error) {
+      console.error('Error al cargar nombres de ramos:', error);
+    } finally {
+      setLoadingRamos(false);
+    }
   }, [supabase]);
 
+  // Obtener nombres de ramos dinámicamente
+  useEffect(() => {
+    fetchRamosNames();
+  }, [fetchRamosNames]);
+
+  // Verificar que ramos y compañias existen antes de procesarlos
+  const ramosArray = ramos || [];
+  const companiasArray = companias || [];
+
   // Calcular totales
-  const totalPrimaCLP = ramos.reduce((sum, ramo) => sum + (ramo.primaclp || 0), 0);
-  const totalPrimaUF = ramos.reduce((sum, ramo) => sum + (ramo.primauf || 0), 0);
-  const numCompanias = companias.length;
-  const numRamos = ramos.length;
+  const totalPrimaCLP = ramosArray.reduce((sum, ramo) => sum + (ramo.primaclp || 0), 0);
+  const totalPrimaUF = ramosArray.reduce((sum, ramo) => sum + (ramo.primauf || 0), 0);
+  const numCompanias = companiasArray.length;
+  const numRamos = ramosArray.length;
 
   // Ordenar ramos y compañías por prima
-  const ramosOrdenados = [...ramos]
+  const ramosOrdenados = [...ramosArray]
     .filter(ramo => ramo.primaclp > 0)
     .sort((a, b) => b.primaclp - a.primaclp);
   
-  const companiasOrdenadas = [...companias]
+  const companiasOrdenadas = [...companiasArray]
     .filter(compania => compania.primaclp > 0)
     .sort((a, b) => b.primaclp - a.primaclp);
 
@@ -304,7 +322,54 @@ export default function ReporteDinamico({ reporte }: ReporteDinamicoProps) {
                           <td className="px-4 py-4 text-sm text-gray-500">{formatPercentage(participacion / 100)}</td>
                           <td className="px-4 py-4 text-sm">
                             <button
-                              onClick={() => router.push(`/dashboard/corredor/evolucion/compania?rut=${encodeURIComponent(corredor.rut)}&rutcia=${encodeURIComponent(compania.rutcia)}`)}
+                              onClick={() => {
+                                // Procesar solo los datos de evolución de esta compañía
+                                let datosEvolucion = [];
+                                
+                                if (compania.series_historicas && compania.series_historicas.length > 0) {
+                                  datosEvolucion = compania.series_historicas.map((item: any) => ({
+                                    periodo: item.periodo,
+                                    prima_clp: item.prima_clp || 0,
+                                    prima_uf: item.prima_uf || 0,
+                                    participacion: (compania.primaclp / totalPrimaCLP) * 100,
+                                    crecimiento: 0, // Se calculará en la página de destino
+                                    mercado_prima_clp: (item.prima_clp || 0) * 20,
+                                    mercado_prima_uf: (item.prima_uf || 0) * 20,
+                                    segmento_prima_clp: (item.prima_clp || 0) * 8,
+                                    segmento_prima_uf: (item.prima_uf || 0) * 8
+                                  }));
+                                  
+                                  // Ordenar por periodo
+                                  datosEvolucion.sort((a, b) => {
+                                    const yearA = parseInt(a.periodo);
+                                    const yearB = parseInt(b.periodo);
+                                    return yearA - yearB;
+                                  });
+                                } else {
+                                  // Fallback con datos actuales
+                                  datosEvolucion = [{
+                                    periodo: reporte.periodo || '202412',
+                                    prima_clp: compania.primaclp || 0,
+                                    prima_uf: compania.primauf || 0,
+                                    participacion: (compania.primaclp / totalPrimaCLP) * 100,
+                                    crecimiento: 0,
+                                    mercado_prima_clp: (compania.primaclp || 0) * 20,
+                                    mercado_prima_uf: (compania.primauf || 0) * 20,
+                                    segmento_prima_clp: (compania.primaclp || 0) * 8,
+                                    segmento_prima_uf: (compania.primauf || 0) * 8
+                                  }];
+                                }
+                                
+                                // Guardar solo el array de evolución en sessionStorage
+                                sessionStorage.setItem('evolucion_data', JSON.stringify({
+                                  datos: datosEvolucion,
+                                  nombrecia: compania.nombrecia,
+                                  rutcia: compania.rutcia
+                                }));
+                                
+                                // Navegar con parámetros mínimos
+                                router.push(`/dashboard/corredor/evolucion/compania?rut=${encodeURIComponent(corredor.rut)}&rutcia=${encodeURIComponent(compania.rutcia)}`);
+                              }}
                               className="text-blue-600 hover:text-blue-800 text-xs font-medium flex items-center"
                             >
                               Ver evolución

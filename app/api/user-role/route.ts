@@ -1,8 +1,7 @@
 // app/api/user-role/route.ts
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-// Cambiar de '@/ssr/client' a:
-import { createServerSupabaseClient } from '@/ssr/client';
+import { createServerSupabaseClient } from '@/app/ssr/client';
 
 // Endpoint para obtener el rol y suscripciones del usuario
 export async function GET() {

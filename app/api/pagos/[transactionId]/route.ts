@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseAdmin } from '@/app/lib/supabase/admin';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 

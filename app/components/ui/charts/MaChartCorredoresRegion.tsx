@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import '@/lib/utils/chartConfig'; // Importar la configuración de Chart.js
+import '@/app/lib/utils/chartConfig'; // Importar la configuración de Chart.js
 import { Bar } from 'react-chartjs-2';
 import { formatUF, formatNumber } from '@/lib/utils/formatters';
 

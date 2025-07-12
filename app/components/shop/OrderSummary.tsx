@@ -1,6 +1,6 @@
 'use client';
 
-import { CarritoEstado } from '@/lib/api/carrito';
+import { CarritoEstado } from '@/app/lib/api/carrito';
 import { Package, Receipt } from 'lucide-react';
 
 interface OrderSummaryProps {

@@ -2,21 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { useSupabaseClient } from '@/lib/supabase/client';
-import ModernCard from '@/components/ui/charts/ModernCard';
-import SummaryCard from '@/components/ui/charts/SummaryCard';
-import DataTable from '@/components/ui/charts/tables/DataTable';
-import NoData from '@/components/ui/charts/NoData';
+import ModernCard from '@/app/components/ui/charts/ModernCard';
+import SummaryCard from '@/app/components/ui/charts/SummaryCard';
+import DataTable from '@/app/components/ui/charts/tables/DataTable';
+import NoData from '@/app/components/ui/charts/NoData';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-// Cambiar estas importaciones:
-import { usePeriod } from '@/memoria-anual/context/PeriodContext';
-import { inter, spaceGrotesk } from '@/memoria-anual/fonts';
-import { getCorredoresData, getHistoricalCorredoresData } from '@/memoria-anual/api/corredores';
-import { formatUF } from '@/utils/formatters';
-import { colors } from '@/utils/colors';
-import ChartMovimientos from '@/components/ui/charts/common/ChartMovimientos';
-import ChartCountEvolution from '@/components/ui/charts/ChartCountEvolution';
-import ChartPrimaEvolution from '@/components/ui/charts/ChartPrimaEvolution';
-import ChartHHIEvolution from '@/components/ui/charts/ChartHHIEvolution';
+import { usePeriod } from '@/app/(routes)/dashboard/memoria-anual/context/PeriodContext';
+import { inter, spaceGrotesk } from '../fonts';
+import { getCorredoresData, getHistoricalCorredoresData } from '@/app/(routes)/dashboard/memoria-anual/api/corredores';
+import { formatUF } from '@/lib/utils/formatters';
+import { colors } from '@/lib/utils/colors';
+import ChartMovimientos from '@/app/components/ui/charts/common/ChartMovimientos';
+import ChartCountEvolution from '@/app/components/ui/charts/ChartCountEvolution';
+import ChartPrimaEvolution from '@/app/components/ui/charts/ChartPrimaEvolution';
+import ChartHHIEvolution from '@/app/components/ui/charts/ChartHHIEvolution';
 
 // Definir interfaces
 interface Corredor {

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { CarritoCompras, carritoUtils, type CarritoEstado } from '@/lib/api/carrito';
-import { OrderSummary } from '@/components/shop/OrderSummary';
-import { Button } from '@/components/ui/button';
+import { CarritoCompras, carritoUtils, type CarritoEstado } from '@/app/lib/api/carrito';
+import { OrderSummary } from '@/app/components/shop/OrderSummary';
+import { Button } from '@/app/components/ui/button';
 import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

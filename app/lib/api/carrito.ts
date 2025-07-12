@@ -1,13 +1,13 @@
 // Nuevo archivo para manejar carrito de compras
 'use client';
-import { createServerSupabaseClient } from '@/lib/supabase/server'; // Cambiar de @/lib/supabase/server
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // Cambiar de @/app/lib/supabase/server
 
 // Only import admin client if we're on the server side
 let supabaseAdmin: any = null;
 if (typeof window === 'undefined') {
   // We're on the server, safe to import admin client
   try {
-    const { supabaseAdmin: adminClient } = require('@/lib/supabase/admin'); // Cambiar de @/lib/supabase/admin
+    const { supabaseAdmin: adminClient } = require('@/lib/supabase/admin'); // Cambiar de @/app/lib/supabase/admin
     supabaseAdmin = adminClient;
   } catch (error) {
     console.warn('Admin client not available:', error);
@@ -15,8 +15,8 @@ if (typeof window === 'undefined') {
 }
 
 // Remover estas importaciones que causan el error
-// import { createServerSupabaseClient } from '@/lib/supabase/server';
-// import { supabaseAdmin } from '@/lib/supabase/admin';
+// import { createServerSupabaseClient } from '@/app/lib/supabase/server';
+// import { supabaseAdmin } from '@/app/lib/supabase/admin';
 
 export interface ItemCarrito {
   productoId: string;

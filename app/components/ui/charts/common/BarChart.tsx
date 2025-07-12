@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import Card from '@/components/ui/Card';
+import Card from '@/app/components/ui/Card';
 import { getChartColors } from '@/lib/utils/colors';
 import { formatUF, formatCLP, formatPercent, formatPercentage, formatNumber } from '@/lib/utils/formatters';
 

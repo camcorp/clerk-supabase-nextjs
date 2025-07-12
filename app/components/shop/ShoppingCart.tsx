@@ -1,8 +1,8 @@
 'use client';
 
-import { CarritoCompras, CarritoEstado } from '@/lib/api/carrito';
+import { CarritoCompras, CarritoEstado } from '@/app/lib/api/carrito';
 import { CartItem } from './CartItem';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/ui/button';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 
 interface ShoppingCartProps {

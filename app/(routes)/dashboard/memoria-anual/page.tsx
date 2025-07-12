@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { usePeriod } from '@/memoria-anual/context/PeriodContext';
-import CompaniasView from '@/memoria-anual/views/Companias';
-import RamosView from '@/memoria-anual/views/Ramos';
-import CorredoresView from '@/memoria-anual/views/Corredores';
-import PortadaView from '@/memoria-anual/views/Portada';
-import PeriodSelector from '@/components/ui/charts/PeriodSelector';
+import { usePeriod } from '@/app/(routes)/dashboard/memoria-anual/context/PeriodContext';
+import CompaniasView from '@/app/(routes)/dashboard/memoria-anual/views/Companias';
+import RamosView from '@/app/(routes)/dashboard/memoria-anual/views/Ramos';
+import CorredoresView from '@/app/(routes)/dashboard/memoria-anual/views/Corredores';
+import PortadaView from '@/app/(routes)/dashboard/memoria-anual/views/Portada';
+import PeriodSelector from '@/app/components/ui/charts/PeriodSelector';
 import { useSearchParams } from 'next/navigation';
 
 // Definir las secciones disponibles

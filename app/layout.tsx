@@ -1,6 +1,5 @@
 // Importar otras dependencias
-import '@/lib/utils/chartConfig';
-import { Inter } from 'next/font/google';
+import '@/app/lib/utils/chartConfig';
 
 import {
   ClerkProvider,
@@ -11,8 +10,6 @@ import {
   SignUpButton,
 } from "@clerk/nextjs";
 import "./globals.css";
-
-const inter = Inter({ subsets: ['latin'] });
 import Link from "next/link";
 import UserButtonWrapper from './components/ui/UserButtonWrapper';
 import { Metadata } from 'next';
@@ -41,12 +38,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider
-      signInFallbackRedirectUrl="/dashboard"
-      signUpFallbackRedirectUrl="/registro-completo"
-    >
+    <ClerkProvider>
       <html lang="es">
-        <body className={inter.className}>
+        <body>
           <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
@@ -78,9 +72,6 @@ export default function RootLayout({
                       </Link>
                       <Link href="/dashboard/corredor/reportes" className="text-gray-600 hover:text-blue-600">
                         Reportes
-                        </Link>
-                      <Link href="/dashboard/corredor/mockup" className="text-gray-600 hover:text-blue-600">
-                        Reporte Ejemplo
                       </Link>
                       <Link href="/configuracion" className="text-gray-600 hover:text-blue-600">
                         Configuración

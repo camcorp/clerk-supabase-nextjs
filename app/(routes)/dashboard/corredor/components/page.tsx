@@ -6,10 +6,10 @@ import { useUser } from '@clerk/nextjs';
 import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, BarChart3, PieChart, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Building2, Users, TrendingUp } from 'lucide-react';
 import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
 
-function ConcentracionContent() {
+function ComponentesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const rut = searchParams.get('rut') || '';
@@ -71,50 +71,32 @@ function ConcentracionContent() {
         </button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Análisis de Concentración - {corredor?.nombre || 'Corredor'}
+            Componentes - {corredor?.nombre || 'Corredor'}
           </h1>
           <p className="text-gray-600">RUT: {corredor?.rut}</p>
         </div>
       </div>
       
       {/* Contenido Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Índice HHI
+              <Building2 className="h-5 w-5" />
+              Análisis de Componentes
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Índice Herfindahl-Hirschman
-              </h3>
-              <p className="text-gray-500">
-                Análisis de concentración del mercado basado en el índice HHI.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5" />
-              Participación de Mercado
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <PieChart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Distribución del Mercado
-              </h3>
-              <p className="text-gray-500">
-                Análisis de la participación relativa en el mercado de seguros.
-              </p>
+            <div className="space-y-4">
+              <div className="text-center py-8">
+                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  Análisis en Desarrollo
+                </h3>
+                <p className="text-gray-500">
+                  Esta sección mostrará el análisis detallado de los componentes del corredor.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -123,53 +105,32 @@ function ConcentracionContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Tendencias
+              Métricas de Rendimiento
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Evolución Temporal
-              </h3>
-              <p className="text-gray-500">
-                Tendencias de concentración a lo largo del tiempo.
-              </p>
+            <div className="space-y-4">
+              <div className="text-center py-8">
+                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  Métricas en Desarrollo
+                </h3>
+                <p className="text-gray-500">
+                  Aquí se mostrarán las métricas de rendimiento y KPIs del corredor.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
-      
-      {/* Sección adicional */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Análisis Detallado de Concentración</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">
-                Funcionalidad en Desarrollo
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Esta sección mostrará análisis avanzados de concentración del mercado, 
-                incluyendo métricas de competencia y posicionamiento relativo.
-              </p>
-              <Badge variant="outline" className="text-blue-600 border-blue-600">
-                Próximamente
-              </Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
 
-export default function ConcentracionPage() {
+export default function ComponentesPage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <ConcentracionContent />
+      <ComponentesContent />
     </Suspense>
   );
 }

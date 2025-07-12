@@ -33,10 +33,10 @@ export const useIndividualReportAccess = (userId: string, rut: string) => {
       setError(null);
 
       try {
-        // First get the report data
+        // CORRECCIÓN: Cambiar de "reporte_individual" a "reportes_individuales"
         const { data: reportData, error: reportError } = await supabase
-          .from("reporte_individual")
-          .select("id, rut, periodo, data, fecha_generacion, fecha_expiracion")
+          .from("reportes_individuales")
+          .select("id, rut, periodo, datos_reporte, fecha_generacion, fecha_expiracion")
           .eq("user_id", userId)
           .eq("rut", rut)
           .eq("activo", true)
@@ -50,7 +50,7 @@ export const useIndividualReportAccess = (userId: string, rut: string) => {
           return;
         }
 
-        // Then check if there's a payment for this report
+        // También cambiar "data" por "datos_reporte" para coincidir con la estructura
         const { data: paymentData, error: paymentError } = await supabase
           .from("pagos")
           .select("estado")
@@ -69,12 +69,11 @@ export const useIndividualReportAccess = (userId: string, rut: string) => {
 
         // If we have both report and payment, set the report data
         if (reportData && paymentData && paymentData.length > 0) {
-          // Construct the report with payment info
           const reportWithPayment = {
             reporte_id: reportData.id,
             rut: reportData.rut,
             periodo: reportData.periodo,
-            data: reportData.data,
+            data: reportData.datos_reporte, // Cambiar aquí también
             fecha_generacion: reportData.fecha_generacion,
             fecha_expiracion: reportData.fecha_expiracion,
             pagos: {

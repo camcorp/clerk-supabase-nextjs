@@ -1,12 +1,12 @@
 'use client';
 
 import { SignUpButton, SignedIn, SignedOut } from '@clerk/nextjs';
-import { Stats } from '@/components/ui/Stats';
-import { Benefits } from '@/components/ui/Benefits';
-import { Hero } from '@/components/ui/Hero';
-import { PricingTable } from '@/components/ui/PricingTable';
-import { RegistrationCTA } from '@/components/ui/RegistrationCTA';
-import { Footer } from '@/components/ui/Footer';
+import { Stats } from '@/app/components/ui/Stats';
+import { Benefits } from '@/app/components/ui/Benefits';
+import { Hero } from '@/app/components/ui/Hero';
+import { PricingTable } from '@/app/components/ui/PricingTable';
+import { RegistrationCTA } from '@/app/components/ui/RegistrationCTA';
+import { Footer } from '@/app/components/ui//Footer';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -29,7 +29,7 @@ export default function LandingPage() {
             <p className="text-lg text-gray-700 mb-8">
               Descárgala sin costo y empieza a tomar mejores decisiones con datos reales.
             </p>
-            <SignUpButton mode="redirect">
+            <SignUpButton mode="modal">
               <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow">
                 Registrarse
               </button>

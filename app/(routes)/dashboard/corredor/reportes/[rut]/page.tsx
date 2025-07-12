@@ -58,6 +58,9 @@ export default function ReportePage() {
         }
 
         const data = await response.json();
+        console.log('📊 Datos recibidos de la API:', data);
+        console.log('📊 Estructura del reporte:', data.reporte);
+        console.log('📊 datos_reporte existe?', !!data.reporte?.datos_reporte);
         setReporte(data.reporte);
       } catch (err) {
         console.error('Error fetching reporte:', err);
@@ -127,20 +130,28 @@ export default function ReportePage() {
             <div className="flex justify-between items-start">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  Reporte Individual - {reporte.datos_reporte.corredor.nombre}
+                  Reporte Individual - {reporte?.datos_reporte?.corredor?.nombre || 'Nombre no disponible'}
                 </h1>
-                <p className="text-gray-600">RUT: {reporte.datos_reporte.corredor.rut}</p>
-                <p className="text-gray-600">Período: {reporte.periodo}</p>
+                <p className="text-gray-600">RUT: {reporte?.datos_reporte?.corredor?.rut || rut}</p>
+                <p className="text-gray-600">Período: {reporte?.periodo || 'No disponible'}</p>
               </div>
               <div className="text-right text-sm text-gray-500">
-                <p>Generado: {new Date(reporte.fecha_generacion).toLocaleDateString('es-CL')}</p>
-                <p>Expira: {new Date(reporte.fecha_expiracion).toLocaleDateString('es-CL')}</p>
+                <p>Generado: {reporte?.fecha_generacion ? new Date(reporte.fecha_generacion).toLocaleDateString('es-CL') : 'No disponible'}</p>
+                <p>Expira: {reporte?.fecha_expiracion ? new Date(reporte.fecha_expiracion).toLocaleDateString('es-CL') : 'No disponible'}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <ReporteDinamico reporte={reporte} />
+        {reporte?.datos_reporte ? (
+          <ReporteDinamico reporte={reporte} />
+        ) : (
+          <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
+            <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Datos del reporte no disponibles</h3>
+            <p className="text-gray-600">El reporte existe pero los datos no están disponibles. Contacte al soporte técnico.</p>
+          </div>
+        )}
       </div>
     </div>
   );

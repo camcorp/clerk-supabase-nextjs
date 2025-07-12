@@ -1,4 +1,4 @@
-import { SupabaseHealthDashboard } from '@/components/SupabaseHealthDashboard'
+import { SupabaseHealthDashboard } from '@/app/components/SupabaseHealthDashboard'
 
 export default function HealthPage() {
   return (

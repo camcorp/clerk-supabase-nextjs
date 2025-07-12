@@ -1,156 +1,209 @@
 'use client';
 
-import ReporteIndividualMockup from '../components/ReporteIndividualMockup';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Layout, Palette, Monitor, Smartphone } from 'lucide-react';
+import LoadingSpinner from '@/app/components/ui/charts/LoadingSpinner';
 
-// Datos de ejemplo completos
-const mockData = {
-  corredor: {
-    rut: '96572800-7',
-    nombre: 'Juan Pérez Corredor',
-    ciudad: 'Santiago',
-    telefono: '+56912345678'
-  },
-  reportData: {
-    periodo: '2024',
-    produccion: {
-      total_primaclp: 150000000,
-      total_primauf: 5000,
-      ranking_general: 15,
-      num_companias: 8,
-      num_ramos: 12,
-      crecimiento_anual: 0.15,
-      participacion_mercado: 0.025
-    },
-    rankings: {
-      general: 15,
-      por_compania: [
-        { compania: 'Seguros Generales', ranking: 5, total_corredores: 120 },
-        { compania: 'Vida Seguros', ranking: 8, total_corredores: 95 },
-        { compania: 'Protección Total', ranking: 12, total_corredores: 150 },
-        { compania: 'Seguros del Sur', ranking: 20, total_corredores: 80 },
-        { compania: 'Aseguradora Nacional', ranking: 25, total_corredores: 200 }
-      ],
-      por_ramo: [
-        { ramo: 'Incendio', ranking: 3, total_corredores: 85 },
-        { ramo: 'Automóviles', ranking: 7, total_corredores: 180 },
-        { ramo: 'Vida', ranking: 15, total_corredores: 220 },
-        { ramo: 'Salud', ranking: 22, total_corredores: 160 },
-        { ramo: 'Responsabilidad Civil', ranking: 18, total_corredores: 90 }
-      ]
-    },
-    companias: [
-      {
-        nombrecia: 'Seguros Generales',
-        primaclp: 45000000,
-        primauf: 1500,
-        participacion: 0.30,
-        crecimiento: 0.18,
-        ranking_corredor: 5
-      },
-      {
-        nombrecia: 'Vida Seguros',
-        primaclp: 35000000,
-        primauf: 1200,
-        participacion: 0.23,
-        crecimiento: 0.12,
-        ranking_corredor: 8
-      },
-      {
-        nombrecia: 'Protección Total',
-        primaclp: 28000000,
-        primauf: 950,
-        participacion: 0.19,
-        crecimiento: 0.08,
-        ranking_corredor: 12
-      },
-      {
-        nombrecia: 'Seguros del Sur',
-        primaclp: 25000000,
-        primauf: 850,
-        participacion: 0.17,
-        crecimiento: 0.15,
-        ranking_corredor: 20
-      },
-      {
-        nombrecia: 'Aseguradora Nacional',
-        primaclp: 17000000,
-        primauf: 500,
-        participacion: 0.11,
-        crecimiento: -0.05,
-        ranking_corredor: 25
-      }
-    ],
-    ramos: [
-      {
-        nombre: 'Incendio',
-        primaclp: 40000000,
-        primauf: 1350,
-        participacion: 0.27,
-        crecimiento: 0.22,
-        ranking_corredor: 3
-      },
-      {
-        nombre: 'Automóviles',
-        primaclp: 35000000,
-        primauf: 1200,
-        participacion: 0.23,
-        crecimiento: 0.10,
-        ranking_corredor: 7
-      },
-      {
-        nombre: 'Vida',
-        primaclp: 30000000,
-        primauf: 1000,
-        participacion: 0.20,
-        crecimiento: 0.15,
-        ranking_corredor: 15
-      },
-      {
-        nombre: 'Salud',
-        primaclp: 25000000,
-        primauf: 850,
-        participacion: 0.17,
-        crecimiento: 0.08,
-        ranking_corredor: 22
-      },
-      {
-        nombre: 'Responsabilidad Civil',
-        primaclp: 20000000,
-        primauf: 600,
-        participacion: 0.13,
-        crecimiento: 0.05,
-        ranking_corredor: 18
-      }
-    ],
-    concentracion: {
-      hhi_companias: 2250,
-      hhi_ramos: 1850,
-      nivel_concentracion_companias: 'Moderada',
-      nivel_concentracion_ramos: 'Baja'
-    },
-    top_performers: {
-      ramos_mayor_crecimiento: [
-        { ramo: 'Incendio', crecimiento: 0.22, prima_actual: 40000000 },
-        { ramo: 'Vida', crecimiento: 0.15, prima_actual: 30000000 },
-        { ramo: 'Automóviles', crecimiento: 0.10, prima_actual: 35000000 }
-      ],
-      ramos_mayor_decrecimiento: [
-        { ramo: 'Transporte', crecimiento: -0.08, prima_actual: 8000000 },
-        { ramo: 'Agrícola', crecimiento: -0.05, prima_actual: 5000000 }
-      ],
-      companias_mayor_crecimiento: [
-        { compania: 'Seguros Generales', crecimiento: 0.18, prima_actual: 45000000 },
-        { compania: 'Seguros del Sur', crecimiento: 0.15, prima_actual: 25000000 },
-        { compania: 'Vida Seguros', crecimiento: 0.12, prima_actual: 35000000 }
-      ],
-      companias_mayor_decrecimiento: [
-        { compania: 'Aseguradora Nacional', crecimiento: -0.05, prima_actual: 17000000 },
-        { compania: 'Seguros Antiguos', crecimiento: -0.12, prima_actual: 8000000 }
-      ]
-    }
+function MockupContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const rut = searchParams.get('rut') || '';
+  const { user, isLoaded } = useUser();
+  const userId = user?.id || '';
+  
+  const { report, loading, error, hasAccess } = useIndividualReportAccess(userId, rut);
+  
+  if (!isLoaded || loading) {
+    return <LoadingSpinner />;
   }
-};
+  
+  if (!hasAccess) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Acceso Denegado</h2>
+          <p className="text-gray-600 mb-6">No tienes acceso a este reporte.</p>
+          <button 
+            onClick={() => router.push('/dashboard/corredor')}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Volver a Corredores
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button 
+            onClick={() => router.push('/dashboard/corredor')}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Volver a Corredores
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  const reporteData = report?.data;
+  const corredor = reporteData?.datos_reporte?.corredor;
+  
+  return (
+    <div className="container mx-auto p-6">
+      {/* Header */}
+      <div className="flex items-center mb-6">
+        <button
+          onClick={() => router.push('/dashboard/corredor')}
+          className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Mockups y Prototipos - {corredor?.nombre || 'Corredor'}
+          </h1>
+          <p className="text-gray-600">RUT: {corredor?.rut}</p>
+        </div>
+      </div>
+      
+      {/* Contenido Principal */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Layout className="h-5 w-5" />
+              Diseños de Layout
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-6">
+              <Layout className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <h4 className="font-semibold text-gray-700 mb-2">Layouts</h4>
+              <p className="text-sm text-gray-500">
+                Prototipos de diseño de interfaz
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Palette className="h-5 w-5" />
+              Paleta de Colores
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-6">
+              <Palette className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <h4 className="font-semibold text-gray-700 mb-2">Colores</h4>
+              <p className="text-sm text-gray-500">
+                Esquemas de color y branding
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Monitor className="h-5 w-5" />
+              Vista Desktop
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-6">
+              <Monitor className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <h4 className="font-semibold text-gray-700 mb-2">Desktop</h4>
+              <p className="text-sm text-gray-500">
+                Mockups para pantallas grandes
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Smartphone className="h-5 w-5" />
+              Vista Mobile
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-6">
+              <Smartphone className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <h4 className="font-semibold text-gray-700 mb-2">Mobile</h4>
+              <p className="text-sm text-gray-500">
+                Diseños responsivos móviles
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Sección de Galería de Mockups */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Galería de Prototipos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-16">
+            <div className="max-w-lg mx-auto">
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
+                  <Layout className="h-8 w-8 text-gray-400" />
+                </div>
+                <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
+                  <Monitor className="h-8 w-8 text-gray-400" />
+                </div>
+                <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
+                  <Smartphone className="h-8 w-8 text-gray-400" />
+                </div>
+                <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
+                  <Palette className="h-8 w-8 text-gray-400" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                Prototipos en Desarrollo
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Esta sección contendrá mockups interactivos, wireframes y prototipos 
+                de alta fidelidad para el diseño de reportes de corredores.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Badge variant="outline" className="text-purple-600 border-purple-600">
+                  Diseño UX/UI
+                </Badge>
+                <Badge variant="outline" className="text-green-600 border-green-600">
+                  Prototipado
+                </Badge>
+                <Badge variant="outline" className="text-blue-600 border-blue-600">
+                  Wireframes
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function MockupPage() {
-  return <ReporteIndividualMockup {...mockData} />;
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <MockupContent />
+    </Suspense>
+  );
 }

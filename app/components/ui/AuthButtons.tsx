@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs"; // Asegúrate de importar SignInButton y SignUpButton
-import { Button } from "@/components/ui/button"; // Nota el "app/" añadido
+import { Button } from "@/app/components/ui/button"; // Nota el "app/" añadido
 
 export default function AuthButtons() {
   return (

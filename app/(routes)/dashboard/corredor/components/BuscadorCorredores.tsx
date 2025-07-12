@@ -8,12 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Corredor } from '@/lib/api/reportes';
-import { CarritoCompras, ItemCarrito } from '@/lib/api/carrito';
+import { CarritoCompras, ItemCarrito } from '@/app/lib/api/carrito';
 // Elimina esta importación
-// import { getProductoPorCodigo, Producto } from '@/lib/api/reportes';
+// import { getProductoPorCodigo, Producto } from '@/app/lib/api/reportes';
 // Mantén solo la importación del tipo Producto
-import { Producto } from '@/lib/api/reportes';
-import { carritoUtils } from '@/lib/api/carrito';
+import { Producto } from '@/app/lib/api/reportes';
+import { carritoUtils } from '@/app/lib/api/carrito';
 
 interface BuscadorCorredoresProps {
   onReporteComprado?: (rut: string) => void;

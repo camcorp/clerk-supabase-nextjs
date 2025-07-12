@@ -1,9 +1,9 @@
 'use server';
 
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAnonymousServerClient } from "@/lib/supabase/server";
 
 export const getCorredoresData = async (periodo: string) => {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createAnonymousServerClient();
   
   // Obtener todos los datos de vista_corredores_periodo
   const { data: periodData, error: periodError } = await supabase
@@ -17,9 +17,10 @@ export const getCorredoresData = async (periodo: string) => {
   }
   
   // Obtener datos de concentración para todos los periodos
+  // CORREGIDO: Cambiar hhi_general por hhi, y eliminar grupo y hhi_grupo que no existen en esta vista
   const { data: concentracionData, error: concentracionError } = await supabase
     .from("vista_concentracion_corredores")
-    .select("periodo, hhi_general, grupo, hhi_grupo")
+    .select("periodo, rut, hhi, participacion_porcentaje")
     .order('periodo', { ascending: false });
     
   if (concentracionError) {
@@ -35,7 +36,9 @@ export const getCorredoresData = async (periodo: string) => {
   // Transformar los datos para el componente
   return periodData.map((item, index) => {
     const concentracion = concentracionData?.filter(c => c.periodo === item.periodo) || [];
-    const hhiGeneral = concentracion.find(c => c.grupo === '1')?.hhi_general || 0;
+    // CORREGIDO: Calcular HHI general basado en los datos disponibles
+    const hhiGeneral = concentracion.length > 0 ? 
+      concentracion.reduce((sum, c) => sum + (c.hhi || 0), 0) / concentracion.length : 0;
     
     return {
       id: index,
@@ -51,7 +54,7 @@ export const getCorredoresData = async (periodo: string) => {
 
 // Obtener datos históricos para gráficos temporales
 export const getHistoricalCorredoresData = async () => {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createAnonymousServerClient();
   
   // Datos de evolución temporal
   const { data: evolutionData, error: evolutionError } = await supabase
@@ -66,9 +69,10 @@ export const getHistoricalCorredoresData = async () => {
   }
   
   // Datos de concentración
+  // CORREGIDO: Usar las columnas correctas de vista_concentracion_corredores
   const { data: concentracionData, error: concentracionError } = await supabase
     .from("vista_concentracion_corredores")
-    .select("periodo, hhi_general, grupo, hhi_grupo")
+    .select("periodo, rut, hhi, participacion_porcentaje")
     .order('periodo', { ascending: true });
     
   if (concentracionError) {
@@ -139,8 +143,8 @@ export const getHistoricalCorredoresData = async () => {
   // Asegurarse de que los datos de concentración estén correctamente formateados
   const concentracionFormateada = concentracionData?.map(item => ({
     ...item,
-    hhi_general: Number(item.hhi_general),
-    hhi_grupo: Number(item.hhi_grupo)
+    hhi: Number(item.hhi),
+    participacion_porcentaje: Number(item.participacion_porcentaje)
   })) || [];
   
   return {

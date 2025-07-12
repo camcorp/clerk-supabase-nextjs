@@ -1,24 +1,14 @@
 'use server';
 
-import { createServerClient } from '@supabase/ssr';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
 // Implementar paginación
 export const getRamosData = async (periodo: string, page = 0, pageSize = 50) => {
   try {
     // Crear cliente Supabase usando cookies para autenticación con await
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
+    const cookieStore = cookies();
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
     
     // Verificar si hay una sesión activa
     const { data: sessionData } = await supabase.auth.getSession();

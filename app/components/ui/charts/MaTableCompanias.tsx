@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Compania } from '@/hooks/api/useMarketData';
+import { Compania } from '@/app/hooks/api/useMarketData';
 import { formatUF, formatNumber } from '@/lib/utils/formatters';
 // Corregir la importación de Heroicons
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface MaTableCompaniasProps {
   companias: Compania[];

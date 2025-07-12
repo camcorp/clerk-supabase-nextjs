@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { ItemCarrito } from '@/lib/api/carrito';
+import { ItemCarrito } from '@/app/lib/api/carrito';
 
 interface CartItemProps {
   item: ItemCarrito;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { formatUF, formatNumber } from '@/lib/utils/formatters';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface MaEstructuraMercadoProps {
   grupoGenerales: any;
@@ -23,21 +23,38 @@ export default function MaEstructuraMercado({
   
   // Obtener los indicadores HHI
   const obtenerIndicadoresHHI = () => {
-    if (!Array.isArray(historicalConcentracion)) return { total: 0, generales: 0, vida: 0 };
-
-    const periodoData = historicalConcentracion.find(item => item.periodo === selectedPeriodo);
-
-    if (!periodoData) return { total: 0, generales: 0, vida: 0 };
-
-    return {
-      total: Number(periodoData.hhi_general || 0),
-      generales: Number(periodoData.hhi_generales || 0),
-      vida: Number(periodoData.hhi_vida || 0)
+    if (!Array.isArray(concentracionMercado)) return { total: 0, generales: 0, vida: 0 };
+    
+    let hhi_general = 0;
+    let hhi_grupo_generales = 0;
+    let hhi_grupo_vida = 0;
+    
+    // Usar directamente los valores de HHI de la base de datos
+    concentracionMercado.forEach(item => {
+      if (item.periodo === selectedPeriodo) {
+        if (item.hhi_general !== undefined) {
+          hhi_general = Number(item.hhi_general);
+        }
+        
+        if (item.hhi_grupo !== undefined) {
+          if (item.grupo === '1') {
+            hhi_grupo_generales = Number(item.hhi_grupo);
+          } else if (item.grupo === '2') {
+            hhi_grupo_vida = Number(item.hhi_grupo);
+          }
+        }
+      }
+    });
+    
+    return { 
+      total: hhi_general, 
+      generales: hhi_grupo_generales, 
+      vida: hhi_grupo_vida 
     };
   };
-
+  
   const indicadoresHHI = obtenerIndicadoresHHI();
-
+  
   // Agrupar datos por grupo y calcular totales
   const calcularTotalesPorGrupo = () => {
     if (!Array.isArray(concentracionMercado)) return { generales: 0, vida: 0 };
@@ -170,11 +187,7 @@ export default function MaEstructuraMercado({
                 <YAxis />
                 <Tooltip formatter={(value) => [formatNumber(Number(value), 0), 'HHI']} />
                 <Legend />
-                <Bar dataKey="HHI" name="Índice HHI" fill="#8884d8">
-                  {datosHHI.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
+                <Bar dataKey="HHI" name="Índice HHI" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </div>

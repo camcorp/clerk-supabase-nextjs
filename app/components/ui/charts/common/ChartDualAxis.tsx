@@ -1,12 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatUF, formatCLP, formatPercent } from '@/lib/utils/formatters';
-import { colors } from '@/config/theme';
-
-// Definir tipos para los formatos de valores
-type ValueType = 'UF' | 'CLP' | 'PERCENT' | 'NUMBER';
+import { colors, getStatusColor, getChartColors } from '@/config/theme';
 
 interface ChartDualAxisProps {
   data: Array<{
@@ -19,28 +16,10 @@ interface ChartDualAxisProps {
   subtitle?: string;
   primaryColor?: string;
   secondaryColor?: string;
-  
-  // Propiedades simplificadas para el eje Y1 (izquierdo)
-  Y1valueLabel?: string;
-  Y1valueType?: ValueType;
-  Y1formatValue?: (value: number) => string;
-  Y1axisDomain?: [number | string, number | string];
-  
-  // Propiedades simplificadas para el eje Y2 (derecho)
-  Y2valueLabel?: string;
-  Y2valueType?: ValueType;
-  Y2formatValue?: (value: number) => string;
-  Y2axisDomain?: [number | string, number | string];
-  
-  // Propiedades para compatibilidad con versiones anteriores
   valueLabel?: string;
   growthLabel?: string;
-  valueType?: ValueType;
-  growthType?: ValueType;
   formatValue?: (value: number) => string;
   formatGrowth?: (value: number) => string;
-  leftAxisDomain?: [number | string, number | string];
-  rightAxisDomain?: [number | string, number | string];
 }
 
 export default function ChartDualAxis({ 
@@ -49,72 +28,11 @@ export default function ChartDualAxis({
   subtitle,
   primaryColor = colors.companias.primary,
   secondaryColor = colors.status.info,
-  
-  // Usar nuevas propiedades con fallback a las anteriores
-  Y1valueLabel,
-  Y1valueType,
-  Y1formatValue,
-  Y1axisDomain,
-  
-  Y2valueLabel,
-  Y2valueType,
-  Y2formatValue,
-  Y2axisDomain,
-  
-  // Propiedades anteriores para compatibilidad
   valueLabel = "Valor",
   growthLabel = "Crecimiento",
-  valueType = 'UF',
-  growthType = 'PERCENT',
-  formatValue,
-  formatGrowth,
-  leftAxisDomain = ['dataMin - 100', 'dataMax + 100'],
-  rightAxisDomain = [-30, 30]
+  formatValue = (value: number) => formatUF(value, 2, false),
+  formatGrowth = (value: number) => formatPercent(value, 2)
 }: ChartDualAxisProps) {
-  
-  // Usar nuevas propiedades si están definidas, sino usar las anteriores
-  const finalY1Label = Y1valueLabel || valueLabel;
-  const finalY2Label = Y2valueLabel || growthLabel;
-  const finalY1Type = Y1valueType || valueType;
-  const finalY2Type = Y2valueType || growthType;
-  const finalY1Domain = Y1axisDomain || leftAxisDomain;
-  const finalY2Domain = Y2axisDomain || rightAxisDomain;
-  
-  // Función para obtener el formateador según el tipo de valor
-  const getFormatter = (type: ValueType, defaultFormatter?: (value: number) => string) => {
-    if (defaultFormatter) return defaultFormatter;
-    
-    switch (type) {
-      case 'CLP':
-        return (value: number) => formatCLP(value / 1000, true, 0) + 'M';
-      case 'UF':
-        return (value: number) => formatUF(value, 0, false);
-      case 'PERCENT':
-        return (value: number) => formatPercent(value, 2);
-      case 'NUMBER':
-      default:
-        return (value: number) => value.toLocaleString('es-CL');
-    }
-  };
-  
-  // Obtener formateadores para ambos ejes
-  const finalY1Formatter = Y1formatValue || formatValue || getFormatter(finalY1Type);
-  const finalY2Formatter = Y2formatValue || formatGrowth || getFormatter(finalY2Type);
-  
-  // Función para formatear ticks según el tipo
-  const formatTickValue = (value: number, type: ValueType, formatter: (value: number) => string) => {
-    switch (type) {
-      case 'CLP':
-        return formatter(value).split('$')[1]; // Mostrar sin el símbolo $ para los ticks
-      case 'UF':
-        return formatter(value).split(' ')[0]; // Quitar el "UF" para los ticks
-      case 'PERCENT':
-        return `${value}%`;
-      case 'NUMBER':
-      default:
-        return value.toLocaleString('es-CL');
-    }
-  };
   
   // Asegurarse de que los datos tengan el formato correcto
   const chartData = data.map(item => ({
@@ -146,25 +64,25 @@ export default function ChartDualAxis({
               />
               <YAxis 
                 yAxisId="left"
-                tickFormatter={(value) => formatTickValue(value, finalY1Type, finalY1Formatter)}
+                tickFormatter={(value) => formatValue(value).split(' ')[0]}
                 tick={{ fontSize: 12 }}
                 tickLine={{ stroke: '#E9ECEF' }}
-                domain={finalY1Domain}
+                domain={['dataMin - 100', 'dataMax + 100']}
               />
               <YAxis 
                 yAxisId="right"
                 orientation="right"
-                tickFormatter={(value) => formatTickValue(value, finalY2Type, finalY2Formatter)}
+                tickFormatter={(value) => `${value}%`}
                 tick={{ fontSize: 12 }}
                 tickLine={{ stroke: '#E9ECEF' }}
-                domain={finalY2Domain}
+                domain={[-30, 30]}
               />
               <Tooltip 
                 formatter={(value: number, name: string) => {
-                  if (name === finalY1Label) {
-                    return [finalY1Formatter(value), finalY1Label];
+                  if (name === valueLabel) {
+                    return [formatValue(value), valueLabel];
                   }
-                  return [finalY2Formatter(value), finalY2Label];
+                  return [`${value.toFixed(2)}%`, growthLabel];
                 }}
                 labelFormatter={(label) => `Período: ${label}`}
               />
@@ -173,7 +91,7 @@ export default function ChartDualAxis({
                 yAxisId="left"
                 type="monotone" 
                 dataKey="valor" 
-                name={finalY1Label} 
+                name={valueLabel} 
                 stroke={primaryColor} 
                 strokeWidth={2}
                 dot={{ r: 4 }}
@@ -183,7 +101,7 @@ export default function ChartDualAxis({
                 yAxisId="right"
                 type="monotone" 
                 dataKey="crecimiento" 
-                name={finalY2Label} 
+                name={growthLabel} 
                 stroke={secondaryColor} 
                 strokeWidth={2}
                 dot={{ r: 4 }}

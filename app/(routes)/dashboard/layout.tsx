@@ -2,7 +2,7 @@
 
 import { PeriodProvider } from './memoria-anual/context/PeriodContext';
 import React from 'react';
-import Sidebar from '@/components/ui/Sidebar';
+import Sidebar from '@/app/components/ui/Sidebar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserButton } from '@clerk/nextjs';
 

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { CarritoCompras, carritoUtils, type CarritoEstado } from '@/lib/api/carrito';
-import { ShoppingCart } from '@/components/shop/ShoppingCart';
-import { Button } from '@/components/ui/button';
+import { CarritoCompras, carritoUtils, type CarritoEstado } from '@/app/lib/api/carrito';
+import { ShoppingCart } from '@/app/components/shop/ShoppingCart';
+import { Button } from '@/app/components/ui/button';
 import { ArrowLeft, ShoppingBag } from 'lucide-react';
 
 export default function CartPage() {

@@ -4,7 +4,6 @@ import { useEffect, useState, Suspense } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useIndividualReportAccess } from '../../hooks/useIndividualReportAccess';
-import ReporteIndividualMockup from '../components/ReporteIndividualMockup';
 
 // Componente interno que usa useSearchParams
 function CorredorDetailContent() {
@@ -16,96 +15,6 @@ function CorredorDetailContent() {
   
   const { report, loading, error, hasAccess } = useIndividualReportAccess(userId, rut);
   const [decodedRut, setDecodedRut] = useState(rut);
-
-  // Mock data structure that matches the expected interface
-  const mockReportData = {
-    periodo: '2024',
-    produccion: {
-      total_primaclp: 150000000,
-      total_primauf: 5000,
-      ranking_general: 15,
-      num_companias: 8,
-      num_ramos: 12,
-      crecimiento_anual: 0.15,
-      participacion_mercado: 0.025
-    },
-    rankings: {
-      general: 15,
-      por_compania: [
-        { compania: 'Seguros Generales', ranking: 5, total_corredores: 120 },
-        { compania: 'Vida Seguros', ranking: 8, total_corredores: 95 }
-      ],
-      por_ramo: [
-        { ramo: 'Incendio', ranking: 3, total_corredores: 85 },
-        { ramo: 'Automóviles', ranking: 7, total_corredores: 180 }
-      ]
-    },
-    companias: [
-      {
-        nombrecia: 'Seguros Generales',
-        primaclp: 45000000,
-        primauf: 1500,
-        participacion: 0.30,
-        crecimiento: 0.18,
-        ranking_corredor: 5
-      },
-      {
-        nombrecia: 'Vida Seguros',
-        primaclp: 35000000,
-        primauf: 1200,
-        participacion: 0.23,
-        crecimiento: 0.12,
-        ranking_corredor: 8
-      }
-    ],
-    ramos: [
-      {
-        nombre: 'Incendio',
-        primaclp: 40000000,
-        primauf: 1350,
-        participacion: 0.27,
-        crecimiento: 0.22,
-        ranking_corredor: 3
-      },
-      {
-        nombre: 'Automóviles',
-        primaclp: 35000000,
-        primauf: 1200,
-        participacion: 0.23,
-        crecimiento: 0.10,
-        ranking_corredor: 7
-      }
-    ],
-    concentracion: {
-      hhi_companias: 2250,
-      hhi_ramos: 1850,
-      nivel_concentracion_companias: 'Moderada',
-      nivel_concentracion_ramos: 'Baja'
-    },
-    top_performers: {
-      ramos_mayor_crecimiento: [
-        { ramo: 'Incendio', crecimiento: 0.22, prima_actual: 40000000 },
-        { ramo: 'Vida', crecimiento: 0.15, prima_actual: 30000000 }
-      ],
-      ramos_mayor_decrecimiento: [
-        { ramo: 'Transporte', crecimiento: -0.08, prima_actual: 8000000 }
-      ],
-      companias_mayor_crecimiento: [
-        { compania: 'Seguros Generales', crecimiento: 0.18, prima_actual: 45000000 },
-        { compania: 'Seguros del Sur', crecimiento: 0.15, prima_actual: 25000000 }
-      ],
-      companias_mayor_decrecimiento: [
-        { compania: 'Aseguradora Nacional', crecimiento: -0.05, prima_actual: 17000000 }
-      ]
-    }
-  };
-
-  const mockCorrector = {
-    rut: decodedRut,
-    nombre: 'Juan Pérez Corredor',
-    ciudad: 'Santiago',
-    telefono: '+56912345678'
-  };
 
   useEffect(() => {
     // Verificar que tenemos el parámetro RUT
@@ -138,60 +47,254 @@ function CorredorDetailContent() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#0F3460] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando información del corredor...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <p className="ml-3">Cargando informe...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error al cargar el informe</p>
-          <button 
-            onClick={() => router.push('/dashboard/corredor')}
-            className="bg-[#0F3460] text-white px-4 py-2 rounded hover:bg-[#0F3460]/90"
-          >
-            Volver al listado
-          </button>
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-red-700">
+                Error al cargar el informe: {error}
+              </p>
+            </div>
+          </div>
         </div>
+        <button 
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => router.push('/dashboard/corredor')}
+        >
+          Volver a la búsqueda
+        </button>
       </div>
     );
   }
 
   if (!hasAccess) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">No tienes acceso a este informe</p>
-          <button 
-            onClick={() => router.push('/dashboard/corredor')}
-            className="bg-[#0F3460] text-white px-4 py-2 rounded hover:bg-[#0F3460]/90"
-          >
-            Volver al listado
-          </button>
-        </div>
-      </div>
-    );
+    return null; // Se redirigirá por el useEffect
   }
 
+  // Extraer datos del informe
+  const reportData = report?.data || {};
+  
   return (
-    <div className="container mx-auto px-4 py-8">
-      <ReporteIndividualMockup 
-        corredor={mockCorrector}
-        reportData={mockReportData}
-      />
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Informe de Corredor</h1>
+        <button 
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+          onClick={() => router.push('/dashboard/corredor')}
+        >
+          Volver a la búsqueda
+        </button>
+      </div>
+      
+      {/* Información básica del corredor */}
+      <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Información del Corredor</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-gray-600">RUT:</p>
+            <p className="font-medium">{decodedRut}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Nombre:</p>
+            <p className="font-medium">{reportData.nombre || 'No disponible'}</p>
+          </div>
+          {reportData.telefono && (
+            <div>
+              <p className="text-gray-600">Teléfono:</p>
+              <p className="font-medium">{reportData.telefono}</p>
+            </div>
+          )}
+          {reportData.ciudad && (
+            <div>
+              <p className="text-gray-600">Ciudad:</p>
+              <p className="font-medium">{reportData.ciudad}</p>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Resumen de producción */}
+      {reportData.produccion && (
+        <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Resumen de Producción</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-medium text-gray-700 mb-2">Producción Total</h3>
+              <div className="bg-gray-50 p-4 rounded">
+                <p className="text-gray-600">Prima CLP:</p>
+                <p className="text-2xl font-bold">
+                  {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' })
+                    .format(reportData.produccion.total_primaclp || 0)}
+                </p>
+                <p className="text-gray-600 mt-2">Prima UF:</p>
+                <p className="text-xl font-semibold">
+                  {new Intl.NumberFormat('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    .format(reportData.produccion.total_primauf || 0)} UF
+                </p>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-gray-700 mb-2">Indicadores</h3>
+              <div className="bg-gray-50 p-4 rounded">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-gray-600">Ranking:</p>
+                    <p className="font-bold">{reportData.produccion.ranking_general || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Crecimiento:</p>
+                    <p className="font-bold">
+                      {reportData.produccion.crecimiento_clp 
+                        ? `${(reportData.produccion.crecimiento_clp * 100).toFixed(2)}%` 
+                        : 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Compañías:</p>
+                    <p className="font-bold">{reportData.produccion.num_companias || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Ramos:</p>
+                    <p className="font-bold">{reportData.produccion.num_ramos || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Distribución por compañías */}
+      {reportData.companias && reportData.companias.length > 0 && (
+        <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Distribución por Compañías</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Compañía
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Prima CLP
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Prima UF
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Participación
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {reportData.companias.map((compania: any, index: number) => (
+                  <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {compania.nombrecia}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' })
+                        .format(compania.primaclp || 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Intl.NumberFormat('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        .format(compania.primauf || 0)} UF
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {compania.participacion 
+                        ? `${(compania.participacion * 100).toFixed(2)}%` 
+                        : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      
+      {/* Distribución por ramos */}
+      {reportData.ramos && reportData.ramos.length > 0 && (
+        <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Distribución por Ramos</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ramo
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Prima CLP
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Prima UF
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Participación
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {reportData.ramos.map((ramo: any, index: number) => (
+                  <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {ramo.ramo}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' })
+                        .format(ramo.primaclp || 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Intl.NumberFormat('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        .format(ramo.primauf || 0)} UF
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {ramo.participacion 
+                        ? `${(ramo.participacion * 100).toFixed(2)}%` 
+                        : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      
+      {/* Información de validez */}
+      <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-600">
+        <p>Informe generado el: {new Date(report?.fecha_generacion || '').toLocaleDateString()}</p>
+        <p>Válido hasta: {new Date(report?.fecha_expiracion || '').toLocaleDateString()}</p>
+      </div>
     </div>
   );
 }
 
-export default function CorredorDetallePage() {
+// Componente principal que envuelve el contenido en un Suspense
+export default function CorredorDetailPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <p className="ml-3">Cargando...</p>
+      </div>
+    }>
       <CorredorDetailContent />
     </Suspense>
   );

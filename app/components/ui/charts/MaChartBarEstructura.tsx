@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
-import { formatUF } from '@/lib/utils/formatters';
+import { formatUF } from '@/app/lib/utils/formatters';
 
 // ... existing code ...
 

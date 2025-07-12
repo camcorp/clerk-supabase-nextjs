@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import SimpleLineChart from './simplified/SimpleLineChart';
-import { ValueType } from './simplified/SimpleLineChart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface ChartHHIEvolutionProps {
   data: Array<{
@@ -16,15 +15,13 @@ interface ChartHHIEvolutionProps {
   title?: string;
   subtitle?: string;
   threshold?: number;
-  showTitle?: boolean;
 }
 
 export default function ChartHHIEvolution({ 
   data, 
   title = "Evolución del Índice HHI", 
   subtitle = "Índice Herfindahl-Hirschman de concentración del mercado",
-  threshold = 1000,
-  showTitle = true
+  threshold = 1000
 }: ChartHHIEvolutionProps) {
   const [selectedGrupo, setSelectedGrupo] = useState<string>('General');
   
@@ -48,15 +45,13 @@ export default function ChartHHIEvolution({
     <div className="bg-white rounded-xl shadow-sm border border-[#E9ECEF] overflow-hidden transition-all duration-300 hover:shadow-md">
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
-          {showTitle && (
-            <div>
-              <h3 className="text-lg font-semibold text-[#0F3460] font-sans">{title}</h3>
-              {subtitle && <p className="text-sm text-[#6C757D]">{subtitle}</p>}
-            </div>
-          )}
+          <div>
+            <h3 className="text-lg font-semibold text-[#0F3460] font-['Space_Grotesk']">{title}</h3>
+            {subtitle && <p className="text-sm text-[#6C757D]">{subtitle}</p>}
+          </div>
           
           {/* Selector de grupo */}
-          <div className={`flex space-x-2 bg-gray-100 rounded-lg p-1 ${!showTitle ? 'ml-auto' : ''}`}>
+          <div className="flex space-x-2 bg-gray-100 rounded-lg p-1">
             {grupos.map(grupo => (
               <button
                 key={grupo}
@@ -74,16 +69,50 @@ export default function ChartHHIEvolution({
         </div>
         
         <div className="h-80">
-          <SimpleLineChart
-            data={filteredData}
-            xAxisKey="periodo"
-            dataKey={dataKey}
-            title={selectedGrupo === 'General' ? "Índice HHI General" : `Índice HHI Grupo ${selectedGrupo}`}
-            valueLabel="HHI"
-            valueType="NUMBER"
-            valueDomain={[0, 'dataMax + 200']}
-            color="#8884d8"
-          />
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={filteredData}
+              margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+              <XAxis 
+                dataKey="periodo" 
+                tick={{ fontSize: 12 }}
+                tickLine={{ stroke: '#E9ECEF' }}
+              />
+              <YAxis 
+                tickFormatter={(value) => Math.round(value).toString()}
+                tick={{ fontSize: 12 }}
+                tickLine={{ stroke: '#E9ECEF' }}
+                domain={[0, 'dataMax + 200']}
+              />
+              <Tooltip 
+                formatter={(value: number) => [Math.round(value), "HHI"]}
+                labelFormatter={(label) => `Período: ${label}`}
+              />
+              <Legend />
+              <ReferenceLine 
+                y={threshold} 
+                stroke="#FF6B6B" 
+                strokeDasharray="3 3"
+                label={{ 
+                  value: `Threshold: ${threshold}`, 
+                  position: 'insideBottomRight',
+                  fill: '#FF6B6B',
+                  fontSize: 12
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey={dataKey} 
+                name={selectedGrupo === 'General' ? "Índice HHI General" : `Índice HHI Grupo ${selectedGrupo}`} 
+                stroke="#8884d8" 
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6, stroke: '#8884d8', strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
         
         <div className="mt-4 text-xs text-[#6C757D]">

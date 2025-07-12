@@ -424,6 +424,7 @@ export async function getReporteIndividual(
     periodo
   });
 
+  // Usar supabaseAdmin para bypasear RLS
   const { data, error } = await supabaseAdmin
     .from('reportes_individuales')
     .select('*')
@@ -457,6 +458,9 @@ export async function getReporteIndividual(
     // ❌ ELIMINAR ESTA LÍNEA PROBLEMÁTICA:
     // const companiasConSeriesValidas = useSeriesHistoricasAgrupadas(data.datos_reporte.companias);
     
+    // ✅ REEMPLAZAR CON LOGGING SIMPLE:
+    console.log('📊 Compañías disponibles:', data.datos_reporte.companias.length);
+    
     data.datos_reporte.companias.forEach((compania: any, index: number) => {
       console.log(`📊 Compañía ${index + 1}:`, {
         rutcia: compania.rutcia,
@@ -484,7 +488,7 @@ export async function getReporteIndividual(
     console.log('❌ NO se encontró array de compañias en datos_reporte');
   }
 
-  // Los datos ya están completos en reportes_individuales, no necesitamos consultar nada más
+  // Los datos ya están completos en reportes_individuales, no necesitamos consultar intercia
   return data;
 }
 
@@ -720,41 +724,34 @@ export async function generarReporteIndividual(
   periodo: string = '202412'
 ): Promise<ReporteIndividual | null> {
   try {
-    // 1. Obtener el reporte maestro (que ya tiene todos los datos)
-    const { data: reporteMaestro, error } = await supabaseAdmin
-      .from('reportes') // o la tabla donde están los reportes maestros
-      .select('datos_reporte')
-      .eq('rut', rutCorredor)
-      .eq('periodo', periodo)
-      .single();
-
-    if (error || !reporteMaestro) {
-      console.error('Reporte maestro no encontrado:', error);
-      return null;
-    }
-
-    // 2. Crear el reporte individual con los datos existentes
     const fechaExpiracion = new Date();
     fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+    
+    // Generar datos completos del reporte
+    const datosCompletos = await generarDatosReporteCompleto(rutCorredor, periodo);
+    
+    if (!datosCompletos) {
+      throw new Error('No se pudieron generar los datos del reporte');
+    }
     
     const reporte = {
       user_id: userId,
       rut: rutCorredor,
       periodo: periodo,
-      datos_reporte: reporteMaestro.datos_reporte, // Usar datos existentes
+      datos_reporte: datosCompletos, // Usar datos completos
       fecha_generacion: new Date().toISOString(),
       fecha_expiracion: fechaExpiracion.toISOString(),
       activo: true
     };
     
-    const { data, error: insertError } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('reportes_individuales')
       .insert(reporte)
       .select()
       .single();
 
-    if (insertError) {
-      console.error('Error insertando reporte individual:', insertError);
+    if (error) {
+      console.error('Error generando reporte:', error);
       return null;
     }
 
@@ -765,12 +762,55 @@ export async function generarReporteIndividual(
   }
 }
 
-// ELIMINAR estas funciones que ya no son necesarias:
-// - generarDatosReporteCompleto
-// - construirCompaniasConSeries  
-// - generarPeriodosHistoricos
-// - construirRamos
-// - obtenerNombresRamos
+// Función para generar datos completos del reporte
+export async function generarDatosReporteCompleto(
+  rutCorredor: string,
+  periodo: string = '202412'
+) {
+  try {
+    // 1. Obtener datos de producción del corredor
+    const { data: produccionData, error } = await supabaseAdmin
+      .from('produccion_ramos')
+      .select(`
+        *,
+        companias!inner(*),
+        ramos!inner(*)
+      `)
+      .eq('rut', rutCorredor)
+      .eq('periodo', periodo);
+
+    if (error) throw error;
+
+    // 2. Obtener series históricas (últimos 11 períodos)
+    const periodosHistoricos = generarPeriodosHistoricos(periodo, 11);
+    
+    const { data: seriesHistoricas } = await supabaseAdmin
+      .from('produccion_ramos')
+      .select('*')
+      .eq('rut', rutCorredor)
+      .in('periodo', periodosHistoricos)
+      .order('periodo', { ascending: false });
+
+    // 3. Construir estructura de compañías con series históricas
+    const companias = construirCompaniasConSeries(
+      produccionData,
+      seriesHistoricas
+    );
+
+    // 4. Construir estructura completa
+    return {
+      corredor: await getCorredor(rutCorredor),
+      periodo,
+      indicadores: null,
+      companias,
+      ramos: construirRamos(produccionData),
+      nombresRamos: await obtenerNombresRamos()
+    };
+  } catch (error) {
+    console.error('Error generando datos completos:', error);
+    return null;
+  }
+}
 
 // Función auxiliar para construir compañías con series históricas
 function construirCompaniasConSeries(produccionActual: any[], seriesHistoricas: any[]) {
@@ -787,8 +827,8 @@ function construirCompaniasConSeries(produccionActual: any[], seriesHistoricas: 
         grupo: item.grupo || "1",
         rutcia,
         nombrecia: item.companias?.nombre || 'Sin nombre',
-        prima_uf: 0,  // Cambiado de primauf a prima_uf
-        prima_clp: 0, // Cambiado de primaclp a prima_clp
+        primauf: 0,
+        primaclp: 0,
         participacion: 0,
         crecimiento: 0,
         ranking_corredor: 0,
@@ -797,8 +837,8 @@ function construirCompaniasConSeries(produccionActual: any[], seriesHistoricas: 
     }
     
     const compania = companiasPorRut.get(rutcia);
-    compania.prima_uf += item.prima_uf || 0;  // Cambiado
-    compania.prima_clp += item.prima_clp || 0; // Cambiado
+    compania.primauf += item.prima_uf || 0;
+    compania.primaclp += item.prima_clp || 0;
   });
   
   // Agregar series históricas ANTES de crear el array final
@@ -838,12 +878,12 @@ function construirCompaniasConSeries(produccionActual: any[], seriesHistoricas: 
   // Calcular participación
   companiasArray.forEach(compania => {
     if (totalPrimaClp > 0) {
-      compania.participacion = (compania.prima_clp / totalPrimaClp) * 100; // Cambiado
+      compania.participacion = (compania.primaclp / totalPrimaClp) * 100;
     }
   });
   
   // Ordenar por prima CLP para ranking
-  companiasArray.sort((a, b) => b.prima_clp - a.prima_clp); // Cambiado
+  companiasArray.sort((a, b) => b.primaclp - a.primaclp);
   companiasArray.forEach((compania, index) => {
     compania.ranking_corredor = index + 1;
   });
@@ -876,20 +916,20 @@ function construirRamos(produccionData: any[]) {
     if (!ramosPorCodigo.has(codigo)) {
       ramosPorCodigo.set(codigo, {
         cod: codigo,
-        prima_clp: 0, // Cambiado de primaclp a prima_clp
-        prima_uf: 0,  // Cambiado de primauf a prima_uf
+        primaclp: 0,
+        primauf: 0,
         grupo: item.grupo || "1",
         nombre: item.ramos?.ramo || 'Sin nombre'
       });
     }
     
     const ramo = ramosPorCodigo.get(codigo);
-    ramo.prima_clp += item.prima_clp || 0; // Cambiado
-    ramo.prima_uf += item.prima_uf || 0;   // Cambiado
+    ramo.primaclp += item.prima_clp || 0;
+    ramo.primauf += item.prima_uf || 0;
   });
   
   return Array.from(ramosPorCodigo.values())
-    .sort((a, b) => b.prima_clp - a.prima_clp); // Cambiado
+    .sort((a, b) => b.primaclp - a.primaclp);
 }
 
 // Función auxiliar para obtener nombres de ramos
@@ -910,3 +950,4 @@ async function obtenerNombresRamos() {
     return [];
   }
 }
+
